@@ -1,7 +1,7 @@
 package Main;
 
 import Graphics.Renderer;
-import Graphics.Texture;
+import Levels.Tiles.Wall;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -20,7 +20,7 @@ public class Main {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 
         // sets the window to be full screen
-        long window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Test", glfwGetPrimaryMonitor(), 0);
+        long window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Test", 0, 0);
 
         if (window == 0) {
             throw new IllegalStateException("Failed to create window");
@@ -36,43 +36,30 @@ public class Main {
         glEnable(GL_TEXTURE_2D);
 
         float[] testVertices = new float[] {
-                -0.5f, 0.5f,    // TOP LEFT
-                0.5f, 0.5f,     // TOP RIGHT
-                0.5f, -0.5f,    // BOTTOM RIGHT
-
-                0.5f, -0.5f,    // BOTTOM RIGHT
-                -0.5f, -0.5f,   // BOTTOM LEFT
-                -0.5f, 0.5f     // TOP LEFT
+                -0.5f, 0.5f, 0.0f,    // TOP LEFT
+                0.5f, 0.5f, 0.0f,     // TOP RIGHT
+                0.5f, -0.5f, 0.0f,    // BOTTOM RIGHT
+                -0.5f, -0.5f, 0.0f    // BOTTOM LEFT
         };
 
         float[] testTexture = new float[] {
-                0,0,
-                1,0,
-                1,1,
-
-                1,1,
                 0,1,
-                0,0
+                1,1,
+                1,0,
+                0,0,
         };
 
         Renderer renderer = new Renderer(testVertices, testTexture);
 
-        Texture tex = new Texture("src/Textures/test_texture.jpg");
-
-        // Set the clear color
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
-
         while ( !glfwWindowShouldClose(window) ) {
             glfwPollEvents();
-
-            glClear(GL_COLOR_BUFFER_BIT);
 
             // for now, allow exiting of the window by pressing escape
             if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GL_TRUE) {
                 glfwSetWindowShouldClose(window, true);
             }
 
-            tex.bind();
+            Wall.CASTLE_WALL.bindTexture();
             renderer.render();
 
             glfwSwapBuffers(window);

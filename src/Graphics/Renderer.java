@@ -1,5 +1,9 @@
 package Graphics;
 
+import java.nio.FloatBuffer;
+import java.util.Arrays;
+import java.util.Collections;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 
@@ -13,24 +17,27 @@ public class Renderer {
     // the texture id
     private int t_id;
 
-    // the amount of dimensions
-    private final static int DIMENSIONS = 2;
+    // the index id
+    private int i_id;
 
     public Renderer(float[] vertices, float[] texCoords) {
-        drawCount = vertices.length / DIMENSIONS;
+        drawCount = vertices.length / 3;
 
         v_id = glGenBuffers();
-
         // bind v_id to GL_ARRAY_BUFFER
         glBindBuffer(GL_ARRAY_BUFFER, v_id);
         glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         t_id = glGenBuffers();
-        // bind v_id to GL_ARRAY_BUFFER
+        // bind t_id to GL_ARRAY_BUFFER
         glBindBuffer(GL_ARRAY_BUFFER, t_id);
         glBufferData(GL_ARRAY_BUFFER, texCoords, GL_STATIC_DRAW);
+
+        // unbind from the array buffer
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        i_id = glGenBuffers();
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, i_id);
     }
 
     public void render() {
@@ -38,12 +45,12 @@ public class Renderer {
         glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
         glBindBuffer(GL_ARRAY_BUFFER, v_id);
-        glVertexPointer(DIMENSIONS, GL_FLOAT, 0, 0);
+        glVertexPointer(3, GL_FLOAT, 0, 0);
 
         glBindBuffer(GL_ARRAY_BUFFER, t_id);
-        glTexCoordPointer(DIMENSIONS, GL_FLOAT, 0, 0);
+        glTexCoordPointer(2, GL_FLOAT, 0, 0);
 
-        glDrawArrays(GL_TRIANGLES, 0, drawCount);
+        glDrawArrays(GL_QUADS, 0, drawCount);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 

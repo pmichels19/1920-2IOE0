@@ -5,6 +5,6 @@ This is the repository for the university project by Group Five for DBL Interact
 ## Development (IntelliJ)
 
 1. Clone the repo
-2. Go to ```File > Project Structure > Add > Library > New Library > Java > 1920-2IOE0\lwjgl-release-3.2-light```
-3. Click on ```OK```
+2. Go to **File > Project Structure > Add > Library > New Library > Java**
+3. Add ```1920-2IOE0\lwjgl-release-3.2-light```
 4. Run ```Main\Main.java```

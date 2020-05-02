@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
  * This keeps check of the state of the maze
  */
 public class Maze {
-    private String[][] grid;
+    private char[][] grid;
 
     /**
      * reads a new file into the maze object
@@ -25,14 +25,14 @@ public class Maze {
         BufferedReader reader = new BufferedReader( new FileReader(maze) );
         List<String> lines = reader.lines().collect( Collectors.toList() );
 
-        grid = new String[ lines.size() ][ lines.get(0).length() ];
+        grid = new char[ lines.size() ][ lines.get(0).length() ];
 
         for (int i = 0; i < grid.length; i++) {
-            grid[i] = lines.get(i).split("");
+            grid[i] = lines.get(i).toCharArray();
         }
     }
 
-    public String[][] getGrid() {
+    public char[][] getGrid() {
         return grid;
     }
 

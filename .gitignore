@@ -5,3 +5,4 @@
 out/*
 src/org/*
 *.iml
+lib/*

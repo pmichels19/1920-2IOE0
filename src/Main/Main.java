@@ -1,9 +1,8 @@
 package Main;
 
 import Graphics.Renderer;
+import Graphics.Shader;
 import Graphics.Window;
-import Levels.Tiles.Wall;
-import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -42,6 +41,7 @@ public class Main {
         };
 
         Renderer renderer = new Renderer(testVertices, testTexture);
+        Shader shader = new Shader("testshader");
 
         while ( !window.shouldClose() ) {
             glfwPollEvents();
@@ -51,7 +51,8 @@ public class Main {
                 window.close();
             }
 
-            Wall.CASTLE_WALL.bindTexture();
+//            Wall.CASTLE_WALL.bindTexture();
+            shader.bind();
             renderer.render();
 
             window.swapBuffers();

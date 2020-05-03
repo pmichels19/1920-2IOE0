@@ -20,29 +20,29 @@
  THE SOFTWARE.
 
  */
-package org.joml;
+package Levels.Framework.joml;
 
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 
 /**
- * A stack of many {@link Matrix4f} instances. This resembles the matrix stack known from legacy OpenGL.
+ * A stack of many {@link Matrix4d} instances. This resembles the matrix stack known from legacy OpenGL.
  * <p>
- * This {@link MatrixStackf} class inherits from {@link Matrix4f}, so the current/top matrix is always the {@link MatrixStackf}/{@link Matrix4f} itself. This
- * affects all operations in {@link Matrix4f} that take another {@link Matrix4f} as parameter. If a {@link MatrixStackf} is used as argument to those methods,
+ * This {@link MatrixStackd} class inherits from {@link Matrix4d}, so the current/top matrix is always the {@link MatrixStackd}/{@link Matrix4d} itself. This
+ * affects all operations in {@link Matrix4d} that take another {@link Matrix4d} as parameter. If a {@link MatrixStackd} is used as argument to those methods,
  * the effective argument will always be the <i>current</i> matrix of the matrix stack.
  * 
  * @author Kai Burjack
  */
-public class MatrixStackf extends Matrix4f {
+public class MatrixStackd extends Matrix4d {
 
     private static final long serialVersionUID = 1L;
 
     /**
-     * The matrix stack as a non-growable array. The size of the stack must be specified in the {@link #MatrixStack(int) constructor}.
+     * The matrix stack as a non-growable array. The size of the stack must be specified in the {@link #MatrixStackd(int) constructor}.
      */
-    private Matrix4f[] mats;
+    private Matrix4d[] mats;
 
     /**
      * The index of the "current" matrix within {@link #mats}.
@@ -50,22 +50,22 @@ public class MatrixStackf extends Matrix4f {
     private int curr;
 
     /**
-     * Create a new {@link MatrixStackf} of the given size.
+     * Create a new {@link MatrixStackd} of the given size.
      * <p>
      * Initially the stack pointer is at zero and the current matrix is set to identity.
      * 
      * @param stackSize
-     *            the size of the stack. This must be at least 1, in which case the {@link MatrixStackf} simply only consists of <code>this</code>
-     *            {@link Matrix4f}
+     *            the size of the stack. This must be at least 1, in which case the {@link MatrixStackd} simply only consists of <code>this</code>
+     *            {@link Matrix4d}
      */
-    public MatrixStackf(int stackSize) {
+    public MatrixStackd(int stackSize) {
         if (stackSize < 1) {
             throw new IllegalArgumentException("stackSize must be >= 1"); //$NON-NLS-1$
         }
-        mats = new Matrix4f[stackSize - 1];
+        mats = new Matrix4d[stackSize - 1];
         // Allocate all matrices up front to keep the promise of being "allocation-free"
         for (int i = 0; i < mats.length; i++) {
-            mats[i] = new Matrix4f();
+            mats[i] = new Matrix4d();
         }
     }
 
@@ -74,7 +74,7 @@ public class MatrixStackf extends Matrix4f {
      * 
      * @return this
      */
-    public MatrixStackf clear() {
+    public MatrixStackd clear() {
         curr = 0;
         identity();
         return this;
@@ -85,7 +85,7 @@ public class MatrixStackf extends Matrix4f {
      * 
      * @return this
      */
-    public MatrixStackf pushMatrix() {
+    public MatrixStackd pushMatrix() {
         if (curr == mats.length) {
             throw new IllegalStateException("max stack size of " + (curr + 1) + " reached"); //$NON-NLS-1$ //$NON-NLS-2$
         }
@@ -100,7 +100,7 @@ public class MatrixStackf extends Matrix4f {
      * 
      * @return this
      */
-    public MatrixStackf popMatrix() {
+    public MatrixStackd popMatrix() {
         if (curr == 0) {
             throw new IllegalStateException("already at the buttom of the stack"); //$NON-NLS-1$
         }
@@ -119,23 +119,23 @@ public class MatrixStackf extends Matrix4f {
     }
 
     /*
-     * Contract between Matrix4f and MatrixStackf:
+     * Contract between Matrix4d and MatrixStackd:
      * 
-     * - Matrix4f.equals(MatrixStackf) is true iff all the 16 matrix elements are equal
-     * - MatrixStackf.equals(Matrix4f) is true iff all the 16 matrix elements are equal
-     * - MatrixStackf.equals(MatrixStackf) is true iff all 16 matrix elements are equal AND the matrix arrays as well as the stack pointer are equal
+     * - Matrix4d.equals(MatrixStackd) is true iff all the 16 matrix elements are equal
+     * - MatrixStackd.equals(Matrix4d) is true iff all the 16 matrix elements are equal
+     * - MatrixStackd.equals(MatrixStackd) is true iff all 16 matrix elements are equal AND the matrix arrays as well as the stack pointer are equal
      * - everything else is inequal
      * 
      * (non-Javadoc)
-     * @see org.joml.Matrix4f#equals(java.lang.Object)
+     * @see Levels.Framework.joml.Matrix4f#equals(java.lang.Object)
      */
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (!super.equals(obj))
             return false;
-        if (obj instanceof MatrixStackf) {
-            MatrixStackf other = (MatrixStackf) obj;
+        if (obj instanceof MatrixStackd) {
+            MatrixStackd other = (MatrixStackd) obj;
             if (curr != other.curr)
                 return false;
             for (int i = 0; i < curr; i++) {
@@ -158,9 +158,9 @@ public class MatrixStackf extends Matrix4f {
             ClassNotFoundException {
         super.readExternal(in);
         curr = in.readInt();
-        mats = new MatrixStackf[curr];
+        mats = new MatrixStackd[curr];
         for (int i = 0; i < curr; i++) {
-            Matrix4f m = new Matrix4f();
+            Matrix4d m = new Matrix4d();
             m.readExternal(in);
             mats[i] = m;
         }

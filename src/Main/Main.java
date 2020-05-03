@@ -3,6 +3,7 @@ package Main;
 import Graphics.Renderer;
 import Graphics.Shader;
 import Graphics.Window;
+import Levels.Tiles.Wall;
 import org.lwjgl.opengl.GL;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -51,8 +52,9 @@ public class Main {
                 window.close();
             }
 
-//            Wall.CASTLE_WALL.bindTexture();
             shader.bind();
+            shader.setUniform("sampler", Wall.WALL.getSampler());
+            Wall.WALL.bindTexture();
             renderer.render();
 
             window.swapBuffers();

@@ -7,13 +7,16 @@ import Graphics.Texture;
  */
 public enum Background {
     BASIC (
-            "src/Textures/Background/background.jpg"
+            "src/Textures/Background/background.jpg",
+            7
     );
 
     private final Texture texture;
+    private final int sampler;
 
-    Background(String filePath) {
+    Background(String filePath, int sampler) {
         this.texture = new Texture(filePath);
+        this.sampler = sampler;
     }
 
     public Texture getTexture() {
@@ -21,6 +24,10 @@ public enum Background {
     }
 
     public void bindTexture() {
-        texture.bind();
+        texture.bind(sampler);
+    }
+
+    public int getSampler() {
+        return sampler;
     }
 }

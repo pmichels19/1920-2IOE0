@@ -8,31 +8,38 @@ import Graphics.Texture;
 public enum Decoration {
     TABLE (
             false,
-            "src/Textures/Decoration/table.png"
+            "src/Textures/Decoration/table.png",
+            2
     ),
     TORCH (
             true,
-            "src/Textures/Decoration/torch.jpg"
+            "src/Textures/Decoration/torch.jpg",
+            3
     ),
     CHEST (
             false,
-            "src/Textures/Decoration/chest.jpg"
+            "src/Textures/Decoration/chest.jpg",
+            4
     ),
     DOOR (
             false,
-            "src/Textures/Decoration/door.jpg"
+            "src/Textures/Decoration/door.jpg",
+            5
     ),
     CAMPFIRE (
             true,
-            "src/Textures/Decoration/campfire.jpg"
+            "src/Textures/Decoration/campfire.jpg",
+            6
     );
 
     private final boolean lightSource;
     private final Texture texture;
+    private final int sampler;
 
-    Decoration(boolean lightSource, String filePath) {
+    Decoration(boolean lightSource, String filePath, int sampler) {
         this.lightSource = lightSource;
         this.texture = new Texture(filePath);
+        this.sampler = sampler;
     }
 
     public Texture getTexture() {
@@ -40,10 +47,14 @@ public enum Decoration {
     }
 
     public void bindTexture() {
-        texture.bind();
+        texture.bind(sampler);
     }
 
     public boolean isLightSource() {
         return lightSource;
+    }
+
+    public int getSampler() {
+        return sampler;
     }
 }

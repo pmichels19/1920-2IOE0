@@ -47,6 +47,7 @@ public class Shader {
 
         // the attributes found in the vertex shader
         glBindAttribLocation(program, 0, "vertices");
+        glBindAttribLocation(program, 1, "textures");
 
         glLinkProgram(program);
 
@@ -67,6 +68,17 @@ public class Shader {
 
     public void bind() {
         glUseProgram(program);
+    }
+
+    public void setUniform(String name, int value) {
+        // find where the provided uniform is stored
+        int location = glGetUniformLocation(program, name);
+
+        // test if the location is a valid one
+        if (location != -1) {
+            // replace the uniform if it is
+            glUniform1i(location, value);
+        }
     }
 
     private String readFile(String filename) {

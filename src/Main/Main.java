@@ -1,5 +1,6 @@
 package Main;
 
+import Graphics.Camera;
 import Graphics.Renderer;
 import Graphics.Shader;
 import Graphics.Window;
@@ -12,8 +13,12 @@ import static org.lwjgl.opengl.GL11.*;
 
 public class Main {
 
+    // standard varialbes for width and height of the game
     private static final int SCREEN_WIDTH = 640;
     private static final int SCREEN_HEIGHT = 480;
+
+    // cap at 60 fps for now
+    private static final double FRAME_CAP = 1.0 / 60.0;
 
     public static void main (String[] args) {
         if ( !glfwInit() ) {
@@ -24,6 +29,8 @@ public class Main {
         window.createWindow("Test");
 
         GL.createCapabilities();
+
+        Camera camera = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT);
 
         // enable use of textures
         glEnable(GL_TEXTURE_2D);
@@ -45,32 +52,57 @@ public class Main {
         Renderer renderer = new Renderer(testVertices, testTexture);
         Shader shader = new Shader("testshader");
 
-        Matrix4f projection = new Matrix4f().ortho2D(
-                ((float) -SCREEN_WIDTH) / 2.0f,
-                ((float) SCREEN_WIDTH) / 2.0f,
-                ((float) SCREEN_HEIGHT) / 2.0f,
-                ((float) -SCREEN_HEIGHT) / 2.0f
-        );
-        Matrix4f scale = new Matrix4f().scale(128);
-        Matrix4f target = new Matrix4f();
+        Matrix4f scale = new Matrix4f().scale(64);
 
-        projection.mul(scale, target);
+        // Stuff to keep track of the fps
+        double frame_time = 0;
+        int frames = 0;
+
+        // starting time
+        double time = Timer.getTime();
+        // time that has not yet been processed
+        double unprocessed = 0;
 
         while ( !window.shouldClose() ) {
-            glfwPollEvents();
+            boolean can_render = false;
 
-            // for now, allow exiting of the window by pressing escape
-            if ( window.buttonClicked(GLFW_KEY_ESCAPE) ) {
-                window.close();
+            // update the time variables
+            double time_2 = Timer.getTime();
+            double passed = time_2 - time;
+
+            unprocessed += passed;
+            frame_time += passed;
+            time = time_2;
+
+            while (unprocessed >= FRAME_CAP) {
+                unprocessed -= FRAME_CAP;
+                can_render = true;
+
+                // for now, allow exiting of the window by pressing escape
+                if ( window.buttonClicked(GLFW_KEY_ESCAPE) ) {
+                    window.close();
+                }
+
+                glfwPollEvents();
+
+                if (frame_time >= 1.0) {
+                    frame_time = 0;
+                    System.out.println("FPS: " + frames);
+                    frames = 0;
+                }
             }
 
-            shader.bind();
-            shader.setUniform("sampler", Wall.WALL.getSampler());
-            shader.setUniform("projection", target);
-            Wall.WALL.bindTexture();
-            renderer.render();
+            if (can_render) {
+                shader.bind();
+                shader.setUniform("sampler", Wall.WALL.getSampler());
+                shader.setUniform("projection", camera.getProjection().mul(scale));
+                Wall.WALL.bindTexture();
+                renderer.render();
 
-            window.swapBuffers();
+                window.swapBuffers();
+
+                frames++;
+            }
         }
 
         glfwTerminate();

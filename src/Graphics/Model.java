@@ -4,7 +4,7 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
 
-public class Renderer {
+public class Model {
     // the amount of times this has been drawn
     private int drawCount;
 
@@ -17,7 +17,7 @@ public class Renderer {
     // the index id
     private int i_id;
 
-    public Renderer(float[] vertices, float[] texCoords) {
+    public Model(float[] vertices, float[] texCoords) {
         drawCount = vertices.length / 3;
 
         v_id = glGenBuffers();

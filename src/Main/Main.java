@@ -1,12 +1,15 @@
 package Main;
 
 import Graphics.Camera;
-import Graphics.Renderer;
+import Graphics.Model;
 import Graphics.Shader;
 import Graphics.Window;
+import Levels.Framework.Maze;
 import Levels.Framework.joml.Matrix4f;
 import Levels.Tiles.Wall;
 import org.lwjgl.opengl.GL;
+
+import java.io.IOException;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -14,45 +17,27 @@ import static org.lwjgl.opengl.GL11.*;
 public class Main {
 
     // standard varialbes for width and height of the game
-    private static final int SCREEN_WIDTH = 640;
-    private static final int SCREEN_HEIGHT = 480;
+    private static final int SCREEN_WIDTH = 1920;
+    private static final int SCREEN_HEIGHT = 1080;
 
     // cap at 60 fps for now
     private static final double FRAME_CAP = 1.0 / 60.0;
 
-    public static void main (String[] args) {
+    public static void main (String[] args) throws IOException {
         if ( !glfwInit() ) {
             throw new IllegalStateException("Failed to initialize GLFW");
         }
 
         Window window = new Window(SCREEN_WIDTH, SCREEN_HEIGHT);
+        window.setFullscreen(true);
         window.createWindow("Test");
 
         GL.createCapabilities();
 
-        Camera camera = new Camera(SCREEN_WIDTH, SCREEN_HEIGHT);
+        Renderer renderer = new Renderer(new Maze("level_1"), SCREEN_WIDTH, SCREEN_HEIGHT);
 
         // enable use of textures
         glEnable(GL_TEXTURE_2D);
-
-        float[] testVertices = new float[] {
-                -0.5f, 0.5f, 0.0f,    // TOP LEFT
-                0.5f, 0.5f, 0.0f,     // TOP RIGHT
-                0.5f, -0.5f, 0.0f,    // BOTTOM RIGHT
-                -0.5f, -0.5f, 0.0f    // BOTTOM LEFT
-        };
-
-        float[] testTexture = new float[] {
-                0,1,
-                1,1,
-                1,0,
-                0,0,
-        };
-
-        Renderer renderer = new Renderer(testVertices, testTexture);
-        Shader shader = new Shader("testshader");
-
-        Matrix4f scale = new Matrix4f().scale(64);
 
         // Stuff to keep track of the fps
         double frame_time = 0;
@@ -92,11 +77,8 @@ public class Main {
                 }
             }
 
+            // make sure we only draw 60 frames every second
             if (can_render) {
-                shader.bind();
-                shader.setUniform("sampler", Wall.WALL.getSampler());
-                shader.setUniform("projection", camera.getProjection().mul(scale));
-                Wall.WALL.bindTexture();
                 renderer.render();
 
                 window.swapBuffers();

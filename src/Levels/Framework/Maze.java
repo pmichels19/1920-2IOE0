@@ -15,11 +15,11 @@ public class Maze {
     /**
      * reads a new file into the maze object
      *
-     * @param filePath the path to the maze file
+     * @param filename the path to the maze file
      * @throws FileNotFoundException if the filepath does not lead to an existing file
      */
-    public Maze(String filePath) throws IOException {
-        File maze = new File(filePath);
+    public Maze(String filename) throws IOException {
+        File maze = new File("src/Levels/Framework/" + filename + ".mze");
 
         // read the file into a List line by line
         BufferedReader reader = new BufferedReader( new FileReader(maze) );

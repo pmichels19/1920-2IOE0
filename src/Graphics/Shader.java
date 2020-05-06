@@ -20,6 +20,8 @@ public class Shader {
     // the fragment shader
     private int fs;
 
+    private final int WORLD, OBJECT, PROJECTION;
+
     public Shader(String filename) {
         program = glCreateProgram();
 
@@ -68,6 +70,10 @@ public class Shader {
             System.err.println( glGetProgramInfoLog(program) );
             System.exit(1);
         }
+
+        WORLD = glGetUniformLocation(program, "transformWorld");
+        OBJECT = glGetUniformLocation(program, "transformObject");
+        PROJECTION = glGetUniformLocation(program, "cameraProjection");
     }
 
     public void bind() {
@@ -82,6 +88,31 @@ public class Shader {
         if (location != -1) {
             // replace the uniform if it is
             glUniform1i(location, value);
+        }
+    }
+
+    public void setCamera(Camera camera) {
+        if (PROJECTION != -1)  {
+            float[] matrix = new float[16];
+            camera.getProjection().get(matrix);
+
+            glUniformMatrix4fv(PROJECTION, false, matrix);
+        }
+
+        if (WORLD != -1)  {
+            float[] matrix = new float[16];
+            camera.getTransformation().get(matrix);
+
+            glUniformMatrix4fv(WORLD, false, matrix);
+        }
+    }
+
+    public void setTransform(Transform transform) {
+        if (OBJECT != -1)  {
+            float[] matrix = new float[16];
+            transform.getTransformation().get(matrix);
+
+            glUniformMatrix4fv(OBJECT, false, matrix);
         }
     }
 

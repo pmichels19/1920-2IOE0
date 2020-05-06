@@ -9,6 +9,10 @@ public enum Background {
     BASIC (
             "src/Textures/Background/background.jpg",
             7
+    ),
+    PLAYER (
+            "src/Textures/Background/test_PC.png",
+            8
     );
 
     private final Texture texture;

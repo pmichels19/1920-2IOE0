@@ -13,6 +13,10 @@ public enum Wall {
     CASTLE_WALL (
             "src/Textures/Wall/castle_wall.jpg",
             1
+    ),
+    CEILING (
+            "src/Textures/Wall/wall_ceiling (1).png",
+            9
     );
 
     private final Texture texture;
@@ -21,10 +25,6 @@ public enum Wall {
     Wall(String filePath, int sampler) {
         this.texture = new Texture(filePath);
         this.sampler = sampler;
-    }
-
-    public Texture getTexture() {
-        return texture;
     }
 
     public void bindTexture() {

@@ -3,10 +3,9 @@ package Main;
 import Graphics.Camera;
 import Graphics.Model;
 import Graphics.Shader;
+import Graphics.Transform;
 import Levels.Framework.Maze;
-import Levels.Framework.joml.Matrix4f;
-import Levels.Framework.joml.Vector3f;
-import Levels.Framework.joml.Vector4f;
+import Levels.Framework.joml.*;
 import Levels.Tiles.Background;
 import Levels.Tiles.Decoration;
 import Levels.Tiles.Wall;
@@ -25,6 +24,7 @@ public class Renderer {
     private Point playerLocation;
 
     private Camera camera;
+    private Transform transform;
 
     private final Shader SHADER = new Shader("testShader");
 
@@ -37,10 +37,21 @@ public class Renderer {
             0, 0
     };
 
-    private final Matrix4f SCALE = new Matrix4f().scale(256);
-
     public Renderer(Maze maze, int width, int height) {
-        camera = new Camera(width, height);
+        // prepare the camera
+        camera = new Camera();
+        camera.setPerspective(
+                (float) Math.toRadians(70.0),
+                (float) width / (float) height,
+                0.01f,
+                1000.0f
+        );
+        camera.setPosition(new Vector3f(0, 0, 8));
+
+        // prepare the transformations
+        transform = new Transform();
+        transform.getRotation().rotateAxis((float) Math.toRadians(180.0), 0, 0, 1);
+        transform.getRotation().rotateAxis((float) Math.toRadians(45.0), 1, 0, 0);
 
         char[][] grid = maze.getGrid();
 
@@ -53,23 +64,22 @@ public class Renderer {
                 // fill the mappings according to the grid in the maze class
                 if (grid[i][j] == 'x') {
                     walls.put(new Point(i, j), Wall.WALL);
+                    continue;
                 } else if (grid[i][j] == 'P') {
                     playerLocation = new Point(i, j);
-                } else if (grid[i][j] == ' ') {
-                    backgrounds.put(new Point(i, j), Background.BASIC);
+                    backgrounds.put(playerLocation, Background.PLAYER);
                 }
+
+                // we always want a background if there is not a wall on a tile
+                backgrounds.put(new Point(i, j), Background.BASIC);
             }
         }
     }
 
-    public Vector3f getPlayerLocation() {
-        return new Vector3f(playerLocation.getX(), playerLocation.getY(), 0.0f);
-    }
-
     public void render() {
-        // before drawing, adjust the camera position to the player, so we dont bounce the screen around at 60 Hertz
-//        camera.setPosition( getPlayerLocation() );
         SHADER.bind();
+        SHADER.setCamera(camera);
+        SHADER.setTransform(transform);
 
         for ( Map.Entry<Point, Background> entry : backgrounds.entrySet() ) {
             renderBackgrounds( entry.getKey(), entry.getValue() );
@@ -79,19 +89,26 @@ public class Renderer {
 //            renderDecorations( entry.getKey(), entry.getValue() );
 //        }
 
+        int index = 0;
+        Model[] ceilings = new Model[ walls.size() ];
         for ( Map.Entry<Point, Wall> entry : walls.entrySet() ) {
-            renderWalls( entry.getKey(), entry.getValue() );
+            ceilings[ index ] = renderWalls( entry.getKey(), entry.getValue() );
+            index++;
         }
 
-        // set the camera projection
-        SHADER.setUniform("projection", camera.getProjection().mul(SCALE));
+        // draw the ceilings
+        SHADER.setUniform("sampler", Wall.CEILING.getSampler());
+        Wall.CEILING.bindTexture();
+        for (Model model : ceilings) {
+            model.render();
+        }
     }
 
     private void renderBackgrounds(Point point, Background background) {
         // use the point to get the vertices so we can draw the wall tile
-        float x = point.getX() * 2.0f;
-        float y = point.getY() * 2.0f;
-        float[] vertices = new float[] {
+        float x = ( point.getX() - playerLocation.getX() ) * 2.0f;
+        float y = ( point.getY() - playerLocation.getY() ) * 2.0f;
+        final float[] vertices = new float[] {
                 (x - 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f,
                 (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f,
                 (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f,
@@ -111,24 +128,65 @@ public class Renderer {
 
     }
 
-    private void renderWalls(Point point, Wall wall) {
+    private Model renderWalls(Point point, Wall wall) {
         // use the point to get the vertices so we can draw the wall tile
-        float x = point.getX() * 2.0f;
-        float y = point.getY() * 2.0f;
-        float[] vertices = new float[] {
+        float x = ( point.getX() - playerLocation.getX() ) * 2.0f;
+        float y = ( point.getY() - playerLocation.getY() ) * 2.0f;
+
+        final float[] vertices_left = new float[] {
+                // TOP LEFT
+                (x - 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
+                // TOP RIGHT
                 (x - 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f,
-                (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f,
-                (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f,
+                // BOTTOM RIGHT
                 (x - 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f,
+                // BOTTOM LEFT
+                (x - 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH
         };
 
-        Model model = new Model(vertices, textures);
+        final float[] vertices_up = new float[] {
+                // TOP LEFT
+                (x - 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
+                // TOP RIGHT
+                (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
+                // BOTTOM RIGHT
+                (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f,
+                // BOTTOM LEFT
+                (x - 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f
+        };
 
-        // get the texture ready for rendering
+        final float[] vertices_right = new float[] {
+                // TOP LEFT
+                (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
+                // TOP RIGHT
+                (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f,
+                // BOTTOM RIGHT
+                (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f,
+                // BOTTOM LEFT
+                (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH
+        };
+
+        final float[] ceiling = new float[] {
+                // TOP LEFT
+                (x - 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
+                // TOP RIGHT
+                (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
+                // BOTTOM RIGHT
+                (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
+                // BOTTOM LEFT
+                (x - 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH
+        };
+
         SHADER.setUniform("sampler", wall.getSampler());
         wall.bindTexture();
 
-        model.render();
+        // render the parts of the wall that can be visible
+        new Model(vertices_left, textures).render();
+        new Model(vertices_up, textures).render();
+        new Model(vertices_right, textures).render();
+
+        // and return the ceiling model
+        return new Model(ceiling, textures);
     }
 }
 

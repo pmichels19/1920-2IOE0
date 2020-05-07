@@ -16,14 +16,12 @@ import java.util.*;
  * Class for rendering a maze
  */
 public class Renderer {
-    private Map<Point, Background> backgrounds;
-    private Map<Point, Decoration> decorations;
-    private Set<Point> walls;
+    private final Map<Point, Background> backgrounds;
+    private final Map<Point, Decoration> decorations;
+    private final Set<Point> walls;
 
-    private Point playerLocation;
-    private Camera camera;
-    private Transform transform;
-    private Maze maze;
+    private final Point playerLocation;
+    private final Maze maze;
     private final Shader SHADER = new Shader("testShader");
 
     private char[][] grid;
@@ -37,11 +35,11 @@ public class Renderer {
             0, 0
     };
 
-    private List<Model> lefts, rights, ups, ceilings;
+    private final List<Model> lefts, rights, ups, ceilings;
 
     public Renderer(Maze maze, int width, int height) {
         // prepare the camera
-        camera = new Camera();
+        Camera camera = new Camera();
         camera.setPerspective(
                 (float) Math.toRadians(40.0),
                 (float) width / (float) height,
@@ -51,7 +49,7 @@ public class Renderer {
         camera.setPosition(new Vector3f(0, 0, 4));
 
         // prepare the transformations
-        transform = new Transform();
+        Transform transform = new Transform();
         transform.getRotation().rotateAxis((float) Math.toRadians(270.0), 0, 0, 1);
         transform.getRotation().rotateAxis((float) Math.toRadians(-30.0), 0, 1, 0);
 
@@ -65,6 +63,12 @@ public class Renderer {
         rights = new ArrayList<>();
         ups = new ArrayList<>();
         ceilings = new ArrayList<>();
+
+        playerLocation = new Point(0, 0);
+
+        SHADER.bind();
+        SHADER.setCamera(camera);
+        SHADER.setTransform(transform);
     }
 
     private void gatherGridInfo() {
@@ -79,8 +83,8 @@ public class Renderer {
                     walls.add(new Point(i, j));
                     continue;
                 } else if (grid[i][j] == 'P') {
-                    playerLocation = new Point(i, j);
-                    backgrounds.put(playerLocation, Background.PLAYER);
+                    playerLocation.setX(i);
+                    playerLocation.setY(j);
                 }
 
                 // we always want a background if there is not a wall on a tile
@@ -91,10 +95,6 @@ public class Renderer {
 
     public void render() {
         gatherGridInfo();
-
-        SHADER.bind();
-        SHADER.setCamera(camera);
-        SHADER.setTransform(transform);
 
         for ( Map.Entry<Point, Background> entry : backgrounds.entrySet() ) {
             renderBackgrounds( entry.getKey(), entry.getValue() );
@@ -111,7 +111,7 @@ public class Renderer {
         // draw the walls
         renderWalls();
 
-        // clear the maps so we can keep that juicy 60 fps
+        // clear the maps for the next render
         walls.clear();
         backgrounds.clear();
         decorations.clear();

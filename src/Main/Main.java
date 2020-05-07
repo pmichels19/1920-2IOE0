@@ -1,12 +1,7 @@
 package Main;
 
-import Graphics.Camera;
-import Graphics.Model;
-import Graphics.Shader;
 import Graphics.Window;
 import Levels.Framework.Maze;
-import Levels.Framework.joml.Matrix4f;
-import Levels.Tiles.Wall;
 import org.lwjgl.opengl.GL;
 
 import java.io.IOException;
@@ -29,7 +24,7 @@ public class Main {
         }
 
         Window window = new Window(SCREEN_WIDTH, SCREEN_HEIGHT);
-        window.setFullscreen(true);
+        window.setFullscreen(false);
         window.createWindow("Test");
 
         GL.createCapabilities();

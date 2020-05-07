@@ -43,7 +43,7 @@ public class Renderer {
         // prepare the camera
         camera = new Camera();
         camera.setPerspective(
-                (float) Math.toRadians(70.0),
+                (float) Math.toRadians(40.0),
                 (float) width / (float) height,
                 0.01f,
                 1000.0f
@@ -53,7 +53,7 @@ public class Renderer {
         // prepare the transformations
         transform = new Transform();
         transform.getRotation().rotateAxis((float) Math.toRadians(270.0), 0, 0, 1);
-        transform.getRotation().rotateAxis((float) Math.toRadians(-45.0), 0, 1, 0);
+        transform.getRotation().rotateAxis((float) Math.toRadians(-30.0), 0, 1, 0);
 
         backgrounds = new HashMap<>();
         decorations = new HashMap<>();

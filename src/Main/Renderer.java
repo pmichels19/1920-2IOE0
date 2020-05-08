@@ -16,13 +16,17 @@ import java.util.*;
  * Class for rendering a maze
  */
 public class Renderer {
-    private final Map<Point, Background> backgrounds;
+    private final Set<Point> backgrounds;
     private final Map<Point, Decoration> decorations;
     private final Set<Point> walls;
 
     private final Point playerLocation;
     private final Maze maze;
     private final Shader SHADER = new Shader("testShader");
+
+    private Model wallModel;
+    private Model ceilModel;
+    private Model backgroundModel;
 
     private char[][] grid;
 
@@ -34,8 +38,6 @@ public class Renderer {
             1, 0,
             0, 0
     };
-
-    private final List<Model> lefts, rights, ups, ceilings;
 
     public Renderer(Maze maze, int width, int height) {
         // prepare the camera
@@ -53,16 +55,11 @@ public class Renderer {
         transform.getRotation().rotateAxis((float) Math.toRadians(270.0), 0, 0, 1);
         transform.getRotation().rotateAxis((float) Math.toRadians(-30.0), 0, 1, 0);
 
-        backgrounds = new HashMap<>();
+        backgrounds = new HashSet<>();
         decorations = new HashMap<>();
         walls = new HashSet<Point>();
 
         this.maze = maze;
-
-        lefts = new ArrayList<>();
-        rights = new ArrayList<>();
-        ups = new ArrayList<>();
-        ceilings = new ArrayList<>();
 
         playerLocation = new Point(0, 0);
 
@@ -87,7 +84,7 @@ public class Renderer {
                 }
 
                 // we always want a background if there is not a wall on a tile
-                backgrounds.put(new Point(i, j), Background.BASIC);
+                backgrounds.add(new Point(i, j));
             }
         }
     }
@@ -95,17 +92,7 @@ public class Renderer {
     public void render() {
         gatherGridInfo();
 
-        for ( Map.Entry<Point, Background> entry : backgrounds.entrySet() ) {
-            renderBackgrounds( entry.getKey(), entry.getValue() );
-        }
-
-        for ( Map.Entry<Point, Decoration> entry : decorations.entrySet() ) {
-            renderDecorations( entry.getKey(), entry.getValue() );
-        }
-
-        for ( Point point : walls ) {
-            generateWallModels( point );
-        }
+        renderBackgrounds();
 
         // draw the walls
         renderWalls();
@@ -116,126 +103,151 @@ public class Renderer {
         decorations.clear();
     }
 
-    private void renderWalls() {
-        SHADER.setUniform("sampler", Wall.CASTLE_WALL.getSampler());
-        Wall.CASTLE_WALL.bindTexture();
+    private void renderBackgrounds() {
+        float[] vertices_total = new float[backgrounds.size() * 12];
+        float[] textures_total = new float[backgrounds.size() * 8];
+        int i = 0;
 
-        for (Model model : lefts) {
-            model.render();
+        for (Point point : backgrounds) {
+            // use the point to get the vertices so we can draw the wall tile
+            float x = (point.getX() - playerLocation.getX()) * 2.0f;
+            float y = (point.getY() - playerLocation.getY()) * 2.0f;
+            final float[] vertices = new float[]{
+                    (x - 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f,
+                    (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f,
+                    (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f,
+                    (x - 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f,
+            };
+
+            System.arraycopy(vertices, 0, vertices_total, i * 12, vertices.length);
+            System.arraycopy(textures, 0, textures_total, i * 8, textures.length);
+
+            i++;
         }
-        lefts.clear();
 
-        for (Model model : rights) {
-            model.render();
-        }
-        rights.clear();
-
-        for (Model model : ups) {
-            model.render();
-        }
-        ups.clear();
-
-        // draw the ceilings
-        SHADER.setUniform("sampler", Wall.CEILING.getSampler());
-        Wall.CEILING.bindTexture();
-        for (Model model : ceilings) {
-            model.render();
-        }
-        ceilings.clear();
-    }
-
-    private void renderBackgrounds(Point point, Background background) {
-        // use the point to get the vertices so we can draw the wall tile
-        float x = ( point.getX() - playerLocation.getX() ) * 2.0f;
-        float y = ( point.getY() - playerLocation.getY() ) * 2.0f;
-        final float[] vertices = new float[] {
-                (x - 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f,
-                (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f,
-                (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f,
-                (x - 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f,
-        };
-
-        Model model = new Model(vertices, textures);
+        backgroundModel = new Model(vertices_total, textures_total);
 
         // get the texture ready for rendering
-        SHADER.setUniform("sampler", background.getSampler());
-        background.bindTexture();
+        SHADER.setUniform("sampler", Background.BASIC.getSampler());
+        Background.BASIC.bindTexture();
 
-        model.render();
+        backgroundModel.render();
+
     }
 
     private void renderDecorations(Point point, Decoration decoration) {
 
     }
 
-    private void generateWallModels(Point point) {
-        final int x_point = point.getX();
-        final int y_point = point.getY();
+    private void renderWalls() {
+        generateWallModel();
 
-        // use the point to get the vertices so we can draw the wall tile
-        float x = ( x_point - playerLocation.getX() ) * 2.0f;
-        float y = ( y_point - playerLocation.getY() ) * 2.0f;
+        SHADER.setUniform("sampler", Wall.CASTLE_WALL.getSampler());
+        Wall.CASTLE_WALL.bindTexture();
+        wallModel.render();
 
-        if (y_point > 0 && grid[x_point][y_point - 1] != 'x' && y > 0) {
-            // walls on the left
-            final float[] vertices = new float[] {
-                    // TOP LEFT
-                    (x - 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
-                    // TOP RIGHT
-                    (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
-                    // BOTTOM RIGHT
-                    (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f,
-                    // BOTTOM LEFT
-                    (x - 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f
-            };
+        SHADER.setUniform("sampler", Wall.CEILING.getSampler());
+        Wall.CEILING.bindTexture();
+        ceilModel.render();
+    }
 
-            Model model = new Model(vertices, textures);
-            lefts.add(model);
-        } else if (y_point < grid[x_point].length - 1 && grid[x_point][y_point + 1] != 'x' && y < 0) {
-            // walls on the right
-            final float[] vertices = new float[] {
+    private void generateWallModel() {
+        List<float[]> vertices_list = new ArrayList<>();
+        List<float[]> ceilings_list = new ArrayList<>();
+
+        for (Point point : walls) {
+            final int x_point = point.getX();
+            final int y_point = point.getY();
+
+            // use the point to get the vertices so we can draw the wall tile
+            float x = (x_point - playerLocation.getX()) * 2.0f;
+            float y = (y_point - playerLocation.getY()) * 2.0f;
+
+            if (y_point > 0 && grid[x_point][y_point - 1] != 'x' && y > 0) {
+                // walls on the left
+                final float[] vertices = new float[]{
+                        // TOP LEFT
+                        (x - 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
+                        // TOP RIGHT
+                        (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
+                        // BOTTOM RIGHT
+                        (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f,
+                        // BOTTOM LEFT
+                        (x - 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f
+                };
+
+                vertices_list.add(vertices);
+            } else if (y_point < grid[x_point].length - 1 && grid[x_point][y_point + 1] != 'x' && y < 0) {
+                // walls on the right
+                final float[] vertices = new float[]{
+                        // TOP LEFT
+                        (x - 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
+                        // TOP RIGHT
+                        (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
+                        // BOTTOM RIGHT
+                        (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f,
+                        // BOTTOM LEFT
+                        (x - 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f
+                };
+
+                vertices_list.add(vertices);
+            }
+
+            if (x_point < grid.length - 1 && grid[x_point + 1][y_point] != 'x' || x_point == grid.length - 1) {
+                // walls on the face
+                final float[] vertices = new float[]{
+                        // BOTTOM LEFT
+                        (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
+                        // TOP LEFT
+                        (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
+                        // TOP RIGHT
+                        (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f,
+                        // BOTTOM RIGHT
+                        (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f
+                };
+
+                vertices_list.add(vertices);
+            }
+
+            final float[] ceiling = new float[]{
                     // TOP LEFT
                     (x - 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
                     // TOP RIGHT
                     (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
                     // BOTTOM RIGHT
-                    (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f,
-                    // BOTTOM LEFT
-                    (x - 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f
-            };
-
-            rights.add( new Model(vertices, textures) );
-        }
-
-        if (x_point < grid.length - 1 && grid[x_point + 1][y_point] != 'x' || x_point == grid.length - 1) {
-            // walls on the face
-            final float[] vertices = new float[] {
-                    // BOTTOM LEFT
                     (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
-                    // TOP LEFT
-                    (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
-                    // TOP RIGHT
-                    (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f,
-                    // BOTTOM RIGHT
-                    (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f
+                    // BOTTOM LEFT
+                    (x - 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH
             };
 
-            ups.add( new Model(vertices, textures) );
+            ceilings_list.add(ceiling);
         }
 
-        final float[] ceiling = new float[] {
-                // TOP LEFT
-                (x - 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
-                // TOP RIGHT
-                (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
-                // BOTTOM RIGHT
-                (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
-                // BOTTOM LEFT
-                (x - 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH
-        };
+        float[] vertices_total = new float[vertices_list.size() * 12];
+        float[] wall_textures = new float[vertices_list.size() * 8];
+        for (int i = 0; i < vertices_list.size(); i++) {
+            System.arraycopy(
+                    vertices_list.get(i), 0, vertices_total, i * 12, vertices_list.get(i).length
+            );
+            System.arraycopy(
+                    textures, 0, wall_textures, i * 8, textures.length
+            );
+        }
 
-        // and return the ceiling model
-        ceilings.add( new Model(ceiling, textures) );
+        wallModel = new Model(vertices_total, wall_textures);
+
+        float[] ceilings_total = new float[ceilings_list.size() * 12];
+        float[] ceil_textures = new float[ceilings_list.size() * 8];
+        for (int i = 0; i < ceilings_list.size(); i++) {
+            System.arraycopy(
+                    ceilings_list.get(i), 0, ceilings_total, i * 12, ceilings_list.get(i).length
+            );
+            System.arraycopy(
+                    textures, 0, ceil_textures, i * 8, textures.length
+            );
+        }
+
+        ceilModel = new Model(ceilings_total, ceil_textures);
     }
 }
 

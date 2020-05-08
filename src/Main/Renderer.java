@@ -72,17 +72,16 @@ public class Renderer {
     }
 
     private void gatherGridInfo() {
-
         // gather the data on the grid
-        grid = maze.getGrid();
+        grid = maze.getNearbyGrid();
 
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 // fill the mappings according to the grid in the maze class
-                if (grid[i][j] == 'x') {
+                if (grid[i][j] == Maze.MARKER_WALL) {
                     walls.add(new Point(i, j));
                     continue;
-                } else if (grid[i][j] == 'P') {
+                } else if (grid[i][j] == Maze.MARKER_PLAYER) {
                     playerLocation.setX(i);
                     playerLocation.setY(j);
                 }
@@ -100,9 +99,9 @@ public class Renderer {
             renderBackgrounds( entry.getKey(), entry.getValue() );
         }
 
-//        for ( Map.Entry<Point, Decoration> entry : decorations.entrySet() ) {
-//            renderDecorations( entry.getKey(), entry.getValue() );
-//        }
+        for ( Map.Entry<Point, Decoration> entry : decorations.entrySet() ) {
+            renderDecorations( entry.getKey(), entry.getValue() );
+        }
 
         for ( Point point : walls ) {
             generateWallModels( point );
@@ -240,28 +239,3 @@ public class Renderer {
     }
 }
 
-class Point {
-    private int x;
-    private int y;
-
-    Point(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    public void setY(int y) {
-        this.y = y;
-    }
-}

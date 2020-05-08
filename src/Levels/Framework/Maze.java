@@ -1,6 +1,9 @@
 package Levels.Framework;
 
+import Main.Point;
+
 import java.io.*;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,6 +14,10 @@ import java.util.stream.Collectors;
  */
 public class Maze {
     private char[][] grid;
+
+    public final static char MARKER_WALL = 'x';
+    public final static char MARKER_PLAYER = 'P';
+    public final static char MARKER_SPACE = ' ';
 
     /**
      * reads a new file into the maze object
@@ -32,8 +39,72 @@ public class Maze {
         }
     }
 
+    /**
+     * returns the entire grid
+     *
+     * @return {@code grid}
+     */
     public char[][] getGrid() {
         return grid;
+    }
+
+    /**
+     * returns the part of the grid in a 12 tile radius around the player
+     *
+     * @return a subset of {@code grid}
+     */
+    public char[][] getNearbyGrid() {
+        Point loc = getPlayerLocation();
+        int range = 12;
+        int x = loc.getX();
+        int y = loc.getY();
+
+        // set up variables for deciding size of subgrid
+        int x_start = x - range;
+        int x_end = x + range;
+        while (x_start < 0) {
+            x_start++;
+        }
+        while (x_end > grid.length) {
+            x_end--;
+        }
+
+        int y_start = y - range;
+        int y_end = y + range;
+        while (y_start < 0) {
+            y_start++;
+        }
+        while (y_end > grid[0].length) {
+            y_end--;
+        }
+
+        char[][] result = new char[x_end - x_start][y_end - y_start];
+
+        for (int i = y_start; i < y_end; i++) {
+            result[i - y_start] = Arrays.copyOfRange(grid[i], x_start, x_end);
+        }
+
+        return result;
+    }
+
+    public Point getPlayerLocation() {
+        int x = -1;
+        int y = -1;
+
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
+                if (grid[i][j] == MARKER_PLAYER) {
+                    x = i;
+                    y = j;
+                    break;
+                }
+            }
+        }
+
+        // we check if the player was found
+        if (x == -1) throw new IllegalStateException("The player has vanished into the void somehow");
+
+        return new Point(x, y);
     }
 
     // TODO: make methods to move the (N)PCs, currently holding off on this to make sure this works with the AI part

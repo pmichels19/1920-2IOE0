@@ -28,7 +28,11 @@ public class Renderer {
     private Model ceilModel;
     private Model backgroundModel;
 
+    private Point globalPlayerLocation;
+
     private char[][] grid;
+
+    private boolean playerMoved;
 
     private final float BLOCK_WIDTH = 1.0f / 6.0f;
 
@@ -61,11 +65,14 @@ public class Renderer {
 
         this.maze = maze;
 
-        playerLocation = new Point(0, 0);
+        playerLocation = new Point(-1, -1);
+        globalPlayerLocation = maze.getPlayerLocation();
 
         SHADER.bind();
         SHADER.setCamera(camera);
         SHADER.setTransform(transform);
+
+        playerMoved = true;
     }
 
     private void gatherGridInfo() {
@@ -81,6 +88,12 @@ public class Renderer {
                 } else if (grid[i][j] == Maze.MARKER_PLAYER) {
                     playerLocation.setX(i);
                     playerLocation.setY(j);
+
+                    // check if the player moved in the maze globally
+                    Point newLocation = maze.getPlayerLocation();
+                    if ( !globalPlayerLocation.equals( newLocation ) ) {
+                        playerMoved = true;
+                    }
                 }
 
                 // we always want a background if there is not a wall on a tile
@@ -93,9 +106,10 @@ public class Renderer {
         gatherGridInfo();
 
         renderBackgrounds();
-
-        // draw the walls
         renderWalls();
+
+        // set the playermoved to false
+        playerMoved = false;
 
         // clear the maps for the next render
         walls.clear();
@@ -104,6 +118,19 @@ public class Renderer {
     }
 
     private void renderBackgrounds() {
+        if ( playerMoved ) {
+            generateBackgroundModel();
+        }
+
+        // get the texture ready for rendering
+        SHADER.setUniform("sampler", Background.BASIC.getSampler());
+        Background.BASIC.bindTexture();
+
+        backgroundModel.render();
+
+    }
+
+    private void generateBackgroundModel() {
         float[] vertices_total = new float[backgrounds.size() * 12];
         float[] textures_total = new float[backgrounds.size() * 8];
         int i = 0;
@@ -126,13 +153,6 @@ public class Renderer {
         }
 
         backgroundModel = new Model(vertices_total, textures_total);
-
-        // get the texture ready for rendering
-        SHADER.setUniform("sampler", Background.BASIC.getSampler());
-        Background.BASIC.bindTexture();
-
-        backgroundModel.render();
-
     }
 
     private void renderDecorations(Point point, Decoration decoration) {
@@ -140,7 +160,9 @@ public class Renderer {
     }
 
     private void renderWalls() {
-        generateWallModel();
+        if ( playerMoved ) {
+            generateWallModel();
+        }
 
         SHADER.setUniform("sampler", Wall.CASTLE_WALL.getSampler());
         Wall.CASTLE_WALL.bindTexture();

@@ -55,12 +55,12 @@ public class Maze {
      */
     public char[][] getNearbyGrid() {
         Point loc = getPlayerLocation();
-        int range = 12;
+        int range = 11;
         int x = loc.getX();
         int y = loc.getY();
 
         // set up variables for deciding size of subgrid
-        int x_start = x - range;
+        int x_start = x - range + 1;
         int x_end = x + range;
         while (x_start < 0) {
             x_start++;
@@ -69,7 +69,7 @@ public class Maze {
             x_end--;
         }
 
-        int y_start = y - range;
+        int y_start = y - range + 1;
         int y_end = y + range;
         while (y_start < 0) {
             y_start++;
@@ -80,8 +80,10 @@ public class Maze {
 
         char[][] result = new char[x_end - x_start][y_end - y_start];
 
-        for (int i = y_start; i < y_end; i++) {
-            result[i - y_start] = Arrays.copyOfRange(grid[i], x_start, x_end);
+        for (int i = x_start; i < x_end; i++) {
+            for (int j = y_start; j < y_end; j++) {
+                result[i - x_start][j - y_start] = grid[i][j];
+            }
         }
 
         return result;

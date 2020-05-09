@@ -49,7 +49,7 @@ public class Maze {
     }
 
     /**
-     * returns the part of the grid in a 12 tile radius around the player
+     * returns the part of the grid in a 10 tile radius around the player
      *
      * @return a subset of {@code grid}
      */
@@ -109,5 +109,51 @@ public class Maze {
         return new Point(x, y);
     }
 
-    // TODO: make methods to move the (N)PCs, currently holding off on this to make sure this works with the AI part
+    public void moveUp() {
+        // get the current player location
+        Point player = getPlayerLocation();
+        int x = player.getX();
+        int y = player.getY();
+
+        if (grid[x - 1][y] == MARKER_SPACE) {
+            grid[x][y] = MARKER_SPACE;
+            grid[x - 1][y] = MARKER_PLAYER;
+        }
+    }
+
+    public void moveDown() {
+        // get the current player location
+        Point player = getPlayerLocation();
+        int x = player.getX();
+        int y = player.getY();
+
+        if (grid[x + 1][y] == MARKER_SPACE) {
+            grid[x][y] = MARKER_SPACE;
+            grid[x + 1][y] = MARKER_PLAYER;
+        }
+    }
+
+    public void moveLeft() {
+        // get the current player location
+        Point player = getPlayerLocation();
+        int x = player.getX();
+        int y = player.getY();
+
+        if (grid[x][y - 1] == MARKER_SPACE) {
+            grid[x][y] = MARKER_SPACE;
+            grid[x][y - 1] = MARKER_PLAYER;
+        }
+    }
+
+    public void moveRight() {
+        // get the current player location
+        Point player = getPlayerLocation();
+        int x = player.getX();
+        int y = player.getY();
+
+        if (grid[x][y + 1] == MARKER_SPACE) {
+            grid[x][y] = MARKER_SPACE;
+            grid[x][y + 1] = MARKER_PLAYER;
+        }
+    }
 }

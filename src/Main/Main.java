@@ -29,7 +29,8 @@ public class Main {
 
         GL.createCapabilities();
 
-        Renderer renderer = new Renderer(new Maze("level_1"), SCREEN_WIDTH, SCREEN_HEIGHT);
+        Maze maze = new Maze("level_1");
+        Renderer renderer = new Renderer(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
 
         // enable use of textures
         glEnable(GL_TEXTURE_2D);
@@ -61,6 +62,22 @@ public class Main {
                 // for now, allow exiting of the window by pressing escape
                 if ( window.buttonClicked(GLFW_KEY_ESCAPE) ) {
                     window.close();
+                }
+
+                if ( window.buttonClicked(GLFW_KEY_W) ) {
+                    maze.moveUp();
+                }
+
+                if ( window.buttonClicked(GLFW_KEY_A) ) {
+                    maze.moveLeft();
+                }
+
+                if ( window.buttonClicked(GLFW_KEY_S) ) {
+                    maze.moveDown();
+                }
+
+                if ( window.buttonClicked(GLFW_KEY_D) ) {
+                    maze.moveRight();
                 }
 
                 glfwPollEvents();

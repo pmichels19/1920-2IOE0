@@ -89,6 +89,13 @@ public class Maze {
         return result;
     }
 
+    /**
+     * Returns the position of th player in the grid as a point, if the player marker could not be found in the grid
+     * an exception is thrown
+     *
+     * @return {@code new Point(x_player, y_player)}
+     * @throws IllegalStateException if the player marker could not be found
+     */
     public Point getPlayerLocation() {
         int x = -1;
         int y = -1;
@@ -109,6 +116,11 @@ public class Maze {
         return new Point(x, y);
     }
 
+    /**
+     * Moves the player up by one tile
+     *
+     * @return whether the player moved successfully
+     */
     public boolean moveUp() {
         // get the current player location
         Point player = getPlayerLocation();
@@ -125,6 +137,11 @@ public class Maze {
         return false;
     }
 
+    /**
+     * Moves the player down by one tile
+     *
+     * @return whether the player moved successfully
+     */
     public boolean moveDown() {
         // get the current player location
         Point player = getPlayerLocation();
@@ -141,6 +158,11 @@ public class Maze {
         return false;
     }
 
+    /**
+     * Moves the player to the left by one tile
+     *
+     * @return whether the player moved up successfully
+     */
     public boolean moveLeft() {
         // get the current player location
         Point player = getPlayerLocation();
@@ -157,6 +179,11 @@ public class Maze {
         return false;
     }
 
+    /**
+     * Moves the player to the right by one tile
+     *
+     * @return whether the player moved up successfully
+     */
     public boolean moveRight() {
         // get the current player location
         Point player = getPlayerLocation();

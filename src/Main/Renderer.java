@@ -43,7 +43,14 @@ public class Renderer {
             0, 0
     };
 
-    public Renderer(Maze maze, int width, int height) {
+    /**
+     * initialises the global variables for the renderer
+     *
+     * @param maze the maze that has to be rendered
+     * @param width the width of the window
+     * @param height the height of the window
+     */
+    Renderer(Maze maze, int width, int height) {
         // prepare the camera
         Camera camera = new Camera();
         camera.setPerspective(
@@ -75,6 +82,9 @@ public class Renderer {
         playerMoved = true;
     }
 
+    /**
+     * gather information based on the grid in {@code maze} so we can prepare for rendering
+     */
     private void gatherGridInfo() {
         // gather the data on the grid
         grid = maze.getNearbyGrid();
@@ -102,6 +112,9 @@ public class Renderer {
         }
     }
 
+    /**
+     * renders the maze
+     */
     public void render() {
         gatherGridInfo();
 
@@ -117,6 +130,9 @@ public class Renderer {
         decorations.clear();
     }
 
+    /**
+     * draws the background (floor) tiles
+     */
     private void renderBackgrounds() {
         if ( playerMoved ) {
             generateBackgroundModel();
@@ -130,6 +146,9 @@ public class Renderer {
 
     }
 
+    /**
+     * rebuilds {@code backgroundModel} when called
+     */
     private void generateBackgroundModel() {
         float[] vertices_total = new float[backgrounds.size() * 12];
         float[] textures_total = new float[backgrounds.size() * 8];
@@ -155,10 +174,19 @@ public class Renderer {
         backgroundModel = new Model(vertices_total, textures_total);
     }
 
+    /**
+     * draw the specified decoration at the specified point
+     *
+     * @param point the point at which the decoration is located
+     * @param decoration the decoration to draw
+     */
     private void renderDecorations(Point point, Decoration decoration) {
 
     }
 
+    /**
+     * draws the wall tiles (including the ceilings)
+     */
     private void renderWalls() {
         if ( playerMoved ) {
             generateWallModel();
@@ -173,6 +201,9 @@ public class Renderer {
         ceilModel.render();
     }
 
+    /**
+     * rebuilds the {@code wallModel} when called
+     */
     private void generateWallModel() {
         List<float[]> vertices_list = new ArrayList<>();
         List<float[]> ceilings_list = new ArrayList<>();

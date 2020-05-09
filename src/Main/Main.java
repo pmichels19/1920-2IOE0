@@ -17,6 +17,7 @@ public class Main {
 
     // cap at 60 fps for now
     private static final double FRAME_CAP = 1.0 / 60.0;
+    private static final double MOVEMENT_CAP = 1.0/10.0;
 
     public static void main (String[] args) throws IOException {
         if ( !glfwInit() ) {
@@ -68,25 +69,25 @@ public class Main {
 
                 if ( window.buttonClicked(GLFW_KEY_W) && time > inputAllowed ) {
                     if ( maze.moveUp() ) {
-                        inputAllowed = time + 0.25;
+                        inputAllowed = time + MOVEMENT_CAP;
                     }
                 }
 
                 if ( window.buttonClicked(GLFW_KEY_A) && time > inputAllowed ) {
                     if ( maze.moveLeft() ) {
-                        inputAllowed = time + 0.25;
+                        inputAllowed = time + MOVEMENT_CAP;
                     }
                 }
 
                 if ( window.buttonClicked(GLFW_KEY_S) && time > inputAllowed ) {
                     if ( maze.moveDown() ) {
-                        inputAllowed = time + 0.25;
+                        inputAllowed = time + MOVEMENT_CAP;
                     }
                 }
 
                 if ( window.buttonClicked(GLFW_KEY_D) && time > inputAllowed ) {
                     if ( maze.moveRight() ) {
-                        inputAllowed = time + 0.25;
+                        inputAllowed = time + MOVEMENT_CAP;
                     }
                 }
 

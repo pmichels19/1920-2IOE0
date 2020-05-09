@@ -109,7 +109,7 @@ public class Maze {
         return new Point(x, y);
     }
 
-    public void moveUp() {
+    public boolean moveUp() {
         // get the current player location
         Point player = getPlayerLocation();
         int x = player.getX();
@@ -118,10 +118,14 @@ public class Maze {
         if (grid[x - 1][y] == MARKER_SPACE) {
             grid[x][y] = MARKER_SPACE;
             grid[x - 1][y] = MARKER_PLAYER;
+
+            return true;
         }
+
+        return false;
     }
 
-    public void moveDown() {
+    public boolean moveDown() {
         // get the current player location
         Point player = getPlayerLocation();
         int x = player.getX();
@@ -130,10 +134,14 @@ public class Maze {
         if (grid[x + 1][y] == MARKER_SPACE) {
             grid[x][y] = MARKER_SPACE;
             grid[x + 1][y] = MARKER_PLAYER;
+
+            return true;
         }
+
+        return false;
     }
 
-    public void moveLeft() {
+    public boolean moveLeft() {
         // get the current player location
         Point player = getPlayerLocation();
         int x = player.getX();
@@ -142,10 +150,14 @@ public class Maze {
         if (grid[x][y - 1] == MARKER_SPACE) {
             grid[x][y] = MARKER_SPACE;
             grid[x][y - 1] = MARKER_PLAYER;
+
+            return true;
         }
+
+        return false;
     }
 
-    public void moveRight() {
+    public boolean moveRight() {
         // get the current player location
         Point player = getPlayerLocation();
         int x = player.getX();
@@ -154,6 +166,10 @@ public class Maze {
         if (grid[x][y + 1] == MARKER_SPACE) {
             grid[x][y] = MARKER_SPACE;
             grid[x][y + 1] = MARKER_PLAYER;
+
+            return true;
         }
+
+        return false;
     }
 }

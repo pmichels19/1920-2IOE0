@@ -44,6 +44,8 @@ public class Main {
         // time that has not yet been processed
         double unprocessed = 0;
 
+        double inputAllowed = 0;
+
         while ( !window.shouldClose() ) {
             boolean can_render = false;
 
@@ -64,20 +66,28 @@ public class Main {
                     window.close();
                 }
 
-                if ( window.buttonClicked(GLFW_KEY_W) ) {
-                    maze.moveUp();
+                if ( window.buttonClicked(GLFW_KEY_W) && time > inputAllowed ) {
+                    if ( maze.moveUp() ) {
+                        inputAllowed = time + 0.25;
+                    }
                 }
 
-                if ( window.buttonClicked(GLFW_KEY_A) ) {
-                    maze.moveLeft();
+                if ( window.buttonClicked(GLFW_KEY_A) && time > inputAllowed ) {
+                    if ( maze.moveLeft() ) {
+                        inputAllowed = time + 0.25;
+                    }
                 }
 
-                if ( window.buttonClicked(GLFW_KEY_S) ) {
-                    maze.moveDown();
+                if ( window.buttonClicked(GLFW_KEY_S) && time > inputAllowed ) {
+                    if ( maze.moveDown() ) {
+                        inputAllowed = time + 0.25;
+                    }
                 }
 
-                if ( window.buttonClicked(GLFW_KEY_D) ) {
-                    maze.moveRight();
+                if ( window.buttonClicked(GLFW_KEY_D) && time > inputAllowed ) {
+                    if ( maze.moveRight() ) {
+                        inputAllowed = time + 0.25;
+                    }
                 }
 
                 glfwPollEvents();

@@ -17,7 +17,7 @@ public class Main {
 
     // cap at 60 fps for now
     private static final double FRAME_CAP = 1.0 / 60.0;
-    private static final double MOVEMENT_CAP = 1.0/10.0;
+    private static final double MOVEMENT_CAP = 1.0 / 6.0;
 
     public static void main (String[] args) throws IOException {
         if ( !glfwInit() ) {
@@ -39,6 +39,7 @@ public class Main {
         // Stuff to keep track of the fps
         double frame_time = 0;
         int frames = 0;
+        int moving_frames = (int) ( MOVEMENT_CAP * 60.0f );
 
         // starting time
         double time = Timer.getTime();
@@ -67,27 +68,31 @@ public class Main {
                     window.close();
                 }
 
-                if ( window.buttonClicked(GLFW_KEY_W) && time > inputAllowed ) {
+                if ( ( window.buttonClicked(GLFW_KEY_W) || window.buttonClicked(GLFW_KEY_UP) ) && time > inputAllowed ) {
                     if ( maze.moveUp() ) {
                         inputAllowed = time + MOVEMENT_CAP;
+                        renderer.setChange( moving_frames, 1.0f / (float) moving_frames, true );
                     }
                 }
 
-                if ( window.buttonClicked(GLFW_KEY_A) && time > inputAllowed ) {
+                if ( ( window.buttonClicked(GLFW_KEY_A) || window.buttonClicked(GLFW_KEY_LEFT) ) && time > inputAllowed ) {
                     if ( maze.moveLeft() ) {
                         inputAllowed = time + MOVEMENT_CAP;
+                        renderer.setChange( moving_frames, -1.0f / (float) moving_frames, false );
                     }
                 }
 
-                if ( window.buttonClicked(GLFW_KEY_S) && time > inputAllowed ) {
+                if ( ( window.buttonClicked(GLFW_KEY_S) || window.buttonClicked(GLFW_KEY_DOWN) ) && time > inputAllowed ) {
                     if ( maze.moveDown() ) {
                         inputAllowed = time + MOVEMENT_CAP;
+                        renderer.setChange( moving_frames, -1.0f / (float) moving_frames, true );
                     }
                 }
 
-                if ( window.buttonClicked(GLFW_KEY_D) && time > inputAllowed ) {
+                if ( ( window.buttonClicked(GLFW_KEY_D) || window.buttonClicked(GLFW_KEY_RIGHT) ) && time > inputAllowed ) {
                     if ( maze.moveRight() ) {
                         inputAllowed = time + MOVEMENT_CAP;
+                        renderer.setChange( moving_frames, 1.0f / (float) moving_frames, false );
                     }
                 }
 

@@ -157,8 +157,7 @@ public class Renderer {
                 vertices_list.add(vertices_right);
             }
 
-            if (x_point < grid.length - 1 && grid[x_point + 1][y_point] != Maze.MARKER_WALL
-                    || x_point == grid.length - 1) {
+            if (x_point < grid.length - 1 && grid[x_point + 1][y_point] != Maze.MARKER_WALL) {
                 // walls on the face
                 final float[] vertices_face = new float[]{
                         // BOTTOM LEFT

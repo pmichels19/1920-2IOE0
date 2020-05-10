@@ -242,25 +242,25 @@ public class Renderer {
      * generates {@code playerModel} when called
      */
     private void generatePlayerModel() {
-        float x = -camera.getPosition().y * 6.0f;
-        float y = camera.getPosition().x * 6.0f;
-
         final float[] player = new float[]{
                 // TOP RIGHT
-                x * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f,
+                delta_x * BLOCK_WIDTH, (delta_y + 1.0f) * BLOCK_WIDTH, 0.0f,
                 // BOTTOM RIGHT
-                x * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f,
+                delta_x * BLOCK_WIDTH, (delta_y - 1.0f) * BLOCK_WIDTH, 0.0f,
                 // BOTTOM LEFT
-                x * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
+                delta_x * BLOCK_WIDTH, (delta_y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
                 // TOP LEFT
-                x * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
+                delta_x * BLOCK_WIDTH, (delta_y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
         };
 
         playerModel = new Model(player, textures);
     }
 
     private int counter = 0;
-    private float speed;
+    private float delta_x = 0;
+    private float delta_y = 0;
+    private float block_speed;
+    private float base_speed;
     private boolean vertical;
 
     /**
@@ -271,18 +271,22 @@ public class Renderer {
         if (counter > 0) {
             Vector3f curPos = camera.getPosition();
             Vector3f newPosition;
+            float dist = block_speed * 60f * base_speed;
             if (vertical) {
                 // when moving vertically, we need to consider the fact that the world is rotated by 30 degrees
                 newPosition = new Vector3f(
                         curPos.x,
-                        curPos.y + ( speed * (float) Math.cos(Math.toRadians(-30.0)) ),
-                        curPos.z - ( speed * (float) Math.tan(Math.toRadians(30.0)) )
+                        curPos.y + ( block_speed * (float) Math.cos(Math.toRadians(-30.0)) ),
+                        curPos.z - ( block_speed * (float) Math.tan(Math.toRadians( 30.0)) )
                 );
+                delta_x += block_speed > 0 ? -dist : dist;
             } else {
                 newPosition = new Vector3f(
-                        curPos.x + speed,
+                        curPos.x + block_speed,
                         curPos.y,
-                        curPos.z);
+                        curPos.z
+                );
+                delta_y += block_speed > 0 ? dist : -dist;
             }
 
             camera.setPosition( newPosition );
@@ -307,7 +311,8 @@ public class Renderer {
      * @param vertical whether movement is on the x or the y axis
      */
     public void setChange(int frames, float speed, boolean vertical) {
-        this.speed = speed * BLOCK_WIDTH * 2.0f;
+        base_speed = speed;
+        block_speed = speed * BLOCK_WIDTH * 2.0f;
         this.vertical = vertical;
         counter = frames;
     }

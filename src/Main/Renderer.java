@@ -26,6 +26,7 @@ public class Renderer {
     private Model wallModel;
     private Model ceilModel;
     private Model backgroundModel;
+    private Model playerModel;
     private final Camera camera;
     private Point playerLocation;
 
@@ -99,15 +100,11 @@ public class Renderer {
                     continue;
                 } else if (grid[i][j] == Maze.MARKER_PLAYER) {
                     // check if the player moved in the maze globally
-                    Point newLocation = maze.getPlayerLocation();
-                    if ( !playerLocation.equals( newLocation ) ) {
-                        playerLocation = newLocation;
-                        playerMoved = true;
-                    }
+                    playerLocation = maze.getPlayerLocation();
                 }
 
                 // we always want a background if there is not a wall on a tile
-                backgrounds.add(new Point(i, j));
+                backgrounds.add( new Point(i, j) );
             }
         }
     }
@@ -241,6 +238,27 @@ public class Renderer {
         backgroundModel = new Model(vertices_total, textures_total);
     }
 
+    /**
+     * generates {@code playerModel} when called
+     */
+    private void generatePlayerModel() {
+        float x = -camera.getPosition().y * 6.0f;
+        float y = camera.getPosition().x * 6.0f;
+
+        final float[] player = new float[]{
+                // TOP RIGHT
+                x * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f,
+                // BOTTOM RIGHT
+                x * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f,
+                // BOTTOM LEFT
+                x * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
+                // TOP LEFT
+                x * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
+        };
+
+        playerModel = new Model(player, textures);
+    }
+
     private int counter = 0;
     private float speed;
     private boolean vertical;
@@ -249,13 +267,15 @@ public class Renderer {
      * renders the maze
      */
     public void render() {
+        playerLocation = maze.getPlayerLocation();
         if (counter > 0) {
             Vector3f curPos = camera.getPosition();
             Vector3f newPosition;
             if (vertical) {
+                // when moving vertically, we need to consider the fact that the world is rotated by 30 degrees
                 newPosition = new Vector3f(
                         curPos.x,
-                        curPos.y + speed,
+                        curPos.y + ( speed * (float) Math.cos(Math.toRadians(-30.0)) ),
                         curPos.z - ( speed * (float) Math.tan(Math.toRadians(30.0)) )
                 );
             } else {
@@ -270,8 +290,12 @@ public class Renderer {
             counter--;
         }
 
+        generatePlayerModel();
+
         renderBackgrounds();
         renderWalls();
+        renderPlayer();
+        renderCeilings();
     }
 
     /**
@@ -300,6 +324,13 @@ public class Renderer {
 
     }
 
+    private void renderPlayer() {
+        SHADER.setUniform("sampler", Background.PLAYER.getSampler());
+        Background.PLAYER.bindTexture();
+
+        playerModel.render();
+    }
+
     /**
      * draw the specified decoration at the specified point
      *
@@ -311,13 +342,18 @@ public class Renderer {
     }
 
     /**
-     * draws the wall tiles (including the ceilings)
+     * draws the wall tiles
      */
     private void renderWalls() {
         SHADER.setUniform("sampler", Wall.CASTLE_WALL.getSampler());
         Wall.CASTLE_WALL.bindTexture();
         wallModel.render();
+    }
 
+    /**
+     * draws the ceiling tiles
+     */
+    private void renderCeilings() {
         SHADER.setUniform("sampler", Wall.CEILING.getSampler());
         Wall.CEILING.bindTexture();
         ceilModel.render();

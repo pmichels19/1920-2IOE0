@@ -26,7 +26,7 @@ public class Main {
 
         Window window = new Window(SCREEN_WIDTH, SCREEN_HEIGHT);
         window.setFullscreen(false);
-        window.createWindow("Test");
+        window.createWindow("Mazes of Magic");
 
         GL.createCapabilities();
 

@@ -2,11 +2,10 @@ package AI;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
+import javax.xml.soap.Text;
 import java.awt.*;
 import java.awt.Color;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 import java.awt.image.ImageObserver;
 import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
@@ -17,18 +16,24 @@ import java.util.Iterator;
  */
 public class DrawingCanvas extends JFrame {
     private int verticalOffset = 27; // Offset for the title bar
+    private int bottomBarHeight = 50;
     private int windowX = 500; // Window width
-    private int windowY = 500 + verticalOffset; // Window height + an offset for the title bar
+    private int windowY = 500 + verticalOffset + bottomBarHeight; // Window height + an offset for the title bar
 
     private int pixelSize = 2; // Size of a pixel
 
-
-    private int gridX = windowX / pixelSize;
-    private int gridY = (windowY - verticalOffset) / pixelSize;
+    private int canvasSize = 475;
+    private int gridX = canvasSize / pixelSize;
+    private int gridY = canvasSize / pixelSize;
     private float[][] grid = new float[gridX][gridY];
     private Canvas canvas = new Canvas();
 
+    private int canvasX;
+    private int canvasY;
+
     private ArrayList<Point> current = new ArrayList<>();
+    private JPanel panel1;
+    private JButton button1;
 
     public DrawingCanvas() {
         this.setTitle("Drawing Canvas");
@@ -37,8 +42,33 @@ public class DrawingCanvas extends JFrame {
         this.setVisible(true);
         this.setResizable(false);
 
-        // Create drawing canvas on window
-        this.setContentPane(canvas);
+        this.setLayout(null);
+
+        canvas.setSize(canvasSize, canvasSize);
+        canvas.setLocation(7, 10);
+        canvasX = canvas.getX();
+        canvasY = canvas.getY();
+        this.add(canvas);
+
+
+        JButton clearButton = new JButton();
+        clearButton.setText("Clear");
+        clearButton.setSize(100, 40);
+
+        clearButton.setVisible(true);
+        clearButton.setLocation(10, 500);
+
+        clearButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ResetGrid();
+                repaint();
+            }
+        });
+
+
+        this.add(clearButton);
+
 
         // Add listener for mouse movements
         Move move = new Move();
@@ -68,7 +98,7 @@ public class DrawingCanvas extends JFrame {
      * @return integer corresponding to grid pixel x index
      */
     public int ConvertXToGrid(int x) {
-        return x / pixelSize;
+        return (x - canvasX-3) /pixelSize;
     }
 
     /**
@@ -78,7 +108,7 @@ public class DrawingCanvas extends JFrame {
      * @return integer corresponding to grid pixel y index
      */
     public int ConvertYToGrid(int y) {
-        return (y - verticalOffset) / pixelSize;
+        return (y - canvasY - verticalOffset) / pixelSize;
     }
 
     /**
@@ -87,10 +117,6 @@ public class DrawingCanvas extends JFrame {
     public class Canvas extends JPanel {
         public void paintComponent(Graphics g) {
             super.paintComponent(g);
-            g.setColor(Color.DARK_GRAY);
-            g.fillRect(0, 0, 920, 920);
-
-
             for (int i = 0; i < gridX; i++) {
                 for (int j = 0; j < gridY; j++) {
                     int color = (int) (255 - (grid[i][j] * 255));
@@ -142,6 +168,7 @@ public class DrawingCanvas extends JFrame {
 
     /**
      * Calculates the grid values for the given point and some of it's neighbours
+     *
      * @param p the point that was drawn over
      */
     private void ColorForPoint(Point p) {

@@ -1,5 +1,6 @@
 package Main;
 
+import Graphics.Renderer;
 import Graphics.Window;
 import Levels.Framework.Maze;
 import org.lwjgl.opengl.GL;
@@ -8,6 +9,9 @@ import java.io.IOException;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11C.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11C.glClear;
 
 public class Main {
 
@@ -107,6 +111,7 @@ public class Main {
 
             // make sure we only draw 60 frames every second
             if (can_render) {
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 renderer.render();
 
                 window.swapBuffers();

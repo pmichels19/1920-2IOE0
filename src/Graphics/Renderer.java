@@ -1,10 +1,10 @@
-package Main;
+package Graphics;
 
-import Graphics.*;
 import Graphics.Generators.*;
 import Levels.Framework.joml.*;
 import Levels.Tiles.*;
 import Levels.Framework.Maze;
+import Main.Point;
 
 import java.util.*;
 
@@ -41,7 +41,7 @@ public class Renderer {
      * @param width the width of the window
      * @param height the height of the window
      */
-    Renderer(Maze maze, int width, int height) {
+    public Renderer(Maze maze, int width, int height) {
         // prepare the camera
         camera = new Camera();
         camera.setPerspective(
@@ -174,7 +174,8 @@ public class Renderer {
      * @param vertical whether movement is on the x or the y axis
      */
     public void setChange(int frames, float speed, boolean vertical) {
-        base_speed = speed;
+        // for some reason this basespeed should always be the same
+        base_speed = speed > 0 ? 1.0f / 10.0f : -1.0f / 10.0f;
         block_speed = speed * BLOCK_WIDTH * 2.0f;
         this.vertical = vertical;
         counter = frames;

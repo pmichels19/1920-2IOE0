@@ -15,7 +15,7 @@ public enum Wall {
             1
     ),
     CEILING (
-            "src/Textures/Wall/wall_ceiling (1).png",
+            "src/Textures/Wall/wall_ceiling.png",
             9
     );
 

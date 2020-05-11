@@ -1,14 +1,10 @@
 package Main;
 
-import Graphics.Camera;
-import Graphics.Model;
-import Graphics.Shader;
-import Graphics.Transform;
-import Levels.Framework.Maze;
+import Graphics.*;
+import Graphics.Generators.*;
 import Levels.Framework.joml.*;
-import Levels.Tiles.Background;
-import Levels.Tiles.Decoration;
-import Levels.Tiles.Wall;
+import Levels.Tiles.*;
+import Levels.Framework.Maze;
 
 import java.util.*;
 
@@ -23,25 +19,20 @@ public class Renderer {
     private final Maze maze;
     private final Shader SHADER = new Shader("testShader");
 
-    private Model wallModel;
-    private Model ceilModel;
-    private Model backgroundModel;
-    private Model playerModel;
+    private final Model wallModel;
+    private final Model ceilModel;
+    private final Model backgroundModel;
     private final Camera camera;
-    private Point playerLocation;
+    private Model playerModel;
 
-    private char[][] grid;
-
-    private boolean playerMoved;
-
-    private final float BLOCK_WIDTH = 1.0f / 6.0f;
-
-    private final float[] textures = new float[] {
+    final float[] textures = new float[] {
             0, 1,
             1, 1,
             1, 0,
             0, 0
     };
+
+    public static final float BLOCK_WIDTH = 1.0f / 6.0f;
 
     /**
      * initialises the global variables for the renderer
@@ -72,17 +63,15 @@ public class Renderer {
 
         this.maze = maze;
 
-        playerLocation = maze.getPlayerLocation();
-
         SHADER.bind();
         SHADER.setCamera(camera);
         SHADER.setTransform(transform);
 
-        playerMoved = true;
-
         gatherGridInfo();
-        generateBackgroundModel();
-        generateWallModel();
+
+        wallModel = new WallGenerator(maze, walls).generate();
+        ceilModel = new CeilingGenerator(maze, walls).generate();
+        backgroundModel = new BackgroundGenerator(maze, backgrounds).generate();
     }
 
     /**
@@ -90,7 +79,7 @@ public class Renderer {
      */
     private void gatherGridInfo() {
         // gather the data on the grid
-        grid = maze.getGrid();
+        char[][] grid = maze.getGrid();
 
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
@@ -98,144 +87,12 @@ public class Renderer {
                 if (grid[i][j] == Maze.MARKER_WALL) {
                     walls.add(new Point(i, j));
                     continue;
-                } else if (grid[i][j] == Maze.MARKER_PLAYER) {
-                    // check if the player moved in the maze globally
-                    playerLocation = maze.getPlayerLocation();
                 }
 
                 // we always want a background if there is not a wall on a tile
                 backgrounds.add( new Point(i, j) );
             }
         }
-    }
-
-    /**
-     * generates the {@code wallModel} when called
-     */
-    private void generateWallModel() {
-        List<float[]> vertices_list = new ArrayList<>();
-        List<float[]> ceilings_list = new ArrayList<>();
-
-        for (Point point : walls) {
-            final int x_point = point.getX();
-            final int y_point = point.getY();
-
-            // use the point to get the vertices so we can draw the wall tile
-            float x = (x_point - playerLocation.getX()) * 2.0f;
-            float y = (y_point - playerLocation.getY()) * 2.0f;
-
-            if (y_point > 0 && grid[x_point][y_point - 1] != Maze.MARKER_WALL) {
-                // walls on the left
-                final float[] vertices_left = new float[]{
-                        // TOP LEFT
-                        (x - 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
-                        // TOP RIGHT
-                        (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
-                        // BOTTOM RIGHT
-                        (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f,
-                        // BOTTOM LEFT
-                        (x - 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f
-                };
-                vertices_list.add(vertices_left);
-            }
-
-            if (y_point < grid.length - 1 && grid[x_point][y_point + 1] != Maze.MARKER_WALL) {
-                // walls on the right
-                final float[] vertices_right = new float[]{
-                        // TOP LEFT
-                        (x - 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
-                        // TOP RIGHT
-                        (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
-                        // BOTTOM RIGHT
-                        (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f,
-                        // BOTTOM LEFT
-                        (x - 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f
-                };
-                vertices_list.add(vertices_right);
-            }
-
-            if (x_point < grid.length - 1 && grid[x_point + 1][y_point] != Maze.MARKER_WALL) {
-                // walls on the face
-                final float[] vertices_face = new float[]{
-                        // BOTTOM LEFT
-                        (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
-                        // TOP LEFT
-                        (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
-                        // TOP RIGHT
-                        (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f,
-                        // BOTTOM RIGHT
-                        (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f
-                };
-                vertices_list.add(vertices_face);
-            }
-
-            final float[] ceiling = new float[]{
-                    // TOP LEFT
-                    (x - 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
-                    // TOP RIGHT
-                    (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
-                    // BOTTOM RIGHT
-                    (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
-                    // BOTTOM LEFT
-                    (x - 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH
-            };
-
-            ceilings_list.add(ceiling);
-        }
-
-        float[] vertices_total = new float[vertices_list.size() * 12];
-        float[] wall_textures = new float[vertices_list.size() * 8];
-        for (int i = 0; i < vertices_list.size(); i++) {
-            System.arraycopy(
-                    vertices_list.get(i), 0, vertices_total, i * 12, vertices_list.get(i).length
-            );
-            System.arraycopy(
-                    textures, 0, wall_textures, i * 8, textures.length
-            );
-        }
-
-        wallModel = new Model(vertices_total, wall_textures);
-
-        float[] ceilings_total = new float[ceilings_list.size() * 12];
-        float[] ceil_textures = new float[ceilings_list.size() * 8];
-        for (int i = 0; i < ceilings_list.size(); i++) {
-            System.arraycopy(
-                    ceilings_list.get(i), 0, ceilings_total, i * 12, ceilings_list.get(i).length
-            );
-            System.arraycopy(
-                    textures, 0, ceil_textures, i * 8, textures.length
-            );
-        }
-
-        ceilModel = new Model(ceilings_total, ceil_textures);
-    }
-
-    /**
-     * generates {@code backgroundModel} when called
-     */
-    private void generateBackgroundModel() {
-        float[] vertices_total = new float[backgrounds.size() * 12];
-        float[] textures_total = new float[backgrounds.size() * 8];
-        int i = 0;
-
-        for (Point point : backgrounds) {
-            // use the point to get the vertices so we can draw the wall tile
-            float x = (point.getX() - playerLocation.getX()) * 2.0f;
-            float y = (point.getY() - playerLocation.getY()) * 2.0f;
-            final float[] vertices = new float[]{
-                    (x - 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f,
-                    (x + 1.0f) * BLOCK_WIDTH, (y + 1.0f) * BLOCK_WIDTH, 0.0f,
-                    (x + 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f,
-                    (x - 1.0f) * BLOCK_WIDTH, (y - 1.0f) * BLOCK_WIDTH, 0.0f,
-            };
-
-            System.arraycopy(vertices, 0, vertices_total, i * 12, vertices.length);
-            System.arraycopy(textures, 0, textures_total, i * 8, textures.length);
-
-            i++;
-        }
-
-        backgroundModel = new Model(vertices_total, textures_total);
     }
 
     /**
@@ -267,7 +124,20 @@ public class Renderer {
      * renders the maze
      */
     public void render() {
-        playerLocation = maze.getPlayerLocation();
+        calculateCameraPosition();
+
+        generatePlayerModel();
+
+        renderBackgrounds();
+        renderWalls();
+        renderPlayer();
+        renderCeilings();
+    }
+
+    /**
+     * repositions the camera if needed
+     */
+    private void calculateCameraPosition() {
         if (counter > 0) {
             Vector3f curPos = camera.getPosition();
             Vector3f newPosition;
@@ -293,13 +163,6 @@ public class Renderer {
             SHADER.setCamera(camera);
             counter--;
         }
-
-        generatePlayerModel();
-
-        renderBackgrounds();
-        renderWalls();
-        renderPlayer();
-        renderCeilings();
     }
 
     /**

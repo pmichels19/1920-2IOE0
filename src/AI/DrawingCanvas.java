@@ -185,39 +185,12 @@ public class DrawingCanvas extends JFrame {
         @Override
         public void mouseDragged(MouseEvent e) {
 //            System.out.println("X is : " + e.getX() + ",    Y is: " + e.getY());
-            current.add(new Point(e.getX(), e.getY()));
-
-            int xPixel = e.getX();
-            int yPixel = e.getY();
-            int i = ConvertXToGrid(xPixel);
-            int j = ConvertYToGrid(yPixel);
-
-            int offset = 1;
-
-            // make the grids close to the current line grey
-            for (int iOfs = -1 * offset; iOfs <= offset; iOfs++) {
-                for (int jOfs = -1 * offset; jOfs <= offset; jOfs++) {
-                    int x = i + iOfs;
-                    int y = j + jOfs;
-                    // Check if we are still within grid bounds
-                    if (x >= 0 && x < gridX && y >= 0 && y < gridY) {
-                        // Distance is sqrt( |x|^2 + |y|^2)
-                        if (iOfs != 0 || jOfs != 0) {
-                            grid[x][y] += 0.25;
-                        } else {
-                            grid[x][y] += 1.0;
-                        }
-
-
-                        // Make sure the colors stay within bounds
-                        if (grid[x][y] < (float) 0.0) {
-                            grid[x][y] = (float) 0.0;
-                        } else if (grid[x][y] > (float) 1.0) {
-                            grid[x][y] = (float) 1.0;
-                        }
-                    }
-                }
-            }
+            Point point = new Point(e.getX(), e.getY());
+            // Add point to current line list
+            current.add(point);
+            // Calculate value for current point
+            ColorForPoint(point);
+            // Update canvas
             canvas.repaint();
         }
 

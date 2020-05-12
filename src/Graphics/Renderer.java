@@ -7,6 +7,7 @@ import Levels.Framework.Maze;
 import Main.Point;
 
 import java.util.*;
+import static java.lang.Math.*;
 
 /**
  * Class for rendering a maze
@@ -45,7 +46,7 @@ public class Renderer {
         // prepare the camera
         camera = new Camera();
         camera.setPerspective(
-                (float) Math.toRadians(40.0),
+                (float) toRadians(40.0),
                 (float) width / (float) height,
                 0.01f,
                 1000.0f
@@ -54,12 +55,12 @@ public class Renderer {
 
         // prepare the transformations
         Transform transform = new Transform();
-        transform.getRotation().rotateAxis((float) Math.toRadians(270.0), 0, 0, 1);
-        transform.getRotation().rotateAxis((float) Math.toRadians(-30.0), 0, 1, 0);
+        transform.getRotation().rotateAxis((float) toRadians(270.0), 0, 0, 1);
+        transform.getRotation().rotateAxis((float) toRadians(-30.0), 0, 1, 0);
 
         backgrounds = new HashSet<>();
         decorations = new HashMap<>();
-        walls = new HashSet<Point>();
+        walls = new HashSet<>();
 
         this.maze = maze;
 
@@ -146,8 +147,8 @@ public class Renderer {
                 // when moving vertically, we need to consider the fact that the world is rotated by 30 degrees
                 newPosition = new Vector3f(
                         curPos.x,
-                        curPos.y + ( block_speed * (float) Math.cos(Math.toRadians(-30.0)) ),
-                        curPos.z - ( block_speed * (float) Math.tan(Math.toRadians( 30.0)) )
+                        curPos.y + ( block_speed * (float) cos(toRadians(-30.0)) ),
+                        curPos.z - ( block_speed * (float) sin(toRadians( 30.0)) )
                 );
                 delta_x += block_speed > 0 ? -dist : dist;
             } else {

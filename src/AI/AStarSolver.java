@@ -52,16 +52,15 @@ public class AStarSolver {
             }
 
             AStarPoint q = open.remove(maxIndex);
-
             calculateSuccessors(q);
-
+            closed.add(q);
         }
 
         ArrayList<Point> path = null;
         if (destinationPoint.parent != null) {
             path = new ArrayList<>();
             AStarPoint successor = destinationPoint;
-            while (successor.parent != null){
+            while (successor.parent != null) {
                 path.add(new Point(successor.x, successor.y));
                 successor = successor.parent;
             }
@@ -126,12 +125,12 @@ public class AStarSolver {
      * Checks in the list if there is a point that has the same x and y but a smaller f as successor
      *
      * @param successor point to check for
-     * @param list list to look in
+     * @param list      list to look in
      * @return True if there is a point in list that has the same x and y but a smaller f as successor
      */
     private Boolean containsSmaller(AStarPoint successor, ArrayList<AStarPoint> list) {
         for (AStarPoint p : list) {
-            if (p.x == successor.x && p.y == successor.y && p.f == successor.f) {
+            if (p.x == successor.x && p.y == successor.y && p.f < successor.f) {
                 return true;
             }
         }

@@ -108,7 +108,7 @@ public class AStarClickTest {
                     Point destination = new Point(1, 1);
                     AStarSolver ass = new AStarSolver();
                     ArrayList<Point> path = ass.CalculateShortestPath(location, destination, maze.getGrid());
-                    if (path.size()>0) {
+                    if (path!=null && path.size()>0) {
                             Point next = path.remove(path.size() - 1);
 
                         if (next.getY() > location.getY()) {

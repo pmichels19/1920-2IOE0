@@ -13,7 +13,7 @@ public class AStarSolver {
     private ArrayList<AStarPoint> closed;
     private AStarPoint destinationPoint;
 
-    private final int diagonalMoveCost = 154;
+    private final int diagonalMoveCost = 14 * 99999999; //TODO: When diagonal movement is implemented change back to 14
     private final int normalMoveCost = 10;
 
     /**

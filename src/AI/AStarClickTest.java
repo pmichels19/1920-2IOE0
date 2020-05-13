@@ -73,43 +73,33 @@ public class AStarClickTest {
                 // for now, allow exiting of the window by pressing escape
                 if (window.buttonClicked(GLFW_KEY_ESCAPE)) {
                     window.close();
-                }
-
-                if ((window.buttonClicked(GLFW_KEY_W) || window.buttonClicked(GLFW_KEY_UP)) && time > inputAllowed) {
+                } else if ((window.buttonClicked(GLFW_KEY_W) || window.buttonClicked(GLFW_KEY_UP)) && time > inputAllowed) {
                     if (maze.moveUp()) {
                         inputAllowed = time + MOVEMENT_CAP;
                         renderer.setChange(moving_frames, 1.0f / (float) moving_frames, true);
                     }
-                }
-
-                if ((window.buttonClicked(GLFW_KEY_A) || window.buttonClicked(GLFW_KEY_LEFT)) && time > inputAllowed) {
+                } else if ((window.buttonClicked(GLFW_KEY_A) || window.buttonClicked(GLFW_KEY_LEFT)) && time > inputAllowed) {
                     if (maze.moveLeft()) {
                         inputAllowed = time + MOVEMENT_CAP;
                         renderer.setChange(moving_frames, -1.0f / (float) moving_frames, false);
                     }
-                }
-
-                if ((window.buttonClicked(GLFW_KEY_S) || window.buttonClicked(GLFW_KEY_DOWN)) && time > inputAllowed) {
+                } else if ((window.buttonClicked(GLFW_KEY_S) || window.buttonClicked(GLFW_KEY_DOWN)) && time > inputAllowed) {
                     if (maze.moveDown()) {
                         inputAllowed = time + MOVEMENT_CAP;
                         renderer.setChange(moving_frames, -1.0f / (float) moving_frames, true);
                     }
-                }
-
-                if ((window.buttonClicked(GLFW_KEY_D) || window.buttonClicked(GLFW_KEY_RIGHT)) && time > inputAllowed) {
+                } else if ((window.buttonClicked(GLFW_KEY_D) || window.buttonClicked(GLFW_KEY_RIGHT)) && time > inputAllowed) {
                     if (maze.moveRight()) {
                         inputAllowed = time + MOVEMENT_CAP;
                         renderer.setChange(moving_frames, 1.0f / (float) moving_frames, false);
                     }
-                }
-
-                if ((window.buttonClicked(GLFW_KEY_K)) && time > inputAllowed) {
+                } else if ((window.buttonClicked(GLFW_KEY_K)) && time > inputAllowed) {
                     Point location = maze.getPlayerLocation();
                     Point destination = new Point(1, 1);
                     AStarSolver ass = new AStarSolver();
                     ArrayList<Point> path = ass.CalculateShortestPath(location, destination, maze.getGrid());
-                    if (path!=null && path.size()>0) {
-                            Point next = path.remove(path.size() - 1);
+                    if (path != null && path.size() > 0) {
+                        Point next = path.remove(path.size() - 1);
 
                         if (next.getY() > location.getY()) {
                             if (maze.moveRight()) {

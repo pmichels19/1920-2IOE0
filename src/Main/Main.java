@@ -24,17 +24,23 @@ public class Main {
     private static final double MOVEMENT_CAP = 1.0 / 5.0;
 
     public static void main (String[] args) throws IOException {
+        // start up GLFW
         if ( !glfwInit() ) {
             throw new IllegalStateException("Failed to initialize GLFW");
         }
 
+        // set up the window for displaying the game
         Window window = new Window(SCREEN_WIDTH, SCREEN_HEIGHT);
         window.setFullscreen(false);
         window.createWindow("Mazes of Magic");
 
+        // initialize GLFW capabilities
         GL.createCapabilities();
 
+        // start the maze found in specified file
         Maze maze = new Maze("level_1");
+
+        // set up the renderer with the maze
         Renderer renderer = new Renderer(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
 
         // enable use of textures
@@ -49,7 +55,7 @@ public class Main {
         double time = Timer.getTime();
         // time that has not yet been processed
         double unprocessed = 0;
-
+        // time to keep track of whether input is allowed
         double inputAllowed = 0;
 
         while ( !window.shouldClose() ) {
@@ -58,7 +64,6 @@ public class Main {
             // update the time variables
             double time_2 = Timer.getTime();
             double passed = time_2 - time;
-
             unprocessed += passed;
             frame_time += passed;
             time = time_2;

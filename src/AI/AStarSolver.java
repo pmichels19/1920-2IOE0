@@ -1,20 +1,19 @@
 package AI;
 
 import Levels.Framework.Maze;
-
-import java.awt.*;
+import Main.Point;
 import java.util.ArrayList;
 
 /**
  * Class that handles all A* calculations
  */
-public class AStar {
+public class AStarSolver {
     private char[][] grid;
     private ArrayList<AStarPoint> open;
     private ArrayList<AStarPoint> closed;
     private AStarPoint destinationPoint;
 
-    private final int diagonalMoveCost = 14;
+    private final int diagonalMoveCost = 154;
     private final int normalMoveCost = 10;
 
     /**
@@ -32,14 +31,14 @@ public class AStar {
         this.grid = grid;
 
         // Convert startPoint and destinationPoint
-        AStarPoint startPoint = new AStarPoint(startLocation.x, startLocation.y, 0, 0, null);
-        destinationPoint = new AStarPoint(destination.x, destination.y, 0, 0, null);
+        AStarPoint startPoint = new AStarPoint(startLocation.getX(), startLocation.getY(), 0, 0, null);
+        destinationPoint = new AStarPoint(destination.getX(), destination.getY(), 0, 0, null);
 
         // Add startpoint to open list
         open.add(startPoint);
 
         // Keep going until we have found the destination or run out of possibilities
-        while (open.size() > 0 && destinationPoint.parent != null) {
+        while (open.size() > 0 && destinationPoint.parent == null) {
 
             // Get the point with the lowest f val from the open list
             int maxF = Integer.MAX_VALUE;

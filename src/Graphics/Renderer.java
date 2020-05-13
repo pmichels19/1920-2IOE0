@@ -7,6 +7,7 @@ import Levels.Framework.Maze;
 import Main.Point;
 
 import java.util.*;
+
 import static java.lang.Math.*;
 
 /**
@@ -33,7 +34,8 @@ public class Renderer {
             0, 0
     };
 
-    public static final float BLOCK_WIDTH = 1.0f / 6.0f;
+    public static final float BLOCK_WIDTH = 1.0f / 2.0f;
+    public static final float WORLD_ANGLE = (float) toRadians(35.0);
 
     /**
      * initialises the global variables for the renderer
@@ -51,22 +53,22 @@ public class Renderer {
                 0.01f,
                 1000.0f
         );
-        camera.setPosition(new Vector3f(0, 0, 4));
+        camera.setPosition(new Vector3f(0f, 0f, 24f * BLOCK_WIDTH));
 
         // prepare the transformations
         Transform transform = new Transform();
         transform.getRotation().rotateAxis((float) toRadians(270.0), 0, 0, 1);
-        transform.getRotation().rotateAxis((float) toRadians(-30.0), 0, 1, 0);
+        transform.getRotation().rotateAxis( -WORLD_ANGLE, 0, 1, 0);
+
+        SHADER.bind();
+        SHADER.setCamera(camera);
+        SHADER.setTransform(transform);
 
         backgrounds = new HashSet<>();
         decorations = new HashMap<>();
         walls = new HashSet<>();
 
         this.maze = maze;
-
-        SHADER.bind();
-        SHADER.setCamera(camera);
-        SHADER.setTransform(transform);
 
         gatherGridInfo();
 
@@ -142,13 +144,13 @@ public class Renderer {
         if (counter > 0) {
             Vector3f curPos = camera.getPosition();
             Vector3f newPosition;
-            float dist = block_speed * 60f * base_speed;
+            float dist = block_speed * (1f / BLOCK_WIDTH) * 10f * base_speed;
             if (vertical) {
                 // when moving vertically, we need to consider the fact that the world is rotated by 30 degrees
                 newPosition = new Vector3f(
                         curPos.x,
-                        curPos.y + ( block_speed * (float) cos(toRadians(-30.0)) ),
-                        curPos.z - ( block_speed * (float) sin(toRadians( 30.0)) )
+                        curPos.y + ( block_speed * (float) cos(-WORLD_ANGLE) ),
+                        curPos.z - ( block_speed * (float) sin( WORLD_ANGLE) )
                 );
                 delta_x += block_speed > 0 ? -dist : dist;
             } else {

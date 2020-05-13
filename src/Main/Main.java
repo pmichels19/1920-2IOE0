@@ -21,7 +21,7 @@ public class Main {
 
     // cap at 60 fps for now
     private static final double FRAME_CAP = 1.0 / 60.0;
-    private static final double MOVEMENT_CAP = 1.0 / 6.0;
+    private static final double MOVEMENT_CAP = 1.0 / 5.0;
 
     public static void main (String[] args) throws IOException {
         if ( !glfwInit() ) {

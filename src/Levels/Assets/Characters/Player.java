@@ -2,13 +2,22 @@ package Levels.Assets.Characters;
 
 import Graphics.Model;
 import Graphics.Texture;
+import Levels.Assets.Items.Item;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static Graphics.Renderer.BLOCK_WIDTH;
 import static Graphics.Renderer.textures;
 
 public class Player extends Character {
-    public Player(Texture texture) {
-        super(texture);
+    private final List<Item> inventory;
+
+    public Player(Texture texture, int max_health, int max_mana) {
+        // the player character (for now) has 100 base health and mana
+        super(texture, max_health, max_mana);
+        // start with an empty inventory
+        inventory = new ArrayList<>();
     }
 
     @Override
@@ -25,5 +34,9 @@ public class Player extends Character {
         };
 
         model = new Model(player, textures);
+    }
+
+    public void addItem(Item item ) {
+        inventory.add( item );
     }
 }

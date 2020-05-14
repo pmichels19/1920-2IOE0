@@ -2,6 +2,7 @@ package Graphics;
 
 import Graphics.Generators.*;
 import Graphics.IO.Camera;
+import Levels.Assets.Characters.Character;
 import Levels.Assets.Characters.Player;
 import Levels.Framework.joml.*;
 import Levels.Assets.Tiles.*;
@@ -17,17 +18,21 @@ import static java.lang.Math.*;
  */
 public class Renderer {
     private final Set<Point> backgrounds;
-    private final Map<Point, Decoration> decorations;
     private final Set<Point> walls;
 
+    private final Map<Point, Decoration> decorations;
+
     private final Maze maze;
+
     private final Shader SHADER = new Shader("testShader");
 
+    private final Model backgroundModel;
     private final Model wallModel;
     private final Model ceilModel;
-    private final Model backgroundModel;
+
     private final Camera camera;
-    private final Player player;
+
+    private final Character player;
 
     public static final float[] textures = new float[] {
             0, 1,
@@ -72,7 +77,7 @@ public class Renderer {
 
         this.maze = maze;
 
-        player = new Player( Background.PLAYER.getTexture() );
+        player = new Player( Background.PLAYER.getTexture(), 100, 100 );
 
         gatherGridInfo();
 
@@ -102,6 +107,7 @@ public class Renderer {
         }
     }
 
+    // variables for moving the camera and player around
     private int counter = 0;
     private float delta_x = 0;
     private float delta_y = 0;

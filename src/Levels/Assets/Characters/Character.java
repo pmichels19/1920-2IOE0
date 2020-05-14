@@ -4,12 +4,26 @@ import Graphics.Model;
 import Graphics.Shader;
 import Graphics.Texture;
 
-abstract class Character {
+public abstract class Character {
     Model model;
     Texture texture;
 
-    public Character(Texture texture) {
+    // the values for max health and mana
+    int max_health;
+    int max_mana;
+
+    // the values for current health and mana
+    int cur_health;
+    int cur_mana;
+
+    public Character(Texture texture, int max_health, int max_mana) {
         this.texture = texture;
+
+        // start the player off fresh, with full mana and health
+        this.max_health = max_health;
+        this.max_mana = max_mana;
+        cur_health = max_health;
+        cur_mana = max_mana;
     }
 
     abstract void generateModel(float x_pos, float y_pos);
@@ -24,5 +38,21 @@ abstract class Character {
         shader.setUniform("sampler", 0);
 
         model.render();
+    }
+
+    public int getHealth() {
+        return cur_health;
+    }
+
+    public int getMana() {
+        return cur_mana;
+    }
+
+    public void setHealth(int health) {
+        cur_health = health;
+    }
+
+    public void setMana(int mana) {
+        cur_mana = mana;
     }
 }

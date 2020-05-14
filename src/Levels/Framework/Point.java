@@ -1,4 +1,4 @@
-package Main;
+package Levels.Framework;
 
 import java.util.Objects;
 

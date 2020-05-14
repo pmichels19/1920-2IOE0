@@ -1,4 +1,4 @@
-package Graphics;
+package Graphics.IO;
 
 import Levels.Framework.joml.Matrix4f;
 import Levels.Framework.joml.Quaternionf;

@@ -1,10 +1,12 @@
 package Graphics;
 
 import Graphics.Generators.*;
+import Graphics.IO.Camera;
+import Levels.Assets.Characters.Player;
 import Levels.Framework.joml.*;
-import Levels.Tiles.*;
+import Levels.Assets.Tiles.*;
 import Levels.Framework.Maze;
-import Main.Point;
+import Levels.Framework.Point;
 
 import java.util.*;
 
@@ -25,9 +27,9 @@ public class Renderer {
     private final Model ceilModel;
     private final Model backgroundModel;
     private final Camera camera;
-    private Model playerModel;
+    private final Player player;
 
-    final float[] textures = new float[] {
+    public static final float[] textures = new float[] {
             0, 1,
             1, 1,
             1, 0,
@@ -70,6 +72,8 @@ public class Renderer {
 
         this.maze = maze;
 
+        player = new Player( Background.PLAYER.getTexture() );
+
         gatherGridInfo();
 
         wallModel = new WallGenerator(maze, walls).generate();
@@ -98,24 +102,6 @@ public class Renderer {
         }
     }
 
-    /**
-     * generates {@code playerModel} when called
-     */
-    private void generatePlayerModel() {
-        final float[] player = new float[]{
-                // TOP RIGHT
-                delta_x * BLOCK_WIDTH, (delta_y + 1.0f) * BLOCK_WIDTH, 0.0f,
-                // BOTTOM RIGHT
-                delta_x * BLOCK_WIDTH, (delta_y - 1.0f) * BLOCK_WIDTH, 0.0f,
-                // BOTTOM LEFT
-                delta_x * BLOCK_WIDTH, (delta_y - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
-                // TOP LEFT
-                delta_x * BLOCK_WIDTH, (delta_y + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
-        };
-
-        playerModel = new Model(player, textures);
-    }
-
     private int counter = 0;
     private float delta_x = 0;
     private float delta_y = 0;
@@ -128,12 +114,11 @@ public class Renderer {
      */
     public void render() {
         calculateCameraPosition();
-
-        generatePlayerModel();
-
         renderBackgrounds();
         renderWalls();
-        renderPlayer();
+
+        player.render(SHADER, delta_x, delta_y);
+
         renderCeilings();
     }
 
@@ -195,13 +180,6 @@ public class Renderer {
 
         backgroundModel.render();
 
-    }
-
-    private void renderPlayer() {
-        SHADER.setUniform("sampler", Background.PLAYER.getSampler());
-        Background.PLAYER.bindTexture();
-
-        playerModel.render();
     }
 
     /**

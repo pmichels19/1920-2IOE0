@@ -1,4 +1,4 @@
-package Levels.Tiles;
+package Levels.Assets.Tiles;
 
 import Graphics.Texture;
 

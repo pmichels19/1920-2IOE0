@@ -1,4 +1,4 @@
-package Graphics;
+package Graphics.IO;
 
 import org.lwjgl.glfw.GLFWVidMode;
 

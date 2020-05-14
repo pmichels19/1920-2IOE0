@@ -1,4 +1,4 @@
-package Main;
+package Graphics.IO;
 
 public class Timer {
     public static double getTime() {

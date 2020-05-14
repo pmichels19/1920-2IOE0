@@ -74,22 +74,26 @@ public class AStarClickTest {
                 if (window.buttonClicked(GLFW_KEY_ESCAPE)) {
                     window.close();
                 } else if ((window.buttonClicked(GLFW_KEY_W) || window.buttonClicked(GLFW_KEY_UP)) && time > inputAllowed) {
-                    if (maze.moveUp()) {
+                    if (maze.canMoveUp()) {
+                        maze.moveUp();
                         inputAllowed = time + MOVEMENT_CAP;
                         renderer.setChange(moving_frames, 1.0f / (float) moving_frames, true);
                     }
                 } else if ((window.buttonClicked(GLFW_KEY_A) || window.buttonClicked(GLFW_KEY_LEFT)) && time > inputAllowed) {
-                    if (maze.moveLeft()) {
+                    if (maze.canMoveLeft()) {
+                        maze.moveLeft();
                         inputAllowed = time + MOVEMENT_CAP;
                         renderer.setChange(moving_frames, -1.0f / (float) moving_frames, false);
                     }
                 } else if ((window.buttonClicked(GLFW_KEY_S) || window.buttonClicked(GLFW_KEY_DOWN)) && time > inputAllowed) {
-                    if (maze.moveDown()) {
+                    if (maze.canMoveDown()) {
+                        maze.moveDown();
                         inputAllowed = time + MOVEMENT_CAP;
                         renderer.setChange(moving_frames, -1.0f / (float) moving_frames, true);
                     }
                 } else if ((window.buttonClicked(GLFW_KEY_D) || window.buttonClicked(GLFW_KEY_RIGHT)) && time > inputAllowed) {
-                    if (maze.moveRight()) {
+                    if (maze.canMoveRight()) {
+                        maze.moveRight();
                         inputAllowed = time + MOVEMENT_CAP;
                         renderer.setChange(moving_frames, 1.0f / (float) moving_frames, false);
                     }
@@ -102,25 +106,29 @@ public class AStarClickTest {
                         Point next = path.remove(path.size() - 1);
 
                         if (next.getY() > location.getY()) {
-                            if (maze.moveRight()) {
+                            if (maze.canMoveRight()) {
+                                maze.moveRight();
                                 inputAllowed = time + MOVEMENT_CAP;
                                 renderer.setChange(moving_frames, 1.0f / (float) moving_frames, false);
                             }
                         }
                         if (next.getY() < location.getY()) {
-                            if (maze.moveLeft()) {
+                            if (maze.canMoveLeft()) {
+                                maze.moveLeft();
                                 inputAllowed = time + MOVEMENT_CAP;
                                 renderer.setChange(moving_frames, -1.0f / (float) moving_frames, false);
                             }
                         }
                         if (next.getX() < location.getX()) {
-                            if (maze.moveUp()) {
+                            if (maze.canMoveUp()) {
+                                maze.moveUp();
                                 inputAllowed = time + MOVEMENT_CAP;
                                 renderer.setChange(moving_frames, 1.0f / (float) moving_frames, true);
                             }
                         }
                         if (next.getX() > location.getX()) {
-                            if (maze.moveDown()) {
+                            if (maze.canMoveDown()) {
+                                maze.moveDown();
                                 inputAllowed = time + MOVEMENT_CAP;
                                 renderer.setChange(moving_frames, -1.0f / (float) moving_frames, true);
                             }

@@ -142,26 +142,28 @@ public class Renderer {
      */
     private void calculateCameraPosition() {
         if (counter > 0) {
+            // get the current camera position
             Vector3f curPos = camera.getPosition();
-            Vector3f newPosition;
+            // calculate the distance the player model has to cover to stay in the center of the screen
             float dist = block_speed * (1f / BLOCK_WIDTH) * 10f * base_speed;
+
+            // calculate the new camera position
+            Vector3f newPosition = new Vector3f(
+                    // if the movement is vertical, we keep the current x position, otherwise we add the block_speed
+                    vertical ? curPos.x : (curPos.x + block_speed),
+                    // if the movement is vertical we want to add the block_speed corrected w.r.t. the world rotation
+                    // to both the y and z axis, if not we simply keep the current y and z coordinate
+                    vertical ? curPos.y + ( block_speed * (float) cos(-WORLD_ANGLE) ) : curPos.y,
+                    vertical ? curPos.z - ( block_speed * (float) sin( WORLD_ANGLE) ) : curPos.z
+            );
+
             if (vertical) {
-                // when moving vertically, we need to consider the fact that the world is rotated by 30 degrees
-                newPosition = new Vector3f(
-                        curPos.x,
-                        curPos.y + ( block_speed * (float) cos(-WORLD_ANGLE) ),
-                        curPos.z - ( block_speed * (float) sin( WORLD_ANGLE) )
-                );
                 delta_x += block_speed > 0 ? -dist : dist;
             } else {
-                newPosition = new Vector3f(
-                        curPos.x + block_speed,
-                        curPos.y,
-                        curPos.z
-                );
                 delta_y += block_speed > 0 ? dist : -dist;
             }
 
+            // reposition the camera and decrement the counter
             camera.setPosition( newPosition );
             SHADER.setCamera(camera);
             counter--;
@@ -188,7 +190,6 @@ public class Renderer {
      * draws the background (floor) tiles
      */
     private void renderBackgrounds() {
-        // get the texture ready for rendering
         SHADER.setUniform("sampler", Background.BASIC.getSampler());
         Background.BASIC.bindTexture();
 

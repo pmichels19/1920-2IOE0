@@ -5,6 +5,7 @@ import Graphics.Window;
 import Levels.Framework.Maze;
 import org.lwjgl.opengl.GL;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -19,9 +20,14 @@ public class Main {
     private static final int SCREEN_WIDTH = 1920;
     private static final int SCREEN_HEIGHT = 1080;
 
+    private Renderer renderer;
+    private Window window;
+    private Maze maze;
+
     // cap at 60 fps for now
     private static final double FRAME_CAP = 1.0 / 60.0;
     private static final double MOVEMENT_CAP = 1.0 / 5.0;
+    private double inputAllowed;
 
     public static void main (String[] args) throws IOException {
         // start up GLFW
@@ -29,8 +35,16 @@ public class Main {
             throw new IllegalStateException("Failed to initialize GLFW");
         }
 
+        // run the main game loop
+        (new Main()).run();
+
+        // terminate GLFW
+        glfwTerminate();
+    }
+
+    public void run() throws IOException {
         // set up the window for displaying the game
-        Window window = new Window(SCREEN_WIDTH, SCREEN_HEIGHT);
+        window = new Window(SCREEN_WIDTH, SCREEN_HEIGHT);
         window.setFullscreen(false);
         window.createWindow("Mazes of Magic");
 
@@ -38,10 +52,10 @@ public class Main {
         GL.createCapabilities();
 
         // start the maze found in specified file
-        Maze maze = new Maze("level_1");
+        maze = new Maze("level_1");
 
         // set up the renderer with the maze
-        Renderer renderer = new Renderer(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
+        renderer = new Renderer(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
 
         // enable use of textures
         glEnable(GL_TEXTURE_2D);
@@ -56,7 +70,7 @@ public class Main {
         // time that has not yet been processed
         double unprocessed = 0;
         // time to keep track of whether input is allowed
-        double inputAllowed = 0;
+        inputAllowed = 0;
 
         while ( !window.shouldClose() ) {
             boolean can_render = false;
@@ -72,41 +86,6 @@ public class Main {
                 unprocessed -= FRAME_CAP;
                 can_render = true;
 
-                // for now, allow exiting of the window by pressing escape
-                if ( window.buttonClicked(GLFW_KEY_ESCAPE) ) {
-                    window.close();
-                }
-
-                else if ( ( window.buttonClicked(GLFW_KEY_W) || window.buttonClicked(GLFW_KEY_UP) ) && time > inputAllowed ) {
-                    if ( maze.moveUp() ) {
-                        inputAllowed = time + MOVEMENT_CAP;
-                        renderer.setChange( moving_frames, 1.0f / (float) moving_frames, true );
-                    }
-                }
-
-                else if ( ( window.buttonClicked(GLFW_KEY_A) || window.buttonClicked(GLFW_KEY_LEFT) ) && time > inputAllowed ) {
-                    if ( maze.moveLeft() ) {
-                        inputAllowed = time + MOVEMENT_CAP;
-                        renderer.setChange( moving_frames, -1.0f / (float) moving_frames, false );
-                    }
-                }
-
-                else if ( ( window.buttonClicked(GLFW_KEY_S) || window.buttonClicked(GLFW_KEY_DOWN) ) && time > inputAllowed ) {
-                    if ( maze.moveDown() ) {
-                        inputAllowed = time + MOVEMENT_CAP;
-                        renderer.setChange( moving_frames, -1.0f / (float) moving_frames, true );
-                    }
-                }
-
-                else if ( ( window.buttonClicked(GLFW_KEY_D) || window.buttonClicked(GLFW_KEY_RIGHT) ) && time > inputAllowed ) {
-                    if ( maze.moveRight() ) {
-                        inputAllowed = time + MOVEMENT_CAP;
-                        renderer.setChange( moving_frames, 1.0f / (float) moving_frames, false );
-                    }
-                }
-
-                glfwPollEvents();
-
                 if (frame_time >= 1.0) {
                     frame_time = 0;
                     System.out.println("FPS: " + frames);
@@ -116,6 +95,9 @@ public class Main {
 
             // make sure we only draw 60 frames every second
             if (can_render) {
+                glfwPollEvents();
+                checkInputs(moving_frames, time);
+
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 renderer.render();
 
@@ -124,7 +106,63 @@ public class Main {
                 frames++;
             }
         }
+    }
 
-        glfwTerminate();
+    public void checkInputs(int moving_frames, double time) {
+        // for now, allow exiting of the window by pressing escape
+        if ( window.buttonClicked(GLFW_KEY_ESCAPE) ) {
+            window.close();
+        }
+
+        if ( window.buttonClicked(GLFW_KEY_F5) ) {
+            try {
+                maze.saveCurrentMaze();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // booleans to check what buttons were pressed
+        boolean WReq = window.inputW();
+        boolean AReq = window.inputA();
+        boolean SReq = window.inputS();
+        boolean DReq = window.inputD();
+        // booleans to check what movement is possible
+        boolean WPoss = maze.canMoveUp();
+        boolean APoss = maze.canMoveLeft();
+        boolean SPoss = maze.canMoveDown();
+        boolean DPoss = maze.canMoveRight();
+
+        if (time > inputAllowed) {
+            if ( WReq ) {
+                if ( WPoss ) {
+                    maze.moveUp();
+
+                    inputAllowed = time + MOVEMENT_CAP;
+                    renderer.setChange(moving_frames, 1.0f / (float) moving_frames, true);
+                }
+            } else if ( AReq ) {
+                if ( APoss ) {
+                    maze.moveLeft();
+
+                    inputAllowed = time + MOVEMENT_CAP;
+                    renderer.setChange(moving_frames, -1.0f / (float) moving_frames, false);
+                }
+            } else if ( SReq ) {
+                if ( SPoss ) {
+                    maze.moveDown();
+
+                    inputAllowed = time + MOVEMENT_CAP;
+                    renderer.setChange(moving_frames, -1.0f / (float) moving_frames, true);
+                }
+            } else if ( DReq ) {
+                if ( DPoss ) {
+                    maze.moveRight();
+
+                    inputAllowed = time + MOVEMENT_CAP;
+                    renderer.setChange(moving_frames, 1.0f / (float) moving_frames, false);
+                }
+            }
+        }
     }
 }

@@ -2,7 +2,7 @@ package Graphics.Generators;
 
 import Graphics.Model;
 import Levels.Framework.Maze;
-import Main.Point;
+import Levels.Framework.Point;
 import Graphics.Renderer;
 
 import java.util.Collection;

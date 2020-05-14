@@ -1,7 +1,7 @@
 package AI;
 
 import Levels.Framework.Maze;
-import Main.Point;
+import Levels.Framework.Point;
 import java.util.ArrayList;
 
 /**

@@ -1,5 +1,6 @@
 package Graphics;
 
+import Graphics.IO.Camera;
 import Levels.Framework.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 

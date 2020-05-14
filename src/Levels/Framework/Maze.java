@@ -1,9 +1,6 @@
 package Levels.Framework;
 
-import Main.Point;
-
 import java.io.*;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 

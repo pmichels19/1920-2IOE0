@@ -1,9 +1,9 @@
 package AI;
 
 import Graphics.Renderer;
-import Main.Point;
-import Main.Timer;
-import Graphics.Window;
+import Levels.Framework.Point;
+import Graphics.IO.Timer;
+import Graphics.IO.Window;
 import Levels.Framework.Maze;
 import org.lwjgl.opengl.GL;
 

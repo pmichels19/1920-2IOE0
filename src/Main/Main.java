@@ -3,6 +3,9 @@ package Main;
 import Graphics.IO.Timer;
 import Graphics.Renderer;
 import Graphics.IO.Window;
+import Levels.Assets.Characters.Character;
+import Levels.Assets.Characters.Player;
+import Levels.Assets.Tiles.Background;
 import Levels.Framework.Maze;
 import org.lwjgl.opengl.GL;
 
@@ -21,6 +24,7 @@ public class Main {
     private static final int SCREEN_WIDTH = 1920;
     private static final int SCREEN_HEIGHT = 1080;
 
+    private Character player;
     private Renderer renderer;
     private Window window;
     private Maze maze;
@@ -52,11 +56,12 @@ public class Main {
         // initialize GLFW capabilities
         GL.createCapabilities();
 
-        // start the maze found in specified file
+        // start the maze found in specified file and create the player object
         maze = new Maze("level_1");
+        player = new Player(Background.PLAYER.getTexture(), 100, 100 );
 
-        // set up the renderer with the maze
-        renderer = new Renderer(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
+        // set up the renderer with the player and maze created above
+        renderer = new Renderer(player, maze, SCREEN_WIDTH, SCREEN_HEIGHT);
 
         // enable use of textures
         glEnable(GL_TEXTURE_2D);

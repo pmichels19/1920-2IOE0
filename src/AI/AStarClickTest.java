@@ -1,6 +1,8 @@
 package AI;
 
 import Graphics.Renderer;
+import Levels.Assets.Characters.Player;
+import Levels.Assets.Tiles.Background;
 import Levels.Framework.Point;
 import Graphics.IO.Timer;
 import Graphics.IO.Window;
@@ -38,7 +40,8 @@ public class AStarClickTest {
         GL.createCapabilities();
 
         Maze maze = new Maze("level_1");
-        Renderer renderer = new Renderer(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
+        Player player = new Player(Background.PLAYER.getTexture(), 100, 100 );
+        Renderer renderer = new Renderer(player, maze, SCREEN_WIDTH, SCREEN_HEIGHT);
 
         // enable use of textures
         glEnable(GL_TEXTURE_2D);

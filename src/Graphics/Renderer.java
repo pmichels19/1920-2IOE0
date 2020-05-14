@@ -51,7 +51,7 @@ public class Renderer {
      * @param width the width of the window
      * @param height the height of the window
      */
-    public Renderer(Maze maze, int width, int height) {
+    public Renderer(Character player, Maze maze, int width, int height) {
         // prepare the camera
         camera = new Camera();
         camera.setPerspective((float) toRadians(40.0), (float) width / (float) height, 0.01f, 1000.0f);
@@ -72,7 +72,7 @@ public class Renderer {
 
         this.maze = maze;
 
-        player = new Player( Background.PLAYER.getTexture(), 100, 100 );
+        this.player = player;
 
         gatherGridInfo();
 

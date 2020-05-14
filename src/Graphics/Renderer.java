@@ -54,12 +54,7 @@ public class Renderer {
     public Renderer(Maze maze, int width, int height) {
         // prepare the camera
         camera = new Camera();
-        camera.setPerspective(
-                (float) toRadians(40.0),
-                (float) width / (float) height,
-                0.01f,
-                1000.0f
-        );
+        camera.setPerspective((float) toRadians(40.0), (float) width / (float) height, 0.01f, 1000.0f);
         camera.setPosition(new Vector3f(0f, 0f, 24f * BLOCK_WIDTH));
 
         // prepare the transformations
@@ -148,11 +143,9 @@ public class Renderer {
                     vertical ? curPos.z - ( block_speed * (float) sin( WORLD_ANGLE) ) : curPos.z
             );
 
-            if (vertical) {
-                delta_x += block_speed > 0 ? -dist : dist;
-            } else {
-                delta_y += block_speed > 0 ? dist : -dist;
-            }
+            // calculate the amount of movement in the x and y direction
+            delta_x += vertical ? (block_speed > 0 ? -dist : dist) : 0f;
+            delta_y += vertical ? 0f : (block_speed > 0 ? dist : -dist);
 
             // reposition the camera and decrement the counter
             camera.setPosition( newPosition );

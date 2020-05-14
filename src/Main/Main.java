@@ -60,6 +60,9 @@ public class Main {
 
         // enable use of textures
         glEnable(GL_TEXTURE_2D);
+        // make transparent backgrounds in textures actually transparent
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // Stuff to keep track of the fps
         double frame_time = 0;

@@ -5,9 +5,13 @@ import Graphics.Transforming.Camera;
 import Graphics.OpenGL.Shader;
 import Graphics.Transforming.Transform;
 import Levels.Characters.Character;
+import Levels.Framework.Point;
 import Levels.Framework.joml.*;
 import Levels.Assets.Tiles.*;
 import Levels.Framework.Maze;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import static java.lang.Math.*;
 
@@ -28,6 +32,12 @@ public class World {
     // variables to keep track of the player location in the world
     private float xPlayer;
     private float yPlayer;
+
+    // variables for moving the camera and player around
+    private int counter = 0;
+    private float speed;
+    private float block_speed;
+    private boolean vertical;
 
     /**
      * initialises the global variables for the renderer
@@ -66,39 +76,79 @@ public class World {
 
         // prepare the tile renderer for rendering
         renderer = TileRenderer.getInstance();
-        renderer.setCamera(camera);
-        renderer.setShader(SHADER);
     }
-
-    // variables for moving the camera and player around
-    private int counter = 0;
-    private float speed;
-    private float block_speed;
-    private boolean vertical;
 
     /**
      * renders the maze
      */
     public void render() {
+        // calculate the camera position
         calculateCameraPosition();
 
-        SHADER.bind();
+        // start up sets to make sure the rendering happens in the right order
+        Set<Point> floors = new HashSet<>();
+        Set<Point> leftWalls = new HashSet<>();
+        Set<Point> rightWalls = new HashSet<>();
+        Set<Point> faceWalls = new HashSet<>();
+        Set<Point> ceilings = new HashSet<>();
+
+        // set the camera and shader for the renderer
+        renderer.setCamera(camera);
+        renderer.setShader(SHADER);
+
         char[][] grid = maze.getGrid();
 
         for ( int i = 0; i < grid.length; i++ ) {
             for ( int j = 0; j < grid[i].length; j++ ) {
-                // determine what tile needs to be drawn
+                // determine what tile needs to be drawn and fill that into the sets instantiated above
                 if ( grid[i][j] == Maze.MARKER_WALL ) {
-                    renderer.renderTile( Wall.CASTLE_WALL.getTexture(), j, grid.length - i, 3 );
-                } else {
-                    renderer.renderTile( Background.BASIC.getTexture(), j, grid.length - i, 2 );
-                }
+                    // we check if the tile to left is also a wall
+                    if ( j > 0 && grid[i][j - 1] != Maze.MARKER_WALL ) {
+                        // if there is no wall to the left, we wish to draw the left side of this wall
+                        leftWalls.add( new Point(j, grid.length - i) );
+                    }
 
+                    // we check if the tile to right is also a wall
+                    if ( j < grid.length - 1 && grid[i][j + 1] != Maze.MARKER_WALL ) {
+                        // if there is no wall to the right, we wish to draw the right side of this wall
+                        rightWalls.add( new Point(j, grid.length - i) );
+                    }
+
+                    // we check if the tile in front is also a wall
+                    if ( i < grid.length - 1 && grid[i + 1][j] != Maze.MARKER_WALL ) {
+                        // if there is no wall in front, we wish to draw the face of this wall
+                        faceWalls.add( new Point(j, grid.length - i) );
+                    }
+
+                    // we always want to render a ceiling:
+                    ceilings.add( new Point(j, grid.length - i) );
+                } else if ( grid[i][j] == Maze.MARKER_SPACE || grid[i][j] == Maze.MARKER_PLAYER ) {
+                    floors.add( new Point( j, grid.length - i ) );
+                }
             }
         }
 
-        // finally render the player
+        for ( Point point : floors ) {
+            renderer.renderTile( Background.BASIC.getTexture(), point.getX(), point.getY(), 2 );
+        }
+
+        for ( Point point : leftWalls ) {
+            renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), 4 );
+        }
+
+        for ( Point point : rightWalls ) {
+            renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), 1 );
+        }
+
+        for ( Point point : faceWalls ) {
+            renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), 3 );
+        }
+
         renderer.renderTile( Background.PLAYER.getTexture(), yPlayer, grid.length - xPlayer, 2 );
+
+        for ( Point point : ceilings ) {
+            renderer.renderTile( Wall.CEILING.getTexture(), point.getX(), point.getY(), 0 );
+        }
     }
 
     /**

@@ -1,6 +1,6 @@
 package Levels.Assets.Tiles;
 
-import Graphics.Texture;
+import Graphics.OpenGL.Texture;
 
 /**
  * Enum that holds data for wall tiles, these have a z-index of 1

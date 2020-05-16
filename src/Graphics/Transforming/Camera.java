@@ -1,28 +1,35 @@
-package Graphics;
+package Graphics.Transforming;
 
 import Levels.Framework.joml.Matrix4f;
 import Levels.Framework.joml.Quaternionf;
 import Levels.Framework.joml.Vector3f;
 
-public class Transform {
+public class Camera {
     private Vector3f position;
     private Quaternionf rotation;
-    private Vector3f scale;
+    private Matrix4f projection;
 
-    public Transform() {
+    public Camera() {
         position = new Vector3f();
         rotation = new Quaternionf();
-        scale = new Vector3f(1);
+        projection = new Matrix4f();
     }
 
     public Matrix4f getTransformation() {
         Matrix4f result = new Matrix4f();
 
-        result.translate(position);
-        result.rotate(rotation);
-        result.scale(scale);
+        result.rotate( rotation.conjugate( new Quaternionf() ) );
+        result.translate( position.mul(-1, new Vector3f() ) );
 
         return result;
+    }
+
+    public void setOrthoGraphic(float left, float right, float top, float bottom) {
+        projection.setOrtho2D(left, right, top, bottom);
+    }
+
+    public void setPerspective(float fov, float aspectRatio, float zNear, float zFar) {
+        projection.setPerspective(fov, aspectRatio, zNear, zFar);
     }
 
     public Vector3f getPosition() {
@@ -41,11 +48,7 @@ public class Transform {
         this.rotation = rotation;
     }
 
-    public Vector3f getScale() {
-        return scale;
-    }
-
-    public void setScale(Vector3f scale) {
-        this.scale = scale;
+    public Matrix4f getProjection() {
+        return projection;
     }
 }

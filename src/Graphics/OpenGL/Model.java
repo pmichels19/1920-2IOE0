@@ -1,4 +1,4 @@
-package Graphics;
+package Graphics.OpenGL;
 
 import static org.lwjgl.opengl.GL20.*;
 

@@ -1,7 +1,7 @@
 package AI;
 
-import Graphics.Renderer;
-import Levels.Assets.Characters.Player;
+import Main.World;
+import Levels.Characters.Player;
 import Levels.Assets.Tiles.Background;
 import Levels.Framework.Point;
 import Graphics.IO.Timer;
@@ -41,7 +41,7 @@ public class AStarClickTest {
 
         Maze maze = new Maze("level_1");
         Player player = new Player(Background.PLAYER.getTexture(), 100, 100 );
-        Renderer renderer = new Renderer(player, maze, SCREEN_WIDTH, SCREEN_HEIGHT);
+        World world = new World(player, maze, SCREEN_WIDTH, SCREEN_HEIGHT);
 
         // enable use of textures
         glEnable(GL_TEXTURE_2D);
@@ -80,25 +80,25 @@ public class AStarClickTest {
                     if (maze.canMoveUp()) {
                         maze.moveUp();
                         inputAllowed = time + MOVEMENT_CAP;
-                        renderer.setChange(moving_frames, 1.0f / (float) moving_frames, true);
+                        world.setChange(moving_frames, 1.0f / (float) moving_frames, true);
                     }
                 } else if ((window.buttonClicked(GLFW_KEY_A) || window.buttonClicked(GLFW_KEY_LEFT)) && time > inputAllowed) {
                     if (maze.canMoveLeft()) {
                         maze.moveLeft();
                         inputAllowed = time + MOVEMENT_CAP;
-                        renderer.setChange(moving_frames, -1.0f / (float) moving_frames, false);
+                        world.setChange(moving_frames, -1.0f / (float) moving_frames, false);
                     }
                 } else if ((window.buttonClicked(GLFW_KEY_S) || window.buttonClicked(GLFW_KEY_DOWN)) && time > inputAllowed) {
                     if (maze.canMoveDown()) {
                         maze.moveDown();
                         inputAllowed = time + MOVEMENT_CAP;
-                        renderer.setChange(moving_frames, -1.0f / (float) moving_frames, true);
+                        world.setChange(moving_frames, -1.0f / (float) moving_frames, true);
                     }
                 } else if ((window.buttonClicked(GLFW_KEY_D) || window.buttonClicked(GLFW_KEY_RIGHT)) && time > inputAllowed) {
                     if (maze.canMoveRight()) {
                         maze.moveRight();
                         inputAllowed = time + MOVEMENT_CAP;
-                        renderer.setChange(moving_frames, 1.0f / (float) moving_frames, false);
+                        world.setChange(moving_frames, 1.0f / (float) moving_frames, false);
                     }
                 } else if ((window.buttonClicked(GLFW_KEY_K)) && time > inputAllowed) {
                     Point location = maze.getPlayerLocation();
@@ -112,28 +112,28 @@ public class AStarClickTest {
                             if (maze.canMoveRight()) {
                                 maze.moveRight();
                                 inputAllowed = time + MOVEMENT_CAP;
-                                renderer.setChange(moving_frames, 1.0f / (float) moving_frames, false);
+                                world.setChange(moving_frames, 1.0f / (float) moving_frames, false);
                             }
                         }
                         if (next.getY() < location.getY()) {
                             if (maze.canMoveLeft()) {
                                 maze.moveLeft();
                                 inputAllowed = time + MOVEMENT_CAP;
-                                renderer.setChange(moving_frames, -1.0f / (float) moving_frames, false);
+                                world.setChange(moving_frames, -1.0f / (float) moving_frames, false);
                             }
                         }
                         if (next.getX() < location.getX()) {
                             if (maze.canMoveUp()) {
                                 maze.moveUp();
                                 inputAllowed = time + MOVEMENT_CAP;
-                                renderer.setChange(moving_frames, 1.0f / (float) moving_frames, true);
+                                world.setChange(moving_frames, 1.0f / (float) moving_frames, true);
                             }
                         }
                         if (next.getX() > location.getX()) {
                             if (maze.canMoveDown()) {
                                 maze.moveDown();
                                 inputAllowed = time + MOVEMENT_CAP;
-                                renderer.setChange(moving_frames, -1.0f / (float) moving_frames, true);
+                                world.setChange(moving_frames, -1.0f / (float) moving_frames, true);
                             }
                         }
                     }
@@ -151,7 +151,7 @@ public class AStarClickTest {
             // make sure we only draw 60 frames every second
             if (can_render) {
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                renderer.render();
+                world.render();
 
                 window.swapBuffers();
 

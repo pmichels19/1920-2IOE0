@@ -1,8 +1,8 @@
-package Levels.Assets.Characters;
+package Levels.Characters;
 
-import Graphics.Model;
-import Graphics.Shader;
-import Graphics.Texture;
+import Graphics.OpenGL.Model;
+import Graphics.OpenGL.Shader;
+import Graphics.OpenGL.Texture;
 
 public abstract class Character {
     Model model;

@@ -1,6 +1,7 @@
-package Graphics;
+package Graphics.OpenGL;
 
-import Graphics.IO.Camera;
+import Graphics.Transforming.Camera;
+import Graphics.Transforming.Transform;
 import Levels.Framework.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 

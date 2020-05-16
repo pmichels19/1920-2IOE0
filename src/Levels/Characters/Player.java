@@ -1,14 +1,11 @@
-package Levels.Assets.Characters;
+package Levels.Characters;
 
-import Graphics.Model;
-import Graphics.Texture;
+import Graphics.OpenGL.Model;
+import Graphics.OpenGL.Texture;
 import Levels.Assets.Items.Item;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static Graphics.Renderer.BLOCK_WIDTH;
-import static Graphics.Renderer.textures;
 
 public class Player extends Character {
     private final List<Item> inventory;
@@ -24,16 +21,24 @@ public class Player extends Character {
     void generateModel(float x_pos, float y_pos) {
         final float[] player = new float[]{
                 // TOP RIGHT
-                x_pos * BLOCK_WIDTH, (y_pos + 1.0f) * BLOCK_WIDTH, 0.0f,
+                x_pos, y_pos + 1.0f, 0.0f,
                 // BOTTOM RIGHT
-                x_pos * BLOCK_WIDTH, (y_pos - 1.0f) * BLOCK_WIDTH, 0.0f,
+                x_pos, y_pos - 1.0f, 0.0f,
                 // BOTTOM LEFT
-                x_pos * BLOCK_WIDTH, (y_pos - 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
+                x_pos, y_pos - 1.0f, 2,
                 // TOP LEFT
-                x_pos * BLOCK_WIDTH, (y_pos + 1.0f) * BLOCK_WIDTH, 2 * BLOCK_WIDTH,
+                x_pos, y_pos + 1.0f, 2,
         };
 
-        model = new Model(player, textures);
+        model = new Model(
+                player,
+                new float[] {
+                    0, 1,
+                    1, 1,
+                    1, 0,
+                    0, 0
+                }
+        );
     }
 
     public void addItem(Item item ) {

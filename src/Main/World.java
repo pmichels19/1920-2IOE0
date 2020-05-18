@@ -121,7 +121,7 @@ public class World {
         }
 
         for ( Point point : floors ) {
-            renderer.renderTile( Background.BASIC.getTexture(), point.getX(), point.getY(), TileRenderer.CEILS );
+            renderer.renderTile( Background.BASIC.getTexture(), point.getX(), point.getY(), TileRenderer.FLOOR );
         }
 
         for ( Point point : leftWalls ) {

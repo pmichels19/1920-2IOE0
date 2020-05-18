@@ -136,7 +136,7 @@ public class World {
             renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES );
         }
 
-        renderer.renderTile( Background.PLAYER.getTexture(), xPlayer, grid.length - yPlayer, TileRenderer.FLOOR );
+        renderer.renderTile( Background.PLAYER.getTexture(), xPlayer, grid.length + 0.5f - yPlayer, TileRenderer.FACES );
 
         for ( Point point : ceilings ) {
             renderer.renderTile( Wall.CEILING.getTexture(), point.getX(), point.getY(), TileRenderer.CEILS );

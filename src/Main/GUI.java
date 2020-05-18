@@ -56,15 +56,23 @@ public class GUI {
         renderer.renderTile( GUIElements.BACKGROUND.getTexture(), 0.5f, 0.5f, TileRenderer.FLOOR );
 
         // calculate the percentage of health and mana left
-        float health = ( (float) player.getCurrentHealth() ) / ( (float) player.getMaxHealth() );
-        float mana = ( (float) player.getCurrentMana() ) / ( (float) player.getMaxMana() );
+        float healthPercent = ( (float) player.getCurrentHealth() ) / ( (float) player.getMaxHealth() );
+        float manaPercent = ( (float) player.getCurrentMana() ) / ( (float) player.getMaxMana() );
 
-        // render the health bar and mana bar
-        transform.setScale( new Vector3f( 0.19f * health, 0.04f, 1 ) );
+        // first we render the missing health bar
+        transform.setScale( new Vector3f( 0.19f, 0.04f, 1 ) );
+        renderer.setTransform(transform);
+        renderer.renderTile( GUIElements.MISSING_HEALTH.getTexture(), 0.5f, 1.75f, TileRenderer.FLOOR );
+        // then the health bar
+        transform.setScale( new Vector3f( 0.19f * healthPercent, 0.04f, 1 ) );
         renderer.setTransform(transform);
         renderer.renderTile( GUIElements.HEALTH.getTexture(), 0.5f, 1.75f, TileRenderer.FLOOR );
-
-        transform.setScale( new Vector3f( 0.19f * mana, 0.04f, 1 ) );
+        // then the missing mana bar
+        transform.setScale( new Vector3f( 0.19f, 0.04f, 1 ) );
+        renderer.setTransform(transform);
+        renderer.renderTile( GUIElements.MISSING_MANA.getTexture(), 0.5f, 0.5f, TileRenderer.FLOOR );
+        // and finally the mana bar
+        transform.setScale( new Vector3f( 0.19f * manaPercent, 0.04f, 1 ) );
         renderer.setTransform(transform);
         renderer.renderTile( GUIElements.MANA.getTexture(), 0.5f, 0.5f, TileRenderer.FLOOR );
     }

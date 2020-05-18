@@ -6,8 +6,14 @@ public enum GUIElements {
     MANA (
             "mana_color.png"
     ),
+    MISSING_MANA (
+            "missing_mana_color.png"
+    ),
     HEALTH (
-            "red_color.png"
+            "health_color.png"
+    ),
+    MISSING_HEALTH (
+            "missing_health_color.png"
     ),
     BACKGROUND (
             "GUI_background.png"

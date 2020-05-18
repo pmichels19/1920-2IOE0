@@ -55,7 +55,7 @@ public class Main {
         GL.createCapabilities();
 
         // start the maze found in specified file and create the player object
-        maze = new Maze("target");
+        maze = new Maze("level_1");
         player = Player.getInstance();
 
         // set up the renderer with the player and maze created above

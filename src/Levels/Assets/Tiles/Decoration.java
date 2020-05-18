@@ -8,53 +8,34 @@ import Graphics.OpenGL.Texture;
 public enum Decoration {
     TABLE (
             false,
-            "src/Textures/Decoration/table.png",
-            2
+            "src/Textures/Decoration/table.png"
     ),
     TORCH (
             true,
-            "src/Textures/Decoration/torch.jpg",
-            3
+            "src/Textures/Decoration/torch.jpg"
     ),
     CHEST (
             false,
-            "src/Textures/Decoration/chest.jpg",
-            4
+            "src/Textures/Decoration/chest.jpg"
     ),
     DOOR (
             false,
-            "src/Textures/Decoration/door.jpg",
-            5
-    ),
-    CAMPFIRE (
-            true,
-            "src/Textures/Decoration/campfire.jpg",
-            6
+            "src/Textures/Decoration/door.jpg"
     );
 
     private final boolean lightSource;
     private final Texture texture;
-    private final int sampler;
 
-    Decoration(boolean lightSource, String filePath, int sampler) {
+    Decoration(boolean lightSource, String filePath) {
         this.lightSource = lightSource;
         this.texture = new Texture(filePath);
-        this.sampler = sampler;
     }
 
     public Texture getTexture() {
         return texture;
     }
 
-    public void bindTexture() {
-        texture.bind(sampler);
-    }
-
     public boolean isLightSource() {
         return lightSource;
-    }
-
-    public int getSampler() {
-        return sampler;
     }
 }

@@ -1,18 +1,15 @@
 package Main;
 
-import Graphics.OpenGL.Texture;
 import Graphics.TileRenderer;
 import Graphics.Transforming.Camera;
 import Graphics.OpenGL.Shader;
 import Graphics.Transforming.Transform;
-import Levels.Characters.Character;
 import Levels.Framework.Point;
 import Levels.Framework.joml.*;
 import Levels.Assets.Tiles.*;
 import Levels.Framework.Maze;
 
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import static java.lang.Math.*;
@@ -28,6 +25,8 @@ public class World {
     private final Shader SHADER = new Shader("testShader");
     // the camera containing the camera position and projection on the world
     private final Camera camera;
+    // the transfomation to display the world in the proper position
+    private final Transform transform;
     // the tile renderer to actaully draw the world and the player
     private final TileRenderer renderer;
 
@@ -42,13 +41,13 @@ public class World {
      * @param width the width of the window
      * @param height the height of the window
      */
-    public World(Character player, Maze maze, int width, int height) {
+    public World(Maze maze, int width, int height) {
         // prepare the camera by setting up its perspective
         camera = new Camera();
         camera.setPerspective((float) toRadians(40.0), (float) width / (float) height, 0.01f, 1000.0f);
 
         // prepare the transformations of the world
-        Transform transform = new Transform();
+        transform = new Transform();
         transform.getRotation().rotateAxis( -(float) toRadians(35.0), 1, 0, 0 );
 
         // set the maze object
@@ -79,8 +78,9 @@ public class World {
      */
     public void render() {
         // set the camera and shader for the renderer
-        renderer.setCamera(camera);
         renderer.setShader(SHADER);
+        renderer.setCamera(camera);
+        renderer.setTransform(transform);
 
         // sets used for gathering points to determine drawing locations of tiles
         Set<Point> floors = new HashSet<>();

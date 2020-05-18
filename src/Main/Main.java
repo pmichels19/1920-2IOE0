@@ -23,7 +23,7 @@ public class Main {
     private static final int SCREEN_WIDTH = 1920;
     private static final int SCREEN_HEIGHT = 1080;
 
-    private Character player;
+    private Player player;
     private World world;
     private Window window;
     private Maze maze;
@@ -55,11 +55,13 @@ public class Main {
         GL.createCapabilities();
 
         // start the maze found in specified file and create the player object
-        maze = new Maze("level_1");
-        player = new Player(Background.PLAYER.getTexture(), 100, 100 );
+        maze = new Maze("target");
+        player = Player.getInstance();
 
         // set up the renderer with the player and maze created above
-        world = new World(player, maze, SCREEN_WIDTH, SCREEN_HEIGHT);
+        world = new World(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
+        // and start up the GUI
+        GUI gui = new GUI();
 
         // enable use of textures
         glEnable(GL_TEXTURE_2D);
@@ -115,6 +117,7 @@ public class Main {
 
                 // render the world
                 world.render();
+                gui.render();
                 window.swapBuffers();
 
                 frames++;
@@ -138,6 +141,18 @@ public class Main {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
+        }
+
+        if ( window.buttonClicked(GLFW_KEY_Q) ) {
+             player.changeHealth(-1);
+        } else if ( window.buttonClicked(GLFW_KEY_E) ) {
+            player.changeHealth(1);
+        }
+
+        if ( window.buttonClicked(GLFW_KEY_Z) ) {
+            player.changeMana(-1);
+        } else if ( window.buttonClicked(GLFW_KEY_C) ) {
+            player.changeMana(1);
         }
 
         // moving is only allowed if the player is not currently moving

@@ -4,12 +4,15 @@ import Graphics.OpenGL.Model;
 import Graphics.OpenGL.Shader;
 import Graphics.OpenGL.Texture;
 import Graphics.Transforming.Camera;
+import Graphics.Transforming.Transform;
 import Levels.Framework.joml.Matrix4f;
 import Levels.Framework.joml.Vector3f;
 
 public class TileRenderer {
 
+    // variables to make sure the render ends up in the right position
     private Camera camera;
+    private Transform transform;
     private Shader shader;
 
     private static TileRenderer renderer;
@@ -112,6 +115,12 @@ public class TileRenderer {
      */
     public void setCamera(Camera camera) {
         this.camera = camera;
+        shader.setCamera(camera);
+    }
+
+    public void setTransform(Transform transform) {
+        this.transform = transform;
+        shader.setTransform(transform);
     }
 
     /**
@@ -121,7 +130,6 @@ public class TileRenderer {
      */
     public void setShader(Shader shader) {
         this.shader = shader;
-        shader.bind();
     }
 
     /**
@@ -129,17 +137,15 @@ public class TileRenderer {
      *
      * @param texture the texture to apply to the model
      * @param x the x coordinate to draw the tile at
-     * @param y the y coordinate to draw the at
+     * @param y the y coordinate to draw the tile at
      * @param model the model to render based on assignments above
      */
-    public void renderTile(Texture texture, float x, float y, int model ) {
+    public void renderTile(Texture texture, float x, float y, int model) {
+        // bind the shader
+        shader.bind();
+
         // calculate the position of the tile
         Matrix4f tilePosition = new Matrix4f().translate( new Vector3f(x * 2f, y * 2f, 0 ) );
-
-        // offset the position w.r.t. the camera projection and the provided transformation matrix
-        Matrix4f target = new Matrix4f();
-        camera.getProjection().mul( target );
-        target.mul( tilePosition );
 
         // set the shader uniforms, so the proper position and texture is used
         shader.setUniform("tilePosition", tilePosition );

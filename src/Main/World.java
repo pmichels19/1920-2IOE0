@@ -61,7 +61,7 @@ public class World {
         // initialize the camera by centering it on the player
         camera.setPosition( new Vector3f(
                 xPlayer * 2,
-                yPlayer * 2 - 8,
+                (maze.getGrid().length - yPlayer) * 2 - 10,
                 16
         ) );
 

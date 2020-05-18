@@ -1,7 +1,6 @@
 package AI;
 
 import Levels.Characters.Character;
-import Main.Main;
 import Main.World;
 import Levels.Characters.Player;
 import Levels.Assets.Tiles.Background;

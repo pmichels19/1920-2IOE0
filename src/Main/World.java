@@ -1,5 +1,6 @@
 package Main;
 
+import Graphics.OpenGL.Texture;
 import Graphics.TileRenderer;
 import Graphics.Transforming.Camera;
 import Graphics.OpenGL.Shader;
@@ -11,6 +12,7 @@ import Levels.Assets.Tiles.*;
 import Levels.Framework.Maze;
 
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static java.lang.Math.*;
@@ -33,12 +35,6 @@ public class World {
     private float xPlayer;
     private float yPlayer;
 
-    // variables for moving the camera and player around
-    private int counter = 0;
-    private float speed;
-    private float block_speed;
-    private boolean vertical;
-
     /**
      * initialises the global variables for the renderer
      *
@@ -59,13 +55,13 @@ public class World {
         this.maze = maze;
 
         // initialize the player location variables
-        xPlayer = maze.getPlayerLocation().getX();
-        yPlayer = maze.getPlayerLocation().getY();
+        yPlayer = maze.getPlayerLocation().getX();
+        xPlayer = maze.getPlayerLocation().getY();
 
-        // center the camera on the player character
+        // initialize the camera by centering it on the player
         camera.setPosition( new Vector3f(
-                yPlayer * 2,
-                xPlayer * 2 - 8,
+                xPlayer * 2,
+                yPlayer * 2 - 8,
                 16
         ) );
 
@@ -82,25 +78,21 @@ public class World {
      * renders the maze
      */
     public void render() {
-        // calculate the camera position
-        calculateCameraPosition();
+        // set the camera and shader for the renderer
+        renderer.setCamera(camera);
+        renderer.setShader(SHADER);
 
-        // start up sets to make sure the rendering happens in the right order
+        // sets used for gathering points to determine drawing locations of tiles
         Set<Point> floors = new HashSet<>();
         Set<Point> leftWalls = new HashSet<>();
         Set<Point> rightWalls = new HashSet<>();
         Set<Point> faceWalls = new HashSet<>();
         Set<Point> ceilings = new HashSet<>();
 
-        // set the camera and shader for the renderer
-        renderer.setCamera(camera);
-        renderer.setShader(SHADER);
-
         char[][] grid = maze.getGrid();
-
         for ( int i = 0; i < grid.length; i++ ) {
             for ( int j = 0; j < grid[i].length; j++ ) {
-                // determine what tile needs to be drawn and fill that into the sets instantiated above
+                // determine what tile needs to be drawn and fill that into the sets made above
                 if ( grid[i][j] == Maze.MARKER_WALL ) {
                     // we check if the tile to left is also a wall
                     if ( j > 0 && grid[i][j - 1] != Maze.MARKER_WALL ) {
@@ -129,69 +121,60 @@ public class World {
         }
 
         for ( Point point : floors ) {
-            renderer.renderTile( Background.BASIC.getTexture(), point.getX(), point.getY(), 2 );
+            renderer.renderTile( Background.BASIC.getTexture(), point.getX(), point.getY(), TileRenderer.CEILS );
         }
 
         for ( Point point : leftWalls ) {
-            renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), 4 );
+            renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), TileRenderer.LEFTS );
         }
 
         for ( Point point : rightWalls ) {
-            renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), 1 );
+            renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), TileRenderer.RIGHT );
         }
 
         for ( Point point : faceWalls ) {
-            renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), 3 );
+            renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES );
         }
 
-        renderer.renderTile( Background.PLAYER.getTexture(), yPlayer, grid.length - xPlayer, 2 );
+        renderer.renderTile( Background.PLAYER.getTexture(), xPlayer, grid.length - yPlayer, TileRenderer.FLOOR );
 
         for ( Point point : ceilings ) {
-            renderer.renderTile( Wall.CEILING.getTexture(), point.getX(), point.getY(), 0 );
+            renderer.renderTile( Wall.CEILING.getTexture(), point.getX(), point.getY(), TileRenderer.CEILS );
         }
     }
 
     /**
-     * repositions the camera if needed
-     */
-    private void calculateCameraPosition() {
-        if (counter > 0) {
-            // get the current camera position
-            Vector3f curPos = camera.getPosition();
-
-            // calculate the new camera position
-            Vector3f newPosition = new Vector3f(
-                    // if the movement is vertical, we keep the current x position, otherwise we add the block_speed
-                    vertical ? curPos.x : (curPos.x + block_speed),
-                    // if the movement is vertical, we add the block_speed to the current y position
-                    vertical ? (curPos.y + block_speed) : curPos.y,
-                    curPos.z
-            );
-
-            // calculate the amount of movement in the x and y direction
-            xPlayer += vertical ? -speed : 0f;
-            yPlayer += vertical ? 0f : speed;
-
-            // reposition the camera and decrement the counter
-            camera.setPosition( newPosition );
-            SHADER.setCamera(camera);
-            counter--;
-        }
-    }
-
-    /**
-     * sets the counter, speed and vertical variable such that the camera can move smoothly with a speed of
-     * {@code speed} over {@code frames} frames in the specified direction
+     * moves the player character as specified by the parameters
      *
-     * @param frames the amount of frames the camera has to move for
-     * @param speed the speed of the camera
-     * @param vertical whether movement is on the x or the y axis
+     * @param speed the distance covered in a single frame
+     * @param vertical whether movement is supposed to be vertical or not
      */
-    public void setChange(int frames, float speed, boolean vertical) {
-        this.speed = speed;
-        block_speed = speed * 2.0f;
-        this.vertical = vertical;
-        counter = frames;
+    public void movePlayer(float speed, boolean vertical) {
+        // calculate the amount of movement in the x and y direction
+        xPlayer += vertical ? 0f : speed;
+        yPlayer += vertical ? -speed : 0f;
+
+        // upon moving the player, we also have to move the camera
+        adjustCamera(speed * 2f, vertical);
+    }
+
+    /**
+     * moves the camera, as specified by the parameters
+     *
+     * @param speed the distance covered by the movement in a single frame
+     * @param vertical whether movement is supposed to be vertical or not
+     */
+    private void adjustCamera(float speed, boolean vertical) {
+        // calculate the new camera position
+        Vector3f cameraPos = camera.getPosition();
+        camera.setPosition( new Vector3f(
+                cameraPos.x + ( vertical ? 0 : speed ),
+                cameraPos.y + ( vertical ? speed : 0 ),
+                cameraPos.z
+        ) );
+
+        // adjust the camera for the shader, so it actually has an effect on the position of the render
+        SHADER.setCamera( camera );
     }
 }
 

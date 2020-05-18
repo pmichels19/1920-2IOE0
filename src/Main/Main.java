@@ -30,8 +30,7 @@ public class Main {
 
     // cap at 60 fps for now
     private static final double FRAME_CAP = 1.0 / 60.0;
-    private static final double MOVEMENT_CAP = 1.0 / 5.0;
-    private double inputAllowed;
+    private static final int MOVEMENT_CAP = 10;
 
     public static void main (String[] args) throws IOException {
         // start up GLFW
@@ -71,14 +70,11 @@ public class Main {
         // Stuff to keep track of the fps
         double frame_time = 0;
         int frames = 0;
-        int moving_frames = (int) ( MOVEMENT_CAP * 60.0f );
 
         // starting time
         double time = Timer.getTime();
         // time that has not yet been processed
         double unprocessed = 0;
-        // time to keep track of whether input is allowed
-        inputAllowed = 0;
 
         while ( !window.shouldClose() ) {
             boolean can_render = false;
@@ -103,12 +99,22 @@ public class Main {
 
             // make sure we only draw 60 frames every second
             if (can_render) {
+                // poll the events, to detect input
                 glfwPollEvents();
-                checkInputs(moving_frames, time);
-
+                // clear previous renders
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-                world.render();
 
+                // check the inputs done by the player
+                checkInputs();
+
+                // if the player still has movement frames left, execute those by moving the player
+                if ( movementCounter > 0 ) {
+                    world.movePlayer( speed, vertical );
+                    movementCounter--;
+                }
+
+                // render the world
+                world.render();
                 window.swapBuffers();
 
                 frames++;
@@ -116,7 +122,11 @@ public class Main {
         }
     }
 
-    public void checkInputs(int moving_frames, double time) {
+    private int movementCounter = 0;
+    private float speed = 0;
+    private boolean vertical;
+
+    public void checkInputs() {
         // for now, allow exiting of the window by pressing escape
         if ( window.buttonClicked(GLFW_KEY_ESCAPE) ) {
             window.close();
@@ -130,45 +140,44 @@ public class Main {
             }
         }
 
-        // booleans to check what buttons were pressed
-        boolean WReq = window.inputW();
-        boolean AReq = window.inputA();
-        boolean SReq = window.inputS();
-        boolean DReq = window.inputD();
-        // booleans to check what movement is possible
-        boolean WPoss = maze.canMoveUp();
-        boolean APoss = maze.canMoveLeft();
-        boolean SPoss = maze.canMoveDown();
-        boolean DPoss = maze.canMoveRight();
-
-        if (time > inputAllowed) {
-            if ( WReq ) {
-                if ( WPoss ) {
+        // moving is only allowed if the player is not currently moving
+        if (movementCounter == 0) {
+            /*
+             we check for the inputs: W/up, A/left, S/down, D/right
+             If movement in the desired direction is allowed, we adjust the speed, counter and vertical variables
+             accordingly and move the player in the maze
+             */
+            if ( window.inputW() ) {
+                if ( maze.canMoveUp() ) {
                     maze.moveUp();
 
-                    inputAllowed = time + MOVEMENT_CAP;
-                    world.setChange(moving_frames, 1.0f / (float) moving_frames, true);
+                    movementCounter = MOVEMENT_CAP;
+                    speed = 1f / (float) MOVEMENT_CAP;
+                    vertical = true;
                 }
-            } else if ( AReq ) {
-                if ( APoss ) {
+            } else if ( window.inputA() ) {
+                if ( maze.canMoveLeft() ) {
                     maze.moveLeft();
 
-                    inputAllowed = time + MOVEMENT_CAP;
-                    world.setChange(moving_frames, -1.0f / (float) moving_frames, false);
+                    movementCounter = MOVEMENT_CAP;
+                    speed = -1f / (float) MOVEMENT_CAP;
+                    vertical = false;
                 }
-            } else if ( SReq ) {
-                if ( SPoss ) {
+            } else if ( window.inputS() ) {
+                if ( maze.canMoveDown() ) {
                     maze.moveDown();
 
-                    inputAllowed = time + MOVEMENT_CAP;
-                    world.setChange(moving_frames, -1.0f / (float) moving_frames, true);
+                    movementCounter = MOVEMENT_CAP;
+                    speed = -1f / (float) MOVEMENT_CAP;
+                    vertical = true;
                 }
-            } else if ( DReq ) {
-                if ( DPoss ) {
+            } else if ( window.inputD() ) {
+                if ( maze.canMoveRight() ) {
                     maze.moveRight();
 
-                    inputAllowed = time + MOVEMENT_CAP;
-                    world.setChange(moving_frames, 1.0f / (float) moving_frames, false);
+                    movementCounter = MOVEMENT_CAP;
+                    speed = 1f / (float) MOVEMENT_CAP;
+                    vertical = false;
                 }
             }
         }

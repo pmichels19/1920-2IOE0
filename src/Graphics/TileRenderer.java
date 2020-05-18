@@ -5,10 +5,7 @@ import Graphics.OpenGL.Shader;
 import Graphics.OpenGL.Texture;
 import Graphics.Transforming.Camera;
 import Levels.Framework.joml.Matrix4f;
-import Levels.Framework.joml.Quaternionf;
 import Levels.Framework.joml.Vector3f;
-
-import static java.lang.Math.*;
 
 public class TileRenderer {
 
@@ -24,11 +21,18 @@ public class TileRenderer {
     private final Model faceModel;      // bound to 3
     private final Model leftModel;      // bound to 4
 
+    // the bindings to the models
+    public static final int CEILS = 0;
+    public static final int RIGHT = 1;
+    public static final int FLOOR = 2;
+    public static final int FACES = 3;
+    public static final int LEFTS = 4;
+
     /**
      * Sets up a new TileRenderer object, instantiating the basic model
      */
     private TileRenderer() {
-        // the texture coordinates are the same for all
+        // the texture coordinates are the same for all models
         final float[] textures = new float[] {
                 0, 1,
                 1, 1,
@@ -146,19 +150,19 @@ public class TileRenderer {
 
         // and finally render the selected model
         switch ( model ) {
-            case 0:
+            case CEILS:
                 ceilingModel.render();
                 break;
-            case 1:
+            case RIGHT:
                 rightModel.render();
                 break;
-            case 2:
+            case FLOOR:
                 floorModel.render();
                 break;
-            case 3:
+            case FACES:
                 faceModel.render();
                 break;
-            case 4:
+            case LEFTS:
                 leftModel.render();
                 break;
             default:

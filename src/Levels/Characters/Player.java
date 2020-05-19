@@ -12,6 +12,7 @@ public class Player {
 
     // a list of items the player has collected so far
     private final Item[] inventory;
+    private int selectedItem = 0;
 
     // the max health and mana of the player
     private final int max_health = 100;
@@ -37,6 +38,14 @@ public class Player {
 
     public Item[] getInventory() {
         return inventory;
+    }
+
+    public void setSelectedItem(int selectedItem) {
+        this.selectedItem = (selectedItem + inventory.length) % inventory.length;
+    }
+
+    public int getSelectedItem() {
+        return selectedItem;
     }
 
     public int getMaxHealth() {
@@ -90,16 +99,11 @@ public class Player {
     }
 
     /**
-     * Sets the item in the inventory at {@code index} to the provided item
+     * Sets the item in the inventory at {@code selectedItem} to the provided item
      *
      * @param item the new item to add to the inventory
-     * @param index the index the new item is supposed to go into
      */
-    public void addItem(Item item, int index) {
-        if ( index < 0 || index >= inventory.length ) {
-            throw new IllegalArgumentException( "index provided is out of bounds" );
-        }
-
-        inventory[index] = item;
+    public void addItem(Item item) {
+        inventory[selectedItem] = item;
     }
 }

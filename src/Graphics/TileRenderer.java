@@ -51,13 +51,7 @@ public class TileRenderer {
                         -1, 1, 2,
                         1, 1, 2,
                 },
-                textures,
-                new float[] {
-                        0, 0, 1,
-                        0, 0, 1,
-                        0, 0, 1,
-                        0, 0, 1
-                }
+                textures
         );
 
         rightModel = new Model(
@@ -67,13 +61,7 @@ public class TileRenderer {
                         1, 1, 2,
                         1, -1, 2,
                 },
-                textures,
-                new float[] {
-                        1, 0, 0,
-                        1, 0, 0,
-                        1, 0, 0,
-                        1, 0, 0
-                }
+                textures
         );
 
         floorModel = new Model(
@@ -83,13 +71,7 @@ public class TileRenderer {
                         -1, 1, 0,
                         1, 1, 0,
                 },
-                textures,
-                new float[] {
-                        0, 0, 1,
-                        0, 0, 1,
-                        0, 0, 1,
-                        0, 0, 1
-                }
+                textures
         );
 
         faceModel = new Model(
@@ -99,13 +81,7 @@ public class TileRenderer {
                         -1, -1, 2,
                         1, -1, 2,
                 },
-                textures,
-                new float[] {
-                        0, -1, 0,
-                        0, -1, 0,
-                        0, -1, 0,
-                        0, -1, 0
-                }
+                textures
         );
 
         leftModel = new Model(
@@ -115,13 +91,7 @@ public class TileRenderer {
                         -1, 1, 2,
                         -1, -1, 2,
                 },
-                textures,
-                new float[] {
-                        -1, 0, 0,
-                        -1, 0, 0,
-                        -1, 0, 0,
-                        -1, 0, 0
-                }
+                textures
         );
     }
 

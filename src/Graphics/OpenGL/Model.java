@@ -18,8 +18,9 @@ public class Model {
     // the index id
     private int i_id;
 
-    public Model(float[] vertices, float[] texCoords, float[] normals) {
+    public Model(float[] vertices, float[] texCoords) {
         drawCount = vertices.length / 3;
+        float[] normals = Maths.getNormals(vertices);
 
         v_id = glGenBuffers();
         // bind v_id to GL_ARRAY_BUFFER

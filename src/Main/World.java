@@ -64,11 +64,6 @@ public class World {
                 16
         ) );
 
-        // bind the shader and set the camera and world transformations
-        SHADER.bind();
-        SHADER.setCamera(camera);
-        SHADER.setTransform(transform);
-
         // prepare the tile renderer for rendering
         renderer = TileRenderer.getInstance();
     }
@@ -78,6 +73,7 @@ public class World {
      */
     public void render() {
         // set the camera and shader for the renderer
+        SHADER.bind();
         renderer.setShader(SHADER);
         renderer.setCamera(camera);
         renderer.setTransform(transform);

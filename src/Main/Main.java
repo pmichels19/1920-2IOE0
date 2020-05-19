@@ -109,7 +109,7 @@ public class Main {
 
                 // render the world
                 world.render();
-                gui.render( player.getSelectedItem() );
+                gui.render();
                 window.swapBuffers();
 
                 frames++;

@@ -1,5 +1,6 @@
 package Main;
 
+import Graphics.OpenGL.Shader;
 import Graphics.TileRenderer;
 import Graphics.Transforming.Camera;
 import Graphics.Transforming.Transform;
@@ -15,6 +16,7 @@ public class GUI {
     private TileRenderer renderer;
 
     // stuff needed for rendering
+    private final Shader shader;
     private Camera camera;
     private Transform transform;
 
@@ -28,6 +30,7 @@ public class GUI {
         renderer = TileRenderer.getInstance();
 
         // we use an unchanged camera with an empty transform to easily render the layout
+        shader = new Shader("GUIShader");
         camera = new Camera();
         transform = new Transform();
     }
@@ -35,9 +38,15 @@ public class GUI {
     /**
      * renders the GUI
      */
-    public void render(int selectedItem) {
+    public void render() {
+        // set the camera and shader for the renderer
+        shader.bind();
+        renderer.setShader(shader);
+        renderer.setCamera(camera);
+        renderer.setTransform(transform);
+
         renderResourceBars();
-        renderInventory( selectedItem );
+        renderInventory();
     }
 
     private void renderResourceBars() {
@@ -77,13 +86,13 @@ public class GUI {
         renderer.renderTile( GUIElements.MANA.getTexture(), 0.5f, 0.5f, TileRenderer.FLOOR );
     }
 
-    private void renderInventory( int selectedItem ) {
+    private void renderInventory() {
         // retrieve the inventory
         Item[] inventory = player.getInventory();
 
         // render the white banner to highlight the selected inventory slot
         transform.setScale( new Vector3f(0.17f, 0.1f, 1) );
-        transform.setPosition( new Vector3f( 1, (2f / 3f) - ((1f / 3f) * selectedItem), 0 ) );
+        transform.setPosition( new Vector3f( 1, (2f / 3f) - ((1f / 3f) * player.getSelectedItem()), 0 ) );
         renderer.setTransform( transform );
         renderer.renderTile( GUIElements.BACKGROUND.getTexture(), 0, 0, TileRenderer.FLOOR );
 

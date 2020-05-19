@@ -51,7 +51,13 @@ public class TileRenderer {
                         -1, 1, 2,
                         1, 1, 2,
                 },
-                textures
+                textures,
+                new float[] {
+                        0, 0, 1,
+                        0, 0, 1,
+                        0, 0, 1,
+                        0, 0, 1
+                }
         );
 
         rightModel = new Model(
@@ -61,7 +67,13 @@ public class TileRenderer {
                         1, 1, 2,
                         1, -1, 2,
                 },
-                textures
+                textures,
+                new float[] {
+                        1, 0, 0,
+                        1, 0, 0,
+                        1, 0, 0,
+                        1, 0, 0
+                }
         );
 
         floorModel = new Model(
@@ -71,7 +83,13 @@ public class TileRenderer {
                         -1, 1, 0,
                         1, 1, 0,
                 },
-                textures
+                textures,
+                new float[] {
+                        0, 0, 1,
+                        0, 0, 1,
+                        0, 0, 1,
+                        0, 0, 1
+                }
         );
 
         faceModel = new Model(
@@ -81,7 +99,13 @@ public class TileRenderer {
                         -1, -1, 2,
                         1, -1, 2,
                 },
-                textures
+                textures,
+                new float[] {
+                        0, -1, 0,
+                        0, -1, 0,
+                        0, -1, 0,
+                        0, -1, 0
+                }
         );
 
         leftModel = new Model(
@@ -91,7 +115,13 @@ public class TileRenderer {
                         -1, 1, 2,
                         -1, -1, 2,
                 },
-                textures
+                textures,
+                new float[] {
+                        -1, 0, 0,
+                        -1, 0, 0,
+                        -1, 0, 0,
+                        -1, 0, 0
+                }
         );
     }
 

@@ -29,7 +29,7 @@ public class Shader {
 
         // create and compile the vertex shader
         vs = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vs, readFile(filename + ".vs"));
+        glShaderSource(vs, readFile(filename + ".vert"));
         glCompileShader(vs);
 
         // check if the shader compiled correctly
@@ -41,7 +41,7 @@ public class Shader {
 
         // do the same for the fragment shader
         fs = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fs, readFile(filename + ".fs"));
+        glShaderSource(fs, readFile(filename + ".frag"));
         glCompileShader(fs);
 
         if (glGetShaderi(fs, GL_COMPILE_STATUS) != GL_TRUE) {
@@ -54,8 +54,9 @@ public class Shader {
         glAttachShader(program, fs);
 
         // the attributes found in the vertex shader
-        glBindAttribLocation(program, 0, "vertices");
-        glBindAttribLocation(program, 1, "textures");
+        glBindAttribLocation(program, 0, "vertexPosition");
+        glBindAttribLocation(program, 1, "vertexTexture");
+        glBindAttribLocation(program, 2, "vertexNormal");
 
         glLinkProgram(program);
 
@@ -73,9 +74,9 @@ public class Shader {
             System.exit(1);
         }
 
-        WORLD = glGetUniformLocation(program, "transformWorld");
-        OBJECT = glGetUniformLocation(program, "transformObject");
-        PROJECTION = glGetUniformLocation(program, "cameraProjection");
+        WORLD = glGetUniformLocation(program, "viewMatrix");
+        OBJECT = glGetUniformLocation(program, "modelMatrix");
+        PROJECTION = glGetUniformLocation(program, "projectionMatrix");
     }
 
     public void bind() {

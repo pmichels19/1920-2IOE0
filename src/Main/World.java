@@ -22,7 +22,7 @@ public class World {
     // the maze for data on what to draw where
     private final Maze maze;
     // the shader to use when rendering
-    private final Shader SHADER = new Shader("testShader");
+    private final Shader SHADER = new Shader("gouradShading");
     // the camera containing the camera position and projection on the world
     private final Camera camera;
     // the transfomation to display the world in the proper position

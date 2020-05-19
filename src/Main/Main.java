@@ -6,7 +6,6 @@ import Levels.Characters.Player;
 import Levels.Framework.Maze;
 import org.lwjgl.opengl.GL;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -20,11 +19,6 @@ public class Main {
     // standard variables for width and height of the game
     private static final int SCREEN_WIDTH = 1920;
     private static final int SCREEN_HEIGHT = 1080;
-
-    private Player player;
-    private World world;
-    private Window window;
-    private Maze maze;
 
     // cap at 60 fps for now
     private static final double FRAME_CAP = 1.0 / 60.0;
@@ -44,7 +38,7 @@ public class Main {
 
     public void run() throws IOException {
         // set up the window for displaying the game
-        window = new Window(SCREEN_WIDTH, SCREEN_HEIGHT);
+        Window window = new Window(SCREEN_WIDTH, SCREEN_HEIGHT);
         window.setFullscreen(false);
         window.createWindow("Mazes of Magic");
 
@@ -57,11 +51,11 @@ public class Main {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // start the maze found in specified file and create the player object
-        maze = new Maze("level_1");
-        player = Player.getInstance();
+        Maze maze = new Maze("level_1");
+        Player player = Player.getInstance();
 
         // set up the renderer with the player and maze created above
-        world = new World(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
+        World world = new World(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
         // and start up the GUI
         GUI gui = new GUI();
         // and initialize the controller for input checking

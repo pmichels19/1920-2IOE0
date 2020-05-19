@@ -56,6 +56,7 @@ public class Shader {
         // the attributes found in the vertex shader
         glBindAttribLocation(program, 0, "vertexPosition");
         glBindAttribLocation(program, 1, "vertexTexture");
+        glBindAttribLocation(program, 2, "vertexNormal");
 
         glLinkProgram(program);
 

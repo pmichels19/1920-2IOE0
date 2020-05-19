@@ -2,7 +2,7 @@
 
 attribute vec4 vertexPosition;
 attribute vec2 vertexTexture;
-vec3 vertexNormal = vec3(1,0,0);
+attribute vec3 vertexNormal;
 
 uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;

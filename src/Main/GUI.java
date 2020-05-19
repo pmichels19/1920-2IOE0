@@ -40,7 +40,6 @@ public class GUI {
      */
     public void render() {
         // set the camera and shader for the renderer
-        shader.bind();
         renderer.setShader(shader);
         renderer.setCamera(camera);
         renderer.setTransform(transform);

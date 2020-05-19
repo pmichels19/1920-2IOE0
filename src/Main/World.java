@@ -73,7 +73,6 @@ public class World {
      */
     public void render() {
         // set the camera and shader for the renderer
-        SHADER.bind();
         renderer.setShader(SHADER);
         renderer.setCamera(camera);
         renderer.setTransform(transform);

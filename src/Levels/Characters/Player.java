@@ -11,7 +11,7 @@ public class Player {
     private static Player player;
 
     // a list of items the player has collected so far
-    private final List<Item> inventory;
+    private final Item[] inventory;
 
     // the max health and mana of the player
     private final int max_health = 100;
@@ -21,8 +21,8 @@ public class Player {
     private int current_mana;
 
     private Player() {
-        // start with an empty inventory
-        inventory = new ArrayList<>();
+        // start with an empty inventory of max size 5
+        inventory = new Item[5];
         // player starts at max health and mana
         current_health = max_health;
         current_mana = max_mana;
@@ -35,7 +35,7 @@ public class Player {
         return player;
     }
 
-    public List<Item> getInventory() {
+    public Item[] getInventory() {
         return inventory;
     }
 
@@ -89,7 +89,17 @@ public class Player {
         }
     }
 
-    public void addItem(Item item ) {
-        inventory.add( item );
+    /**
+     * Sets the item in the inventory at {@code index} to the provided item
+     *
+     * @param item the new item to add to the inventory
+     * @param index the index the new item is supposed to go into
+     */
+    public void addItem(Item item, int index) {
+        if ( index < 0 || index >= inventory.length ) {
+            throw new IllegalArgumentException( "index provided is out of bounds" );
+        }
+
+        inventory[index] = item;
     }
 }

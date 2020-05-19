@@ -2,9 +2,7 @@ package Main;
 
 import Graphics.IO.Timer;
 import Graphics.IO.Window;
-import Levels.Characters.Character;
 import Levels.Characters.Player;
-import Levels.Assets.Tiles.Background;
 import Levels.Framework.Maze;
 import org.lwjgl.opengl.GL;
 
@@ -117,7 +115,7 @@ public class Main {
 
                 // render the world
                 world.render();
-                gui.render();
+                gui.render(1);
                 window.swapBuffers();
 
                 frames++;

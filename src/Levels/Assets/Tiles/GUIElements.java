@@ -15,6 +15,9 @@ public enum GUIElements {
     MISSING_HEALTH (
             "missing_health_color.png"
     ),
+    ITEM_BACKGROUND (
+            "item_background.png"
+    ),
     BACKGROUND (
             "GUI_background.png"
     );

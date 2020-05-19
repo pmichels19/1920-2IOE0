@@ -1,5 +1,6 @@
 package Main;
 
+import Graphics.OpenGL.Light;
 import Graphics.TileRenderer;
 import Graphics.Transforming.Camera;
 import Graphics.OpenGL.Shader;
@@ -29,6 +30,8 @@ public class World {
     private final Transform transform;
     // the tile renderer to actaully draw the world and the player
     private final TileRenderer renderer;
+    // the light object
+    private final Light light = new Light(new Vector3f(2,2,5), new Vector3f(1,1,1), new Vector3f(1,0.01f,0.002f));
 
     // variables to keep track of the player location in the world
     private float xPlayer;
@@ -68,6 +71,7 @@ public class World {
         SHADER.bind();
         SHADER.setCamera(camera);
         SHADER.setTransform(transform);
+        SHADER.setLight(light);
 
         // prepare the tile renderer for rendering
         renderer = TileRenderer.getInstance();
@@ -137,6 +141,7 @@ public class World {
         }
 
         renderer.renderTile( Background.PLAYER.getTexture(), xPlayer, grid.length + 0.5f - yPlayer, TileRenderer.FACES );
+        renderer.renderTile( Background.TORCH.getTexture(), light.getPosition().x, grid.length + 0.5f - light.getPosition().y, TileRenderer.FACES );
 
         for ( Point point : ceilings ) {
             renderer.renderTile( Wall.CEILING.getTexture(), point.getX(), point.getY(), TileRenderer.CEILS );

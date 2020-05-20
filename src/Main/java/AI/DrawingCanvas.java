@@ -1,12 +1,17 @@
 package AI;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.MouseInputListener;
 import javax.xml.soap.Text;
 import java.awt.*;
 import java.awt.Color;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,6 +40,11 @@ public class DrawingCanvas extends JFrame {
     private JPanel panel1;
     private JButton button1;
 
+    //GoogleConfig object for visionML
+    private GoogleConfig googleConfig = new GoogleConfig();
+    private String defaultLabel = "Predicted class and score: ";
+    private JLabel imageClass = new JLabel();
+
     public DrawingCanvas() {
         this.setTitle("Drawing Canvas");
         this.setSize(windowX, windowY);
@@ -52,6 +62,13 @@ public class DrawingCanvas extends JFrame {
 
 
         JButton clearButton = new JButton();
+        JButton classifyButton = new JButton();
+
+        imageClass.setText(defaultLabel);
+        imageClass.setSize(400, 100);
+        imageClass.setVisible(true);
+        imageClass.setLocation(240, 450);
+
         clearButton.setText("Clear");
         clearButton.setSize(100, 40);
 
@@ -66,8 +83,31 @@ public class DrawingCanvas extends JFrame {
             }
         });
 
+        classifyButton.setText("Classify");
+        classifyButton.setSize(100, 40);
+
+        classifyButton.setVisible(true);
+        classifyButton.setLocation(120, 500);
+
+        classifyButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+
+                    String[] tempData = googleConfig.predict(saveGridAsImage());
+                    imageClass.setText(defaultLabel + tempData[0] + ", " + tempData[1]);
+
+                } catch (Exception ex) {
+                    System.out.println(ex);
+                }
+
+            }
+        });
+
 
         this.add(clearButton);
+        this.add(classifyButton);
+        this.add(imageClass);
 
 
         // Add listener for mouse movements
@@ -89,6 +129,23 @@ public class DrawingCanvas extends JFrame {
                 grid[i][j] = (float) 0.0;
             }
         }
+    }
+
+    /** Saves the drawing canvas as an image locally.
+     *
+     * @return the path to the image
+     */
+    private String saveGridAsImage() throws IOException {
+        Container c = canvas;
+        BufferedImage im = new BufferedImage(c.getWidth(), c.getHeight(), BufferedImage.TYPE_INT_RGB);
+        c.paint(im.getGraphics());
+
+        String tempPath = Paths.get("").toAbsolutePath().toString() + "\\" + "spell.jpg";
+        ImageIO.write(im, "jpg", new File(tempPath));
+
+        System.out.println(tempPath);
+
+        return tempPath;
     }
 
     /**

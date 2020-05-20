@@ -17,13 +17,6 @@ public class TileRenderer {
 
     private static TileRenderer renderer;
 
-    // the models available for rendering
-    private final Model ceilingModel;   // bound to 0
-    private final Model rightModel;     // bound to 1
-    private final Model floorModel;     // bound to 2
-    private final Model faceModel;      // bound to 3
-    private final Model leftModel;      // bound to 4
-
     // the bindings to the models
     public static final int CEILS = 0;
     public static final int RIGHT = 1;
@@ -35,94 +28,6 @@ public class TileRenderer {
      * Sets up a new TileRenderer object, instantiating the basic model
      */
     private TileRenderer() {
-        // the texture coordinates are the same for all models
-        final float[] textures = new float[] {
-                0, 1,
-                1, 1,
-                1, 0,
-                0, 0,
-        };
-
-        // initialize the models
-        ceilingModel = new Model(
-                new float[] {
-                        1, -1, 2,
-                        -1, -1, 2,
-                        -1, 1, 2,
-                        1, 1, 2,
-                },
-                textures,
-                new float[] {
-                        0, 0, 1,
-                        0, 0, 1,
-                        0, 0, 1,
-                        0, 0, 1
-                }
-        );
-
-        rightModel = new Model(
-                new float[] {
-                        1, -1, 0,
-                        1, 1, 0,
-                        1, 1, 2,
-                        1, -1, 2,
-                },
-                textures,
-                new float[] {
-                        1, 0, 0,
-                        1, 0, 0,
-                        1, 0, 0,
-                        1, 0, 0
-                }
-        );
-
-        floorModel = new Model(
-                new float[] {
-                        1, -1, 0,
-                        -1, -1, 0,
-                        -1, 1, 0,
-                        1, 1, 0,
-                },
-                textures,
-                new float[] {
-                        0, 0, 1,
-                        0, 0, 1,
-                        0, 0, 1,
-                        0, 0, 1
-                }
-        );
-
-        faceModel = new Model(
-                new float[] {
-                        1, -1, 0,
-                        -1, -1, 0,
-                        -1, -1, 2,
-                        1, -1, 2,
-                },
-                textures,
-                new float[] {
-                        0, -1, 0,
-                        0, -1, 0,
-                        0, -1, 0,
-                        0, -1, 0
-                }
-        );
-
-        leftModel = new Model(
-                new float[] {
-                        -1, -1, 0,
-                        -1, 1, 0,
-                        -1, 1, 2,
-                        -1, -1, 2,
-                },
-                textures,
-                new float[] {
-                        -1, 0, 0,
-                        -1, 0, 0,
-                        -1, 0, 0,
-                        -1, 0, 0
-                }
-        );
     }
 
     /**
@@ -148,6 +53,11 @@ public class TileRenderer {
         shader.setCamera(camera);
     }
 
+    /**
+     * sets the world transformation which is then passed on to shader currently used by
+     *
+     * @param transform the transformation to apply to the render
+     */
     public void setTransform(Transform transform) {
         this.transform = transform;
         shader.setTransform(transform);
@@ -160,6 +70,7 @@ public class TileRenderer {
      */
     public void setShader(Shader shader) {
         this.shader = shader;
+        this.shader.bind();
     }
 
     /**
@@ -171,6 +82,10 @@ public class TileRenderer {
      * @param model the model to render based on assignments above
      */
     public void renderTile(Texture texture, float x, float y, int model) {
+        if (model < CEILS || model > LEFTS) {
+            throw new IllegalArgumentException("model specified does not exist");
+        }
+
         // bind the shader
         shader.bind();
 
@@ -185,24 +100,6 @@ public class TileRenderer {
         texture.bind(0);
 
         // and finally render the selected model
-        switch ( model ) {
-            case CEILS:
-                ceilingModel.render();
-                break;
-            case RIGHT:
-                rightModel.render();
-                break;
-            case FLOOR:
-                floorModel.render();
-                break;
-            case FACES:
-                faceModel.render();
-                break;
-            case LEFTS:
-                leftModel.render();
-                break;
-            default:
-                throw new IllegalArgumentException( "No model with index " + model );
-        }
+        Model.getModels()[ model ].render();
     }
 }

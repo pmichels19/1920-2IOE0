@@ -13,10 +13,6 @@ public class Window {
 
     private boolean fullscreen;
 
-    public Window() {
-        setSize(640, 480);
-    }
-
     public Window(int width, int height) {
         setSize(width, height);
         setFullscreen(false);
@@ -57,22 +53,6 @@ public class Window {
 
     public boolean buttonClicked(int button) {
         return glfwGetKey(window, button) == GLFW_TRUE;
-    }
-
-    public boolean inputW() {
-        return ( buttonClicked(GLFW_KEY_W) || buttonClicked(GLFW_KEY_UP) );
-    }
-
-    public boolean inputA() {
-        return ( buttonClicked(GLFW_KEY_A) || buttonClicked(GLFW_KEY_LEFT) );
-    }
-
-    public boolean inputS() {
-        return ( buttonClicked(GLFW_KEY_S) || buttonClicked(GLFW_KEY_DOWN) );
-    }
-
-    public boolean inputD() {
-        return ( buttonClicked(GLFW_KEY_D) || buttonClicked(GLFW_KEY_RIGHT) );
     }
 
     public boolean shouldClose() {

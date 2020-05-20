@@ -66,13 +66,7 @@ public class World {
                 (maze.getGrid().length - yPlayer) * 2 - 10,
                 16
         ) );
-
-        // bind the shader and set the camera and world transformations
-        SHADER.bind();
-        SHADER.setCamera(camera);
-        SHADER.setTransform(transform);
-        SHADER.setLight(light);
-
+      
         // prepare the tile renderer for rendering
         renderer = TileRenderer.getInstance();
     }

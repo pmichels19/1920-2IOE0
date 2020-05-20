@@ -3,22 +3,60 @@ package Graphics.OpenGL;
 import static org.lwjgl.opengl.GL20.*;
 
 public class Model {
-    // the amount of times this has been drawn
-    private int drawCount;
+    private static Model[] models;
+
+    // the amount in the model
+    private final int drawCount;
 
     // the version id
-    private int v_id;
+    private final int v_id;
 
     // the texture id
-    private int t_id;
+    private final int t_id;
 
-    // the normal id
-    private int n_id;
+    /**
+     * returns the 5 basic models that you can use to render. They will be initialised upon the first call of this method
+     *
+     * @return {@code models}
+     */
+    public static Model[] getModels() {
+        if (models == null) {
+            // the texture coordinates are the same for all models
+            final float[] textures = new float[]{ 0, 1,       1, 1,       1, 0,       0, 0 };
+            // we only allow the use of 5 different models, one for each of:
+            models = new Model[]{
+                    // the top of a cube
+                    new Model(
+                            new float[]{ 1, -1, 2,       -1, -1, 2,      -1, 1, 2,       1, 1, 2 },
+                            textures
+                    ),
+                    // the right side of a cube
+                    new Model(
+                            new float[]{ 1, -1, 0,       1, 1, 0,        1, 1, 2,        1, -1, 2 },
+                            textures
+                    ),
+                    // the bottom of a cube
+                    new Model(
+                            new float[]{ 1, -1, 0,       -1, -1, 0,      -1, 1, 0,       1, 1, 0 },
+                            textures
+                    ),
+                    // the front of a cube
+                    new Model(
+                            new float[]{ 1, -1, 0,       -1, -1, 0,      -1, -1, 2,      1, -1, 2 },
+                            textures
+                    ),
+                    // the left side of a cube
+                    new Model(
+                            new float[]{ -1, -1, 0,      -1, 1, 0,       -1, 1, 2,       -1, -1, 2 },
+                            textures
+                    )
+            };
+        }
 
-    // the index id
-    private int i_id;
+        return models;
+    }
 
-    public Model(float[] vertices, float[] texCoords, float[] normals) {
+    private Model(float[] vertices, float[] texCoords) {
         drawCount = vertices.length / 3;
 
         v_id = glGenBuffers();
@@ -39,7 +77,8 @@ public class Model {
         // unbind from the array buffer
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-        i_id = glGenBuffers();
+        // the index id
+        int i_id = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, i_id);
     }
 

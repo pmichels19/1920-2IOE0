@@ -201,7 +201,7 @@ public class AStarClickTest {
              If movement in the desired direction is allowed, we adjust the speed, counter and vertical variables
              accordingly and move the player in the maze
              */
-            if ( window.inputW() ) {
+            if ( window.buttonClicked(GLFW_KEY_W) ) {
                 if ( maze.canMoveUp() ) {
                     maze.moveUp();
 
@@ -209,7 +209,7 @@ public class AStarClickTest {
                     speed = 1f / (float) MOVEMENT_CAP;
                     vertical = true;
                 }
-            } else if ( window.inputA() ) {
+            } else if ( window.buttonClicked(GLFW_KEY_A) ) {
                 if ( maze.canMoveLeft() ) {
                     maze.moveLeft();
 
@@ -217,7 +217,7 @@ public class AStarClickTest {
                     speed = -1f / (float) MOVEMENT_CAP;
                     vertical = false;
                 }
-            } else if ( window.inputS() ) {
+            } else if ( window.buttonClicked(GLFW_KEY_S) ) {
                 if ( maze.canMoveDown() ) {
                     maze.moveDown();
 
@@ -225,7 +225,7 @@ public class AStarClickTest {
                     speed = -1f / (float) MOVEMENT_CAP;
                     vertical = true;
                 }
-            } else if ( window.inputD() ) {
+            } else if ( window.buttonClicked(GLFW_KEY_D) ) {
                 if ( maze.canMoveRight() ) {
                     maze.moveRight();
 

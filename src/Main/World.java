@@ -31,7 +31,7 @@ public class World {
     // the tile renderer to actaully draw the world and the player
     private final TileRenderer renderer;
     // the light object
-    private final Light light = new Light(new Vector3f(11,9,1), new Vector3f(1,1,1), new Vector3f(1,0.05f,0.002f));
+    private final Light light = new Light(new Vector3f(11,9,1), new Vector3f(1,1,1), new Vector3f(1,0.5f,0.05f));
 
     // variables to keep track of the player location in the world
     private float xPlayer;

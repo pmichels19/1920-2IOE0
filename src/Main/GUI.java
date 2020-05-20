@@ -30,7 +30,7 @@ public class GUI {
         renderer = TileRenderer.getInstance();
 
         // we use an unchanged camera with an empty transform to easily render the layout
-        shader = new Shader("GUIShader");
+        shader = new Shader("flatShader");
         camera = new Camera();
         transform = new Transform();
     }

@@ -4,13 +4,16 @@ attribute vec4 vertexPosition;
 attribute vec2 vertexTexture;
 attribute vec3 vertexNormal;
 
-uniform mat4 viewMatrix;
 uniform mat4 modelMatrix;
 uniform mat4 projectionMatrix;
+uniform mat4 viewMatrix;
 uniform mat4 tilePosition;
 
+uniform vec3 lightPosition;
+
+out vec3 surfaceNormal;
+out vec3 toLightVector;
 out vec2 textureCoords;
-out float lightValue;
 
 void main() {
 
@@ -19,14 +22,10 @@ void main() {
     mat4 modelToScreen = projectionMatrix * modelToWorld;
     mat3 normalToWorld = mat3(transpose(inverse(modelToWorld)));
 
-    vec4 p = modelToWorld * vertexPosition;
-    vec4 n = vec4(normalize(normalToWorld * vertexNormal),1);
-    vec4 lightPosition = vec4(0,0,1,0);
-    vec4 l = normalize(lightPosition - p);
+    vec4 vertexWorldPosition = modelMatrix * tilePosition * vertexPosition;
 
-    float ambient = 0.2;
-    float diffuse = 0.9 * clamp (0, dot(n, l), 1);
-    lightValue = (ambient + diffuse);
+    surfaceNormal = (modelMatrix * tilePosition * vec4(vertexNormal, 0.0)).xyz;
+    toLightVector = vec3(modelMatrix * vec4(lightPosition, 1.0)) - vertexWorldPosition.xyz;
     textureCoords = vertexTexture;
 
     gl_Position = modelToScreen * vertexPosition;

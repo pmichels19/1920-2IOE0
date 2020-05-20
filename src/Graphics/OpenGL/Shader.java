@@ -2,6 +2,8 @@ package Graphics.OpenGL;
 
 import Graphics.Transforming.Camera;
 import Graphics.Transforming.Transform;
+import Levels.Assets.Tiles.Background;
+import Levels.Assets.Tiles.Wall;
 import Levels.Framework.joml.Matrix4f;
 import Levels.Framework.joml.Vector3f;
 import org.lwjgl.BufferUtils;
@@ -23,9 +25,13 @@ public class Shader {
     // the fragment shader
     private int fs;
 
+    private final int MAX_LIGHTS = 5;
+
     private final int WORLD, OBJECT, PROJECTION;
     private final int EYE_POSITION;
-    private final int LIGHT_POSITION, LIGHT_COLOR, LIGHT_ATTENUATION;
+    private final int[] LIGHT_POSITIONS = new int[MAX_LIGHTS];
+    private final int[] LIGHT_COLORS = new int[MAX_LIGHTS];
+    private final int[] LIGHT_ATTENUATIONS = new int[MAX_LIGHTS];
 
     public Shader(String filename) {
         program = glCreateProgram();
@@ -84,9 +90,12 @@ public class Shader {
 
         EYE_POSITION = glGetUniformLocation(program, "eyePosition");
 
-        LIGHT_POSITION = glGetUniformLocation(program, "lightPosition");
-        LIGHT_COLOR = glGetUniformLocation(program, "lightColor");
-        LIGHT_ATTENUATION = glGetUniformLocation(program, "lightAttenuation");
+        for (int i = 0; i < MAX_LIGHTS; i++) {
+            LIGHT_POSITIONS[i] = glGetUniformLocation(program, "lightPosition[" + i + "]");
+            LIGHT_COLORS[i] = glGetUniformLocation(program, "lightColor[" + i + "]");
+            LIGHT_ATTENUATIONS[i] = glGetUniformLocation(program, "lightAttenuation[" + i + "]");
+        }
+
 
     }
 
@@ -136,20 +145,33 @@ public class Shader {
         }
     }
 
-    public void setLight(Light light) {
-        if (LIGHT_POSITION != -1)  {
-            Vector3f position = light.getPosition();
-            glUniform3f(LIGHT_POSITION, position.x, position.y, position.z);
+    public void setLights(Light[] lights) {
+        if (lights.length > MAX_LIGHTS) {
+            System.err.println("!!! Too many lights initialized !!!");
         }
 
-        if (LIGHT_COLOR != -1)  {
-            Vector3f color = light.getColor();
-            glUniform3f(LIGHT_COLOR, color.x, color.y, color.z);
-        }
+        for (int i = 0; i < MAX_LIGHTS; i++) {
+            Light light;
+            if (i < lights.length) {
+                light = lights[i];
+            } else {
+                light = new Light(new Vector3f(0,0,0), new Vector3f(0,0,0), Wall.CEILING.getTexture());
+            }
 
-        if (LIGHT_ATTENUATION != -1)  {
-            Vector3f attenuation = light.getAttenuation();
-            glUniform3f(LIGHT_ATTENUATION, attenuation.x, attenuation.y, attenuation.z);
+            if (LIGHT_POSITIONS[i] != -1)  {
+                Vector3f position = light.getPosition();
+                glUniform3f(LIGHT_POSITIONS[i], position.x, position.y, position.z);
+            }
+
+            if (LIGHT_COLORS[i] != -1)  {
+                Vector3f color = light.getColor();
+                glUniform3f(LIGHT_COLORS[i], color.x, color.y, color.z);
+            }
+
+            if (LIGHT_ATTENUATIONS[i] != -1)  {
+                Vector3f attenuation = light.getAttenuation();
+                glUniform3f(LIGHT_ATTENUATIONS[i], attenuation.x, attenuation.y, attenuation.z);
+            }
         }
     }
 

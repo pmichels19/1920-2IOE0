@@ -11,6 +11,9 @@ public enum Background {
     ),
     PLAYER (
             "src/Textures/Background/test_PC.png"
+    ),
+    TORCH (
+            "src/Textures/Background/torch.png"
     );
 
     private final Texture texture;

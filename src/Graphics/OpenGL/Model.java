@@ -69,6 +69,11 @@ public class Model {
         glBindBuffer(GL_ARRAY_BUFFER, t_id);
         glBufferData(GL_ARRAY_BUFFER, texCoords, GL_STATIC_DRAW);
 
+        n_id = glGenBuffers();
+        // bind t_id to GL_ARRAY_BUFFER
+        glBindBuffer(GL_ARRAY_BUFFER, n_id);
+        glBufferData(GL_ARRAY_BUFFER, normals, GL_STATIC_DRAW);
+
         // unbind from the array buffer
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -80,6 +85,7 @@ public class Model {
     public void render() {
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
 
         glBindBuffer(GL_ARRAY_BUFFER, v_id);
         glVertexAttribPointer(0, 3, GL_FLOAT, false,0, 0);
@@ -87,11 +93,15 @@ public class Model {
         glBindBuffer(GL_ARRAY_BUFFER, t_id);
         glVertexAttribPointer(1, 2, GL_FLOAT, false,0, 0);
 
+        glBindBuffer(GL_ARRAY_BUFFER, n_id);
+        glVertexAttribPointer(2, 3, GL_FLOAT, false,0, 0);
+
         glDrawArrays(GL_QUADS, 0, drawCount);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
         glDisableVertexAttribArray(0);
         glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
     }
 }

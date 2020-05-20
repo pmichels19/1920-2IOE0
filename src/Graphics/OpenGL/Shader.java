@@ -3,6 +3,7 @@ package Graphics.OpenGL;
 import Graphics.Transforming.Camera;
 import Graphics.Transforming.Transform;
 import Levels.Framework.joml.Matrix4f;
+import Levels.Framework.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 import java.io.BufferedReader;
@@ -23,13 +24,15 @@ public class Shader {
     private int fs;
 
     private final int WORLD, OBJECT, PROJECTION;
+    private final int EYE_POSITION;
+    private final int LIGHT_POSITION, LIGHT_COLOR, LIGHT_ATTENUATION;
 
     public Shader(String filename) {
         program = glCreateProgram();
 
         // create and compile the vertex shader
         vs = glCreateShader(GL_VERTEX_SHADER);
-        glShaderSource(vs, readFile(filename + ".vs"));
+        glShaderSource(vs, readFile(filename + ".vert"));
         glCompileShader(vs);
 
         // check if the shader compiled correctly
@@ -41,7 +44,7 @@ public class Shader {
 
         // do the same for the fragment shader
         fs = glCreateShader(GL_FRAGMENT_SHADER);
-        glShaderSource(fs, readFile(filename + ".fs"));
+        glShaderSource(fs, readFile(filename + ".frag"));
         glCompileShader(fs);
 
         if (glGetShaderi(fs, GL_COMPILE_STATUS) != GL_TRUE) {
@@ -54,8 +57,10 @@ public class Shader {
         glAttachShader(program, fs);
 
         // the attributes found in the vertex shader
-        glBindAttribLocation(program, 0, "vertices");
-        glBindAttribLocation(program, 1, "textures");
+        glBindAttribLocation(program, 0, "vertexPosition");
+        glBindAttribLocation(program, 1, "vertexTexture");
+        glBindAttribLocation(program, 2, "vertexNormal");
+
 
         glLinkProgram(program);
 
@@ -73,9 +78,16 @@ public class Shader {
             System.exit(1);
         }
 
-        WORLD = glGetUniformLocation(program, "transformWorld");
-        OBJECT = glGetUniformLocation(program, "transformObject");
-        PROJECTION = glGetUniformLocation(program, "cameraProjection");
+        WORLD = glGetUniformLocation(program, "viewMatrix");
+        OBJECT = glGetUniformLocation(program, "modelMatrix");
+        PROJECTION = glGetUniformLocation(program, "projectionMatrix");
+
+        EYE_POSITION = glGetUniformLocation(program, "eyePosition");
+
+        LIGHT_POSITION = glGetUniformLocation(program, "lightPosition");
+        LIGHT_COLOR = glGetUniformLocation(program, "lightColor");
+        LIGHT_ATTENUATION = glGetUniformLocation(program, "lightAttenuation");
+
     }
 
     public void bind() {
@@ -107,6 +119,12 @@ public class Shader {
 
             glUniformMatrix4fv(WORLD, false, matrix);
         }
+
+        if (EYE_POSITION != -1) {
+            Vector3f position = camera.getPosition();
+            glUniform3f(EYE_POSITION, position.x, position.y, position.z);
+        }
+
     }
 
     public void setTransform(Transform transform) {
@@ -115,6 +133,23 @@ public class Shader {
             transform.getTransformation().get(matrix);
 
             glUniformMatrix4fv(OBJECT, false, matrix);
+        }
+    }
+
+    public void setLight(Light light) {
+        if (LIGHT_POSITION != -1)  {
+            Vector3f position = light.getPosition();
+            glUniform3f(LIGHT_POSITION, position.x, position.y, position.z);
+        }
+
+        if (LIGHT_COLOR != -1)  {
+            Vector3f color = light.getColor();
+            glUniform3f(LIGHT_COLOR, color.x, color.y, color.z);
+        }
+
+        if (LIGHT_ATTENUATION != -1)  {
+            Vector3f attenuation = light.getAttenuation();
+            glUniform3f(LIGHT_ATTENUATION, attenuation.x, attenuation.y, attenuation.z);
         }
     }
 

@@ -79,6 +79,7 @@ public class World {
         renderer.setShader(SHADER);
         renderer.setCamera(camera);
         renderer.setTransform(transform);
+        SHADER.setLight(light);
 
         // sets used for gathering points to determine drawing locations of tiles
         Set<Point> floors = new HashSet<>();

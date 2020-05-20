@@ -14,6 +14,9 @@ public class Model {
     // the texture id
     private final int t_id;
 
+    // the normal id
+    private final int n_id;
+
     /**
      * returns the 5 basic models that you can use to render. They will be initialised upon the first call of this method
      *
@@ -28,27 +31,57 @@ public class Model {
                     // the top of a cube
                     new Model(
                             new float[]{ 1, -1, 2,       -1, -1, 2,      -1, 1, 2,       1, 1, 2 },
-                            textures
+                            textures,
+                            new float[] {
+                                    0, 0, 1,
+                                    0, 0, 1,
+                                    0, 0, 1,
+                                    0, 0, 1
+                            }
                     ),
                     // the right side of a cube
                     new Model(
                             new float[]{ 1, -1, 0,       1, 1, 0,        1, 1, 2,        1, -1, 2 },
-                            textures
+                            textures,
+                            new float[] {
+                                    1, 0, 0,
+                                    1, 0, 0,
+                                    1, 0, 0,
+                                    1, 0, 0
+                            }
                     ),
                     // the bottom of a cube
                     new Model(
                             new float[]{ 1, -1, 0,       -1, -1, 0,      -1, 1, 0,       1, 1, 0 },
-                            textures
+                            textures,
+                            new float[] {
+                                    0, 0, 1,
+                                    0, 0, 1,
+                                    0, 0, 1,
+                                    0, 0, 1
+                            }
                     ),
                     // the front of a cube
                     new Model(
                             new float[]{ 1, -1, 0,       -1, -1, 0,      -1, -1, 2,      1, -1, 2 },
-                            textures
+                            textures,
+                            new float[] {
+                                    0, -1, 0,
+                                    0, -1, 0,
+                                    0, -1, 0,
+                                    0, -1, 0
+                            }
                     ),
                     // the left side of a cube
                     new Model(
                             new float[]{ -1, -1, 0,      -1, 1, 0,       -1, 1, 2,       -1, -1, 2 },
-                            textures
+                            textures,
+                            new float[] {
+                                    -1, 0, 0,
+                                    -1, 0, 0,
+                                    -1, 0, 0,
+                                    -1, 0, 0
+                            }
                     )
             };
         }
@@ -56,7 +89,7 @@ public class Model {
         return models;
     }
 
-    private Model(float[] vertices, float[] texCoords) {
+    private Model(float[] vertices, float[] texCoords, float[] normals) {
         drawCount = vertices.length / 3;
 
         v_id = glGenBuffers();

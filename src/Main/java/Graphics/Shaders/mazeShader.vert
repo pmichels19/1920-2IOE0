@@ -9,10 +9,10 @@ uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 tilePosition;
 
-uniform vec3 lightPosition;
+uniform vec3 lightPosition[5];
 
 out vec3 surfaceNormal;
-out vec3 toLightVector;
+out vec3 toLightVector[5];
 out vec2 textureCoords;
 
 void main() {
@@ -25,7 +25,11 @@ void main() {
     vec4 vertexWorldPosition = modelMatrix * tilePosition * vertexPosition;
 
     surfaceNormal = (modelMatrix * tilePosition * vec4(vertexNormal, 0.0)).xyz;
-    toLightVector = vec3(modelMatrix * vec4(lightPosition, 1.0)) - vertexWorldPosition.xyz;
+
+    for (int i = 0; i < 5; i++) {
+        toLightVector[i] = vec3(modelMatrix * vec4(lightPosition[i], 1.0)) - vertexWorldPosition.xyz;
+    }
+
     textureCoords = vertexTexture;
 
     gl_Position = modelToScreen * vertexPosition;

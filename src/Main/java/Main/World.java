@@ -31,7 +31,11 @@ public class World {
     // the tile renderer to actaully draw the world and the player
     private final TileRenderer renderer;
     // the light object
-    private final Light light = new Light(new Vector3f(11,9,1), new Vector3f(1,1,1), new Vector3f(1,0.5f,0.05f));
+    private final Light[] lights = {
+            new Light(new Vector3f(2,6,1.5f), new Vector3f(0.2f,1,0.2f), Background.TORCH.getTexture(), new Vector3f(1,0.5f,0.05f)),
+            new Light(new Vector3f(6,8,1.5f), new Vector3f(1,0.2f,0.2f), Background.TORCH.getTexture(), new Vector3f(1,0.5f,0.05f)),
+            new Light(new Vector3f(8,4,1.5f), new Vector3f(0.2f,0.2f,1), Background.TORCH.getTexture(), new Vector3f(1,0.5f,0.05f)),
+    };
 
     // variables to keep track of the player location in the world
     private float xPlayer;
@@ -79,7 +83,7 @@ public class World {
         renderer.setShader(SHADER);
         renderer.setCamera(camera);
         renderer.setTransform(transform);
-        SHADER.setLight(light);
+        SHADER.setLights(lights);
 
         // sets used for gathering points to determine drawing locations of tiles
         Set<Point> floors = new HashSet<>();
@@ -136,7 +140,12 @@ public class World {
         }
 
         renderer.renderTile( Background.PLAYER.getTexture(), xPlayer, grid.length + 0.5f - yPlayer, TileRenderer.FACES );
-        renderer.renderTile( Background.TORCH.getTexture(), light.getPosition().x, grid.length + 0.5f - light.getPosition().y, TileRenderer.FACES );
+
+        for (Light light : lights) {
+            renderer.renderTile( light.getTexture(), light.getPosition().x/2,  (light.getPosition().y)/2 + 0.65f, TileRenderer.FACES );
+        }
+
+
 
         for ( Point point : ceilings ) {
             renderer.renderTile( Wall.CEILING.getTexture(), point.getX(), point.getY(), TileRenderer.CEILS );

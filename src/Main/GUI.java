@@ -10,7 +10,6 @@ import Levels.Characters.Player;
 import Levels.Framework.joml.Vector3f;
 
 public class GUI {
-
     // the player to draw the GUI for
     private Player player;
     private TileRenderer renderer;
@@ -49,9 +48,6 @@ public class GUI {
     }
 
     private void renderResourceBars() {
-        // make sure the camera is set correctly
-        renderer.setCamera(camera);
-
         // we want to draw the resourcebars in the bottom left of the screen
         transform.setPosition( new Vector3f(-1, -1, 0) );
 

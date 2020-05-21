@@ -1,6 +1,6 @@
 package AI.AStar;
 
-import Main.World;
+import Graphics.Rendering.World;
 import Levels.Characters.Player;
 import Levels.Framework.Point;
 import Graphics.IO.Timer;

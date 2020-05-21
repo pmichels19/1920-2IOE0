@@ -1,7 +1,6 @@
-package Main;
+package Graphics.Rendering;
 
 import Graphics.OpenGL.Light;
-import Graphics.TileRenderer;
 import Graphics.Transforming.Camera;
 import Graphics.OpenGL.Shader;
 import Graphics.Transforming.Transform;
@@ -139,13 +138,11 @@ public class World {
             renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES );
         }
 
-        renderer.renderTile( Background.PLAYER.getTexture(), xPlayer, grid.length + 0.5f - yPlayer, TileRenderer.FACES );
-
         for (Light light : lights) {
             renderer.renderTile( light.getTexture(), light.getPosition().x/2,  (light.getPosition().y)/2 + 0.65f, TileRenderer.FACES );
         }
 
-
+        renderer.renderTile( Background.PLAYER.getTexture(), xPlayer, grid.length + 0.5f - yPlayer, TileRenderer.FACES );
 
         for ( Point point : ceilings ) {
             renderer.renderTile( Wall.CEILING.getTexture(), point.getX(), point.getY(), TileRenderer.CEILS );

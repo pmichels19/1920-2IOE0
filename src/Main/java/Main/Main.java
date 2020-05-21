@@ -2,6 +2,8 @@ package Main;
 
 import Graphics.IO.Timer;
 import Graphics.IO.Window;
+import Graphics.Rendering.GUI;
+import Graphics.Rendering.World;
 import Levels.Characters.Player;
 import Levels.Framework.Maze;
 import org.lwjgl.opengl.GL;

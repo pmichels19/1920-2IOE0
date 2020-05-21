@@ -1,43 +1,23 @@
-package Main;
+package Graphics.Rendering;
 
-import Graphics.OpenGL.Shader;
-import Graphics.TileRenderer;
-import Graphics.Transforming.Camera;
-import Graphics.Transforming.Transform;
 import Levels.Assets.Items.Item;
 import Levels.Assets.Tiles.GUIElements;
 import Levels.Characters.Player;
 import Levels.Framework.joml.Vector3f;
 
-public class GUI {
+public class GUI extends FlatRender {
 
     // the player to draw the GUI for
-    private Player player;
-    private TileRenderer renderer;
-
-    // stuff needed for rendering
-    private final Shader shader;
-    private Camera camera;
-    private Transform transform;
+    private final Player player = Player.getInstance();
 
     /**
      * initializes a new GUI for the singleton player
      */
     public GUI() {
-        // we need the player for data such as health, mana inventory etc.
-        player = Player.getInstance();
-        // and a tilerenderer to render the HUD piece by piece
-        renderer = TileRenderer.getInstance();
-
-        // we use an unchanged camera with an empty transform to easily render the layout
-        shader = new Shader("flatShader");
-        camera = new Camera();
-        transform = new Transform();
+        super();
     }
 
-    /**
-     * renders the GUI
-     */
+    @Override
     public void render() {
         // set the camera and shader for the renderer
         renderer.setShader(shader);

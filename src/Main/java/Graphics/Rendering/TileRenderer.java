@@ -1,4 +1,4 @@
-package Graphics;
+package Graphics.Rendering;
 
 import Graphics.OpenGL.Model;
 import Graphics.OpenGL.Shader;

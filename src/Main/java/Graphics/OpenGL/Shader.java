@@ -173,7 +173,7 @@ public class Shader {
         BufferedReader reader;
 
         try {
-            reader = new BufferedReader( new FileReader(new File("src/Graphics/Shaders/" + filename) ) );
+            reader = new BufferedReader( new FileReader(new File("src/Main/java/Graphics/Shaders/" + filename) ) );
             String line;
 
             while ( (line = reader.readLine()) != null ) {

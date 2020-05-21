@@ -7,13 +7,13 @@ import Graphics.OpenGL.Texture;
  */
 public enum Background {
     BASIC (
-            "src/Textures/Background/background.jpg"
+            "src/Main/java/Textures/Background/background.jpg"
     ),
     PLAYER (
-            "src/Textures/Background/test_PC.png"
+            "src/Main/java/Textures/Background/test_PC.png"
     ),
     TORCH (
-            "src/Textures/Background/torch.png"
+            "src/Main/java/Textures/Background/torch.png"
     );
 
     private final Texture texture;

@@ -26,7 +26,7 @@ public class Maze {
      * @throws FileNotFoundException if the filepath does not lead to an existing file
      */
     public Maze(String filename) throws IOException {
-        file = new File("src/Levels/Framework/" + filename + ".mze");
+        file = new File("src/Main/java/Levels/Framework/" + filename + ".mze");
 
         // read the file into a List line by line
         BufferedReader reader = new BufferedReader( new FileReader( file ) );

@@ -1,4 +1,4 @@
-package AI;
+package AI.AStar;
 
 import Levels.Framework.Maze;
 import Levels.Framework.Point;

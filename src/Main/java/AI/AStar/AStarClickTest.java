@@ -1,9 +1,7 @@
-package AI;
+package AI.AStar;
 
-import Levels.Characters.Character;
 import Main.World;
 import Levels.Characters.Player;
-import Levels.Assets.Tiles.Background;
 import Levels.Framework.Point;
 import Graphics.IO.Timer;
 import Graphics.IO.Window;

@@ -7,13 +7,13 @@ import Graphics.OpenGL.Texture;
  */
 public enum Wall {
     WALL (
-            "src/Textures/Wall/wall.jpg"
+            "src/Main/java/Textures/Wall/wall.jpg"
     ),
     CASTLE_WALL (
-            "src/Textures/Wall/castle_wall.jpg"
+            "src/Main/java/Textures/Wall/castle_wall.jpg"
     ),
     CEILING (
-            "src/Textures/Wall/wall_ceiling.png"
+            "src/Main/java/Textures/Wall/wall_ceiling.png"
     );
 
     private final Texture texture;

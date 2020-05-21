@@ -1,18 +1,14 @@
-package AI;
+package AI.ImageRecognition;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
-import javax.swing.event.MouseInputListener;
-import javax.xml.soap.Text;
 import java.awt.*;
 import java.awt.Color;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
 import java.util.Iterator;
 

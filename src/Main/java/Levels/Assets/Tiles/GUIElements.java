@@ -25,7 +25,7 @@ public enum GUIElements {
     private final Texture texture;
 
     GUIElements(String fileName) {
-        texture = new Texture( "src/Textures/GUIElements/" + fileName );
+        texture = new Texture( "src/Main/java/Textures/GUIElements/" + fileName );
     }
 
     public Texture getTexture() {

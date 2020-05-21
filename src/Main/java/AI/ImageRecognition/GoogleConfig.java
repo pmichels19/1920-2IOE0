@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package AI;
+package AI.ImageRecognition;
 
 // [START automl_vision_classification_predict]
 import com.google.cloud.automl.v1.AnnotationPayload;

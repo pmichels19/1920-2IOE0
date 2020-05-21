@@ -1,4 +1,4 @@
-package AI;
+package AI.ImageRecognition;
 
 public class RunDrawingCanvas implements Runnable {
 

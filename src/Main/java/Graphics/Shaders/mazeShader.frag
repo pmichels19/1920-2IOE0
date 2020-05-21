@@ -28,6 +28,6 @@ void main() {
         totalDiffuse += (brightness * lightColor[i])/attFactor;
     }
 
-    gl_FragColor = vec4(totalDiffuse * c.rgb, texture.a);
+    gl_FragColor = vec4(totalDiffuse * texture.rgb, texture.a);
 
 }

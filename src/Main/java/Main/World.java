@@ -32,9 +32,7 @@ public class World {
     private final TileRenderer renderer;
     // the light object
     private final Light[] lights = {
-            new Light(new Vector3f(2,6,1.5f), new Vector3f(0.2f,1,0.2f), Background.TORCH.getTexture(), new Vector3f(1,0.5f,0.05f)),
-            new Light(new Vector3f(6,8,1.5f), new Vector3f(1,0.2f,0.2f), Background.TORCH.getTexture(), new Vector3f(1,0.5f,0.05f)),
-            new Light(new Vector3f(8,4,1.5f), new Vector3f(0.2f,0.2f,1), Background.TORCH.getTexture(), new Vector3f(1,0.5f,0.05f)),
+            new Light(new Vector3f(2,6,1.5f), new Vector3f(1f,1f,1f), Background.TORCH.getTexture(), new Vector3f(1,0f,0f)),
     };
 
     // variables to keep track of the player location in the world
@@ -66,9 +64,9 @@ public class World {
 
         // initialize the camera by centering it on the player
         camera.setPosition( new Vector3f(
-                xPlayer * 2,
-                (maze.getGrid().length - yPlayer) * 2 - 10,
-                16
+                xPlayer + 1 ,
+                (maze.getGrid().length - yPlayer),
+                8
         ) );
       
         // prepare the tile renderer for rendering
@@ -128,15 +126,18 @@ public class World {
         }
 
         for ( Point point : leftWalls ) {
-            renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), TileRenderer.LEFTS );
+            renderer.addNormalMap( Wall.BRICKWALL_NORMAL.getTexture() );
+            renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.LEFTS );
         }
 
         for ( Point point : rightWalls ) {
-            renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), TileRenderer.RIGHT );
+            renderer.addNormalMap( Wall.BRICKWALL_NORMAL.getTexture() );
+            renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.RIGHT );
         }
 
         for ( Point point : faceWalls ) {
-            renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES );
+            renderer.addNormalMap( Wall.BRICKWALL_NORMAL.getTexture() );
+            renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES );
         }
 
         renderer.renderTile( Background.PLAYER.getTexture(), xPlayer, grid.length + 0.5f - yPlayer, TileRenderer.FACES );

@@ -1,6 +1,9 @@
 #version 330 core
 
-uniform sampler2D sampler;
+uniform sampler2D diffuseMap;
+
+uniform sampler2D normalMap;
+uniform int normalMapping;
 
 uniform vec3 lightPosition[5];
 uniform vec3 lightColor[5];
@@ -14,10 +17,19 @@ vec4 c = vec4(.9,.9,.9,1);
 
 void main() {
 
-    vec4 texture = texture2D(sampler, textureCoords);
-    vec3 unitNormal = normalize(surfaceNormal);
-    vec3 totalDiffuse = vec3(0.0);
+    vec4 texture = texture2D(diffuseMap, textureCoords);
 
+    vec3 unitNormal = vec3(0.0);
+
+    if (normalMapping == 1) {
+        unitNormal = texture2D(normalMap, textureCoords).rgb;
+        unitNormal = unitNormal*2-1;
+        unitNormal = normalize(unitNormal);
+    } else {
+        unitNormal = normalize(surfaceNormal);
+    }
+
+    vec3 totalDiffuse = vec3(0.0);
 
     for (int i = 0; i < 5; i++) {
         vec3 unitLightVector = normalize(toLightVector[i]);

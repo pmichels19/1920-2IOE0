@@ -68,7 +68,14 @@ public class World {
                 (maze.getGrid().length - yPlayer),
                 8
         ) );
-      
+
+        //TODO: set camera back
+//        camera.setPosition( new Vector3f(
+//                xPlayer/2 ,
+//                (maze.getGrid().length - yPlayer)/2 - 10,
+//                16
+//        ) );
+
         // prepare the tile renderer for rendering
         renderer = TileRenderer.getInstance();
     }

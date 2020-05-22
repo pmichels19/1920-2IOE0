@@ -29,6 +29,7 @@ public enum Letter {
     X ( "letter_X.png" ),
     Y ( "letter_Y.png" ),
     Z ( "letter_Z.png" ),
+    SPACE ( "letter_SPACE.png" ),
     A_WHITE ( "letter_A_white.png" ),
     B_WHITE ( "letter_B_white.png" ),
     C_WHITE ( "letter_C_white.png" ),
@@ -54,7 +55,8 @@ public enum Letter {
     W_WHITE ( "letter_W_white.png" ),
     X_WHITE ( "letter_X_white.png" ),
     Y_WHITE ( "letter_Y_white.png" ),
-    Z_WHITE ( "letter_Z_white.png" );
+    Z_WHITE ( "letter_Z_white.png" ),
+    SPACE_WHITE ( "letter_SPACE.png" );
 
     private final Texture texture;
 

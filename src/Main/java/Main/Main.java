@@ -3,6 +3,7 @@ package Main;
 import Graphics.IO.Timer;
 import Graphics.IO.Window;
 import Graphics.Rendering.GUI;
+import Graphics.Rendering.MainMenu;
 import Graphics.Rendering.PauseScreen;
 import Graphics.Rendering.World;
 import Levels.Characters.Player;
@@ -56,11 +57,12 @@ public class Main {
         // start the maze found in specified file and create the player object
         Maze maze = new Maze("level_1");
 
-        // set up the renderer with the player and maze created above
+        // set up the world, corresponding GUI, the main menu and pause screen
         World world = new World(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
-        // and start up the GUI
         GUI gui = new GUI();
         PauseScreen pauseScreen = new PauseScreen();
+        MainMenu menu = new MainMenu();
+
         // and initialize the controller for input checking
         Controller controller = new Controller(maze, window);
 
@@ -110,15 +112,17 @@ public class Main {
                     controller.decrementMovementCounter();
                 }
 
-                // we check if the game is paused
-                if ( !controller.paused() ) {
-                    // if not, we want to do the following things:
-                    world.render();
-                    gui.render();
-                } else {
-                    // and rether the pause screen otherwise
-                    pauseScreen.render();
-                }
+                menu.render();
+
+//                // we check if the game is paused
+//                if ( !controller.paused() ) {
+//                    // if not, we want to do the following things:
+//                    world.render();
+//                    gui.render();
+//                } else {
+//                    // and rether the pause screen otherwise
+//                    pauseScreen.render();
+//                }
 
                 window.swapBuffers();
 

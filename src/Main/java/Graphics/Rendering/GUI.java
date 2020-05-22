@@ -10,13 +10,6 @@ public class GUI extends FlatRender {
     // the player to draw the GUI for
     private final Player player = Player.getInstance();
 
-    /**
-     * initializes a new GUI for the singleton player
-     */
-    public GUI() {
-        super();
-    }
-
     @Override
     public void render() {
         prepareRender();

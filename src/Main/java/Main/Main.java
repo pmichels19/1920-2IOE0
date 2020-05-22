@@ -110,10 +110,15 @@ public class Main {
                     controller.decrementMovementCounter();
                 }
 
-                // render the world
-                world.render();
-                gui.render();
-                pauseScreen.render();
+                // we check if the game is paused
+                if ( !controller.paused() ) {
+                    // if not, we want to do the following things:
+                    world.render();
+                    gui.render();
+                } else {
+                    // and rether the pause screen otherwise
+                    pauseScreen.render();
+                }
 
                 window.swapBuffers();
 

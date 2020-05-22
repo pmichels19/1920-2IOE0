@@ -19,10 +19,7 @@ public class GUI extends FlatRender {
 
     @Override
     public void render() {
-        // set the camera and shader for the renderer
-        renderer.setShader(shader);
-        renderer.setCamera(camera);
-        renderer.setTransform(transform);
+        prepareRender();
 
         renderResourceBars();
         renderInventory();

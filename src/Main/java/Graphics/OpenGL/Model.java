@@ -25,63 +25,38 @@ public class Model {
     public static Model[] getModels() {
         if (models == null) {
             // the texture coordinates are the same for all models
-            final float[] textures = new float[]{ 0, 1,       1, 1,       1, 0,       0, 0 };
+            final float[] textures = new float[]{ 1, 1,       0, 1,       0, 0,       1, 0 };
             // we only allow the use of 5 different models, one for each of:
             models = new Model[]{
                     // the top of a cube
                     new Model(
-                            new float[]{ 1, -1, 2,       -1, -1, 2,      -1, 1, 2,       1, 1, 2 },
+                            new float[] { 1, -1, 2,       -1, -1, 2,      -1, 1, 2,       1, 1, 2 },
                             textures,
-                            new float[] {
-                                    0, 0, 1,
-                                    0, 0, 1,
-                                    0, 0, 1,
-                                    0, 0, 1
-                            }
+                            new float[] { 0, 0, 1,        0, 0, 1,        0, 0, 1,        0, 0, 1 }
                     ),
                     // the right side of a cube
                     new Model(
-                            new float[]{ 1, -1, 0,       1, 1, 0,        1, 1, 2,        1, -1, 2 },
+                            new float[] { 1, -1, 0,       1, 1, 0,        1, 1, 2,        1, -1, 2 },
                             textures,
-                            new float[] {
-                                    1, 0, 0,
-                                    1, 0, 0,
-                                    1, 0, 0,
-                                    1, 0, 0
-                            }
+                            new float[] { 1, 0, 0,        1, 0, 0,        1, 0, 0,        1, 0, 0 }
                     ),
                     // the bottom of a cube
                     new Model(
-                            new float[]{ 1, -1, 0,       -1, -1, 0,      -1, 1, 0,       1, 1, 0 },
+                            new float[] { 1, -1, 0,       -1, -1, 0,      -1, 1, 0,       1, 1, 0 },
                             textures,
-                            new float[] {
-                                    0, 0, 1,
-                                    0, 0, 1,
-                                    0, 0, 1,
-                                    0, 0, 1
-                            }
+                            new float[] {0, 0, 1,         0, 0, 1,        0, 0, 1,        0, 0, 1 }
                     ),
                     // the front of a cube
                     new Model(
-                            new float[]{ 1, -1, 0,       -1, -1, 0,      -1, -1, 2,      1, -1, 2 },
+                            new float[] { 1, -1, 0,       -1, -1, 0,      -1, -1, 2,      1, -1, 2 },
                             textures,
-                            new float[] {
-                                    0, -1, 0,
-                                    0, -1, 0,
-                                    0, -1, 0,
-                                    0, -1, 0
-                            }
+                            new float[] { 0, -1, 0,       0, -1, 0,       0, -1, 0,       0, -1, 0 }
                     ),
                     // the left side of a cube
                     new Model(
-                            new float[]{ -1, -1, 0,      -1, 1, 0,       -1, 1, 2,       -1, -1, 2 },
+                            new float[] { -1, -1, 0,      -1, 1, 0,       -1, 1, 2,       -1, -1, 2 },
                             textures,
-                            new float[] {
-                                    -1, 0, 0,
-                                    -1, 0, 0,
-                                    -1, 0, 0,
-                                    -1, 0, 0
-                            }
+                            new float[] { -1, 0, 0,       -1, 0, 0,       -1, 0, 0,       -1, 0, 0 }
                     )
             };
         }

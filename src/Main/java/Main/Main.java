@@ -3,6 +3,7 @@ package Main;
 import Graphics.IO.Timer;
 import Graphics.IO.Window;
 import Graphics.Rendering.GUI;
+import Graphics.Rendering.PauseScreen;
 import Graphics.Rendering.World;
 import Levels.Characters.Player;
 import Levels.Framework.Maze;
@@ -54,12 +55,12 @@ public class Main {
 
         // start the maze found in specified file and create the player object
         Maze maze = new Maze("level_1");
-        Player player = Player.getInstance();
 
         // set up the renderer with the player and maze created above
         World world = new World(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
         // and start up the GUI
         GUI gui = new GUI();
+        PauseScreen pauseScreen = new PauseScreen();
         // and initialize the controller for input checking
         Controller controller = new Controller(maze, window);
 
@@ -112,6 +113,8 @@ public class Main {
                 // render the world
                 world.render();
                 gui.render();
+                pauseScreen.render();
+
                 window.swapBuffers();
 
                 frames++;

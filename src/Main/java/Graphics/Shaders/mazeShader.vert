@@ -6,10 +6,10 @@ attribute vec2 vertexTexture;
 attribute vec3 vertexNormal;
 
 // Transformation matrices
-uniform mat4 modelMatrix;
 uniform mat4 projectionMatrix;
-uniform mat4 viewMatrix;
+uniform mat4 modelMatrix;
 uniform mat4 tilePosition;
+uniform mat4 viewMatrix;
 
 // Light positions
 uniform vec3 lightPosition[5];

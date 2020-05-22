@@ -5,6 +5,7 @@ uniform sampler2D diffuseMap;
 
 // Normal map
 uniform sampler2D normalMap;
+
 // Whether normal mapping is enabled
 uniform int normalMapping;
 

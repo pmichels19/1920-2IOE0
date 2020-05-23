@@ -1,6 +1,9 @@
 package Main.Input;
 
+import Graphics.IO.ScreenShot;
 import Main.GameState;
+
+import java.io.FileNotFoundException;
 
 import static Main.Main.setState;
 import static org.lwjgl.glfw.GLFW.*;
@@ -29,6 +32,18 @@ public class InGameController extends Controller {
             }
         } else {
             pauseCooldown--;
+        }
+
+        if ( window.buttonClicked( GLFW_KEY_F5 ) ) {
+            try {
+                maze.saveCurrentMaze();
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if ( window.buttonClicked( GLFW_KEY_F12 ) ) {
+            ScreenShot.takeScreenShot();
         }
 
         // we only check for inventory inputs if allowed and not paused

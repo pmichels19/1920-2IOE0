@@ -29,32 +29,34 @@ public class PauseMenuController extends Controller {
             pauseCooldown--;
         }
 
+        // if the player selected an option, we need to execute the selected option
+        if ( window.buttonClicked(GLFW_KEY_ENTER) ) {
+            switch ( PauseScreen.getSelectedOption() ) {
+                // 0 is mapped to going back in game
+                case 0:
+                    setState( GameState.IN_GAME );
+                    return;
+                // 1 is mapped to saving the game
+                case 1:
+                    try {
+                        maze.saveCurrentMaze();
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                // 2 is mapped to returning to the main menu
+                case 2:
+                    setState( GameState.MAIN_MENU );
+                    return;
+                // 3 is mapped to exiting to desktop
+                case 3:
+                    glfwSetWindowShouldClose( window.getWindow(), true );
+                    return;
+            }
+        }
+
         // we can go up and down in the pause menu on cooldown
         if (pauseMenuCooldown == 0) {
-            // if the player selected an option, we need to execute the selected option
-            if ( window.buttonClicked(GLFW_KEY_ENTER) ) {
-                switch ( PauseScreen.getSelectedOption() ) {
-                    // 0 is mapped to saving the game
-                    case 0:
-                        try {
-                            maze.saveCurrentMaze();
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
-                        break;
-                    // 1 is mapped to saving the game, then exiting
-                    case 1:
-                        setState( GameState.MAIN_MENU );
-                        break;
-                    // 2 is mapped to quitting the game, without saving
-                    case 2:
-                        glfwSetWindowShouldClose( window.getWindow(), true );
-                        break;
-                }
-
-                pauseMenuCooldown = 5;
-            }
-
             if ( window.buttonClicked(GLFW_KEY_UP) ) {
                 PauseScreen.changeSelected(true);
                 pauseMenuCooldown = 5;

@@ -11,7 +11,7 @@ public class PauseScreen extends FlatRender {
     the option that is selected by the player in the pause menu, mapped to the options array
     */
     private static int selectedOption = 0;
-    private static final String[] options = new String[] { "save", "exit to main menu", "exit to desktop" };
+    private static final String[] options = new String[] { "Return to Game","save", "exit to main menu", "exit to desktop" };
 
     @Override
     public void render() {

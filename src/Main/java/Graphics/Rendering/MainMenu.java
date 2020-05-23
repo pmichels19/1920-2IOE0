@@ -70,28 +70,15 @@ public class MainMenu extends FlatRender {
         renderer.setTransform(transform);
         renderer.renderTile( GUIElements.BACKGROUND.getTexture(), 0.3f, 0, TileRenderer.FLOOR );
 
-        // the option to render
-        String option;
         transform.setScale( new Vector3f( 0.06f * 1080f/1920f, 0.06f, 1 ) );
 
-        option = "Continue";
-        transform.setPosition( new Vector3f( -1, 0.5f, 0 ) );
-        renderer.setTransform(transform);
-        renderString( option, selectedOption != 0, (1f + option.length() / 2f), 0 );
-
-        option = "New Game";
-        transform.setPosition( new Vector3f( -1, 0.25f, 0 ) );
-        renderer.setTransform(transform);
-        renderString( option, selectedOption != 1, (1f + option.length() / 2f), 0 );
-
-        option = "Load Game";
-        transform.setPosition( new Vector3f( -1, 0, 0 ) );
-        renderer.setTransform(transform);
-        renderString( option, selectedOption != 2, (1f + option.length() / 2f), 0 );
-
-        option = "Exit Game";
-        transform.setPosition( new Vector3f( -1, -0.25f, 0 ) );
-        renderer.setTransform(transform);
-        renderString( option, selectedOption != 3, (1f + option.length() / 2f), 0 );
+        // render all available options
+        String[] options = new String[] {"Continue", "New Game", "Load Game", "Exit Game"};
+        for (int i = 0; i < options.length; i++) {
+            String option = options[i];
+            transform.setPosition(new Vector3f(-1, 0.5f - i * 0.25f, 0));
+            renderer.setTransform(transform);
+            renderString(option, selectedOption != i, (1f + option.length() / 2f), 0);
+        }
     }
 }

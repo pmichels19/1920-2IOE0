@@ -25,7 +25,7 @@ public class Main {
     private static final int SCREEN_HEIGHT = 1080;
 
     // we start the game in the main menu
-    private static GameState state = GameState.IN_GAME;
+    private static GameState state = GameState.MAIN_MENU;
 
     // cap at 60 fps for now
     private static final double FRAME_CAP = 1.0 / 60.0;

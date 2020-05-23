@@ -8,12 +8,10 @@ public class PauseScreen extends FlatRender {
     private static boolean paused = false;
 
     /*
-    the option that is selected by the player in the pause menu, mapped as:
-    0: Save
-    1: Save and quit
-    2: quit, without saving
+    the option that is selected by the player in the pause menu, mapped to the options array
     */
     private static int selectedOption = 0;
+    private static final String[] options = new String[] { "save", "exit to main menu", "exit to desktop" };
 
     @Override
     public void render() {
@@ -33,21 +31,12 @@ public class PauseScreen extends FlatRender {
 
         // scale the letters down a bit for the option selection
         transform.setScale( new Vector3f( 0.06f * 1080f / 1920f, 0.06f, 1 ) );
-
-        // render our first option, which is to save the game
-        transform.setPosition( new Vector3f( 0, 0.25f, 0 ) );
-        renderer.setTransform(transform);
-        renderString("Save", selectedOption != 0);
-
-        // render our second option, which is to save the game and then quit
-        transform.setPosition( new Vector3f( 0, 0, 0 ) );
-        renderer.setTransform(transform);
-        renderString("Save and quit", selectedOption != 1);
-
-        // and finally the third option, which is to just quit, without saving
-        transform.setPosition( new Vector3f( 0, -0.25f, 0 ) );
-        renderer.setTransform(transform);
-        renderString("quit", selectedOption != 2);
+        for (int i = 0; i < options.length; i++) {
+            String option = options[i];
+            transform.setPosition(new Vector3f(0, 0.25f - i * 0.25f, 0));
+            renderer.setTransform(transform);
+            renderString(option, selectedOption != i);
+        }
     }
 
     /**
@@ -61,7 +50,7 @@ public class PauseScreen extends FlatRender {
         } else {
             selectedOption++;
         }
-        selectedOption = (selectedOption + 3) % 3;
+        selectedOption = (selectedOption + options.length) % options.length;
     }
 
     public static int getSelectedOption() {

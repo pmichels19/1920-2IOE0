@@ -60,7 +60,7 @@ public abstract class FlatRender {
      * @param toRender the word to render
      * @param white whether the text is to be white or black
      */
-    void renderWord(String toRender, boolean white) {
+    void renderString(String toRender, boolean white) {
         // we check if toRender has an even length as this would impact where the center of the text is
         boolean evenLength = toRender.length() % 2 == 0;
         // we calculate the middle of the text
@@ -92,7 +92,7 @@ public abstract class FlatRender {
      * @param x the x coordinate to add to the normal x coordinate of the {@code renderWord} method
      * @param y the y coordinate to render at
      */
-    void renderWord(String toRender, boolean white, float x, float y) {
+    void renderString(String toRender, boolean white, float x, float y) {
         // we check if toRender has an even length as this would impact where the center of the text is
         boolean evenLength = toRender.length() % 2 == 0;
         // we calculate the middle of the text

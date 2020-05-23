@@ -44,11 +44,11 @@ public class MainMenu extends FlatRender {
         transform.setScale( new Vector3f( 0.1f * 1080f/1920f, 0.1f, 1 ) );
         transform.setPosition( new Vector3f( 0.5f, 0.75f, 0 ) );
         renderer.setTransform(transform);
-        renderWord("Mazes", true);
+        renderString("Mazes", true);
 
         transform.setPosition( new Vector3f( 0.5f, 0.25f, 0 ) );
         renderer.setTransform(transform);
-        renderWord("Magic", true);
+        renderString("Magic", true);
 
         transform.setPosition( new Vector3f( 0.5f, 0.5f, 0 ) );
         transform.setScale( new Vector3f( 0.18f, 0.1f, 1 ) );
@@ -57,7 +57,7 @@ public class MainMenu extends FlatRender {
 
         transform.setScale( new Vector3f( 0.06f * 1080f/1920f, 0.06f, 1 ) );
         renderer.setTransform(transform);
-        renderWord("Of", false);
+        renderString("Of", false);
     }
 
     /**
@@ -77,21 +77,21 @@ public class MainMenu extends FlatRender {
         option = "Continue";
         transform.setPosition( new Vector3f( -1, 0.5f, 0 ) );
         renderer.setTransform(transform);
-        renderWord( option, selectedOption != 0, (1f + option.length() / 2f), 0 );
+        renderString( option, selectedOption != 0, (1f + option.length() / 2f), 0 );
 
         option = "New Game";
         transform.setPosition( new Vector3f( -1, 0.25f, 0 ) );
         renderer.setTransform(transform);
-        renderWord( option, selectedOption != 1, (1f + option.length() / 2f), 0 );
+        renderString( option, selectedOption != 1, (1f + option.length() / 2f), 0 );
 
         option = "Load Game";
         transform.setPosition( new Vector3f( -1, 0, 0 ) );
         renderer.setTransform(transform);
-        renderWord( option, selectedOption != 2, (1f + option.length() / 2f), 0 );
+        renderString( option, selectedOption != 2, (1f + option.length() / 2f), 0 );
 
         option = "Exit Game";
         transform.setPosition( new Vector3f( -1, -0.25f, 0 ) );
         renderer.setTransform(transform);
-        renderWord( option, selectedOption != 3, (1f + option.length() / 2f), 0 );
+        renderString( option, selectedOption != 3, (1f + option.length() / 2f), 0 );
     }
 }

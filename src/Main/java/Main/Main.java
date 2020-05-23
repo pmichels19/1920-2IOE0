@@ -6,8 +6,8 @@ import Graphics.Rendering.GUI;
 import Graphics.Rendering.MainMenu;
 import Graphics.Rendering.PauseScreen;
 import Graphics.Rendering.World;
-import Levels.Characters.Player;
 import Levels.Framework.Maze;
+import Main.Input.MainController;
 import org.lwjgl.opengl.GL;
 
 import java.io.IOException;
@@ -23,6 +23,9 @@ public class Main {
     // standard variables for width and height of the game
     private static final int SCREEN_WIDTH = 1920;
     private static final int SCREEN_HEIGHT = 1080;
+
+    // we start the game in the main menu
+    private static GameState state = GameState.IN_GAME;
 
     // cap at 60 fps for now
     private static final double FRAME_CAP = 1.0 / 60.0;
@@ -64,7 +67,7 @@ public class Main {
         MainMenu menu = new MainMenu();
 
         // and initialize the controller for input checking
-        Controller controller = new Controller(maze, window);
+        MainController mainController = new MainController(maze, window);
 
         // Stuff to keep track of the fps
         double frame_time = 0;
@@ -104,30 +107,45 @@ public class Main {
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
                 // check the inputs done by the player
-                controller.checkInputs();
+                mainController.checkInputs();
 
                 // if the player still has movement frames left, execute those by moving the player
-                if ( controller.getMovementCounter() > 0 ) {
-                    world.movePlayer( controller.getSpeed(), controller.isVertical() );
-                    controller.decrementMovementCounter();
+                if ( mainController.getMovementCounter() > 0 ) {
+                    world.movePlayer( mainController.getSpeed(), mainController.isVertical() );
+                    mainController.decrementMovementCounter();
                 }
 
-                menu.render();
-
-//                // we check if the game is paused
-//                if ( !controller.paused() ) {
-//                    // if not, we want to do the following things:
-//                    world.render();
-//                    gui.render();
-//                } else {
-//                    // and rether the pause screen otherwise
-//                    pauseScreen.render();
-//                }
+                if (state == GameState.MAIN_MENU) {
+                    menu.render();
+                } else if (state == GameState.IN_GAME) {
+                    world.render();
+                    gui.render();
+                } else if (state == GameState.PAUSED) {
+                    pauseScreen.render();
+                }
 
                 window.swapBuffers();
 
                 frames++;
             }
         }
+    }
+
+    /**
+     * getter for the current game state
+     *
+     * @return {@code state}
+     */
+    public static GameState getState() {
+        return Main.state;
+    }
+
+    /**
+     * sets the current game state to {@code state} provided in the parameter
+     *
+     * @param state the new game state
+     */
+    public static void setState(GameState state) {
+        Main.state = state;
     }
 }

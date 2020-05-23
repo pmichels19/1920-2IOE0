@@ -17,56 +17,37 @@ public class PauseScreen extends FlatRender {
 
     @Override
     public void render() {
-        if ( paused ) {
-            prepareRender();
+        prepareRender();
 
-            // firstly we render the bar to show what option was selected in the pause screen
-            transform.setScale( new Vector3f( 0.65f, 0.1f, 1 ) );
-            transform.setPosition( new Vector3f( 0, 0.25f - (0.25f * selectedOption), 0 ) );
-            renderer.setTransform(transform);
-            renderer.renderTile(GUIElements.BACKGROUND.getTexture(), 0, 0, TileRenderer.FLOOR);
+        // firstly we render the bar to show what option was selected in the pause screen
+        transform.setScale( new Vector3f( 0.65f, 0.1f, 1 ) );
+        transform.setPosition( new Vector3f( 0, 0.25f - (0.25f * selectedOption), 0 ) );
+        renderer.setTransform(transform);
+        renderer.renderTile(GUIElements.BACKGROUND.getTexture(), 0, 0, TileRenderer.FLOOR);
 
-            // render the text of the pause screen
-            transform.setScale(new Vector3f(0.1f * 1080f / 1920f, 0.1f, 1));
-            transform.setPosition( new Vector3f( 0, 0.75f, 0 ) );
-            renderer.setTransform(transform);
-            renderWord("game paused", true);
+        // render the text of the pause screen
+        transform.setScale(new Vector3f(0.1f * 1080f / 1920f, 0.1f, 1));
+        transform.setPosition( new Vector3f( 0, 0.75f, 0 ) );
+        renderer.setTransform(transform);
+        renderString("game paused", true);
 
-            // scale the letters down a bit for the option selection
-            transform.setScale( new Vector3f( 0.06f * 1080f / 1920f, 0.06f, 1 ) );
+        // scale the letters down a bit for the option selection
+        transform.setScale( new Vector3f( 0.06f * 1080f / 1920f, 0.06f, 1 ) );
 
-            // render our first option, which is to save the game
-            transform.setPosition( new Vector3f( 0, 0.25f, 0 ) );
-            renderer.setTransform(transform);
-            renderWord("Save", selectedOption != 0);
+        // render our first option, which is to save the game
+        transform.setPosition( new Vector3f( 0, 0.25f, 0 ) );
+        renderer.setTransform(transform);
+        renderString("Save", selectedOption != 0);
 
-            // render our second option, which is to save the game and then quit
-            transform.setPosition( new Vector3f( 0, 0, 0 ) );
-            renderer.setTransform(transform);
-            renderWord("Save and quit", selectedOption != 1);
+        // render our second option, which is to save the game and then quit
+        transform.setPosition( new Vector3f( 0, 0, 0 ) );
+        renderer.setTransform(transform);
+        renderString("Save and quit", selectedOption != 1);
 
-            // and finally the third option, which is to just quit, without saving
-            transform.setPosition( new Vector3f( 0, -0.25f, 0 ) );
-            renderer.setTransform(transform);
-            renderWord("quit", selectedOption != 2);
-        }
-    }
-
-    /**
-     * toggles the pause screen on and off and resets the selected option to 0
-     */
-    public static void togglePause() {
-        paused = !paused;
-        selectedOption = 0;
-    }
-
-    /**
-     * returns whether the game has been paused or not
-     *
-     * @return {@code paused}
-     */
-    public static boolean isPaused() {
-        return paused;
+        // and finally the third option, which is to just quit, without saving
+        transform.setPosition( new Vector3f( 0, -0.25f, 0 ) );
+        renderer.setTransform(transform);
+        renderString("quit", selectedOption != 2);
     }
 
     /**

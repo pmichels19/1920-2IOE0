@@ -2,10 +2,7 @@ package Main;
 
 import Graphics.IO.Timer;
 import Graphics.IO.Window;
-import Graphics.Rendering.GUI;
-import Graphics.Rendering.MainMenu;
-import Graphics.Rendering.PauseScreen;
-import Graphics.Rendering.World;
+import Graphics.Rendering.*;
 import Levels.Framework.Maze;
 import Main.Input.MainController;
 import org.lwjgl.opengl.GL;
@@ -64,7 +61,8 @@ public class Main {
         World world = new World(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
         GUI gui = new GUI();
         PauseScreen pauseScreen = new PauseScreen();
-        MainMenu menu = new MainMenu();
+        MainMenu mainMenu = new MainMenu();
+        NewGameMenu newGameMenu = new NewGameMenu();
 
         // and initialize the controller for input checking
         MainController mainController = new MainController(maze, window);
@@ -116,12 +114,14 @@ public class Main {
                 }
 
                 if (state == GameState.MAIN_MENU) {
-                    menu.render();
+                    mainMenu.render();
                 } else if (state == GameState.IN_GAME) {
                     world.render();
                     gui.render();
                 } else if (state == GameState.PAUSED) {
                     pauseScreen.render();
+                } else if (state == GameState.STARTING_GAME) {
+                    newGameMenu.render();
                 }
 
                 window.swapBuffers();

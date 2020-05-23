@@ -30,7 +30,7 @@ public class MainMenuController extends Controller {
                     // 1 is mapped to starting a new game
                     case 1:
                         // TODO: now we only start the game, but we should let the player select a save slot and start from level 1
-                        setState( GameState.IN_GAME );
+                        setState( GameState.STARTING_GAME );
                         break;
                     // 2 is mapped to loading a saved game
                     case 2:

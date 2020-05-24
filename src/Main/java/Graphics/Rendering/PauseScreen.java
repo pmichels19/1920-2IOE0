@@ -4,9 +4,6 @@ import Levels.Assets.Tiles.GUIElements;
 import Levels.Framework.joml.Vector3f;
 
 public class PauseScreen extends FlatRender {
-    // whether the game has been paused by the player
-    private static boolean paused = false;
-
     /*
     the option that is selected by the player in the pause menu, mapped to the options array
     */

@@ -23,6 +23,8 @@ public class Main {
 
     // we start the game in the main menu
     private static GameState state = GameState.MAIN_MENU;
+    // and with no save slot selected:
+    private static int slot = -1;
 
     // cap at 60 fps for now
     private static final double FRAME_CAP = 1.0 / 60.0;
@@ -147,5 +149,23 @@ public class Main {
      */
     public static void setState(GameState state) {
         Main.state = state;
+    }
+
+    /**
+     * getter for the current save slot
+     *
+     * @return {@code slot}
+     */
+    public static int getSlot() {
+        return slot;
+    }
+
+    /**
+     * sets the current slot to the provided slot
+     *
+     * @param slot the new save slot
+     */
+    public static void setSlot(int slot) {
+        Main.slot = slot;
     }
 }

@@ -50,6 +50,13 @@ public class PauseScreen extends FlatRender {
         selectedOption = (selectedOption + options.length) % options.length;
     }
 
+    /**
+     * resets the selected option to 0
+     */
+    public static void resetSelected() {
+        selectedOption = 0;
+    }
+
     public static int getSelectedOption() {
         return selectedOption;
     }

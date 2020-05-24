@@ -11,6 +11,7 @@ public class MainController {
     private final MainMenuController mainMenuController;
     private final InGameController gameController;
     private final PauseMenuController pauseMenuController;
+    private final SlotPickController slotPickController;
 
     public MainController(Maze maze, Window window) {
         Controller.setWindow( window );
@@ -19,6 +20,7 @@ public class MainController {
         mainMenuController = new MainMenuController();
         gameController = new InGameController();
         pauseMenuController = new PauseMenuController();
+        slotPickController = new SlotPickController();
     }
 
     /**
@@ -33,6 +35,8 @@ public class MainController {
             pauseMenuController.checkInputs();
         } else if ( state == GameState.MAIN_MENU ) {
             mainMenuController.checkInputs();
+        } else if ( state == GameState.STARTING_GAME || state == GameState.LOADING_SAVE || state == GameState.SAVING_GAME ) {
+            slotPickController.checkInputs();
         }
     }
 

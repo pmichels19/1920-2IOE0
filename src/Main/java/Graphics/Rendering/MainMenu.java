@@ -29,6 +29,13 @@ public class MainMenu extends FlatRender {
         selectedOption = (selectedOption + 4) % 4;
     }
 
+    /**
+     * resets the selected option to 0
+     */
+    public static void resetSelected() {
+        selectedOption = 0;
+    }
+
     @Override
     public void render() {
         prepareRender();

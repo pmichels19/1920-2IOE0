@@ -64,6 +64,8 @@ public class Main {
         GUI gui = new GUI();
         PauseScreen pauseScreen = new PauseScreen();
         MainMenu mainMenu = new MainMenu();
+        LoadMenu loadMenu = new LoadMenu();
+        SaveMenu saveMenu = new SaveMenu();
         NewGameMenu newGameMenu = new NewGameMenu();
 
         // and initialize the controller for input checking
@@ -122,6 +124,10 @@ public class Main {
                     gui.render();
                 } else if (state == GameState.PAUSED) {
                     pauseScreen.render();
+                } else if (state == GameState.LOADING_SAVE) {
+                    loadMenu.render();
+                } else if (state == GameState.SAVING_GAME) {
+                    saveMenu.render();
                 } else if (state == GameState.STARTING_GAME) {
                     newGameMenu.render();
                 }

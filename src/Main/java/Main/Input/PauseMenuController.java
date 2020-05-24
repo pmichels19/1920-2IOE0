@@ -38,11 +38,7 @@ public class PauseMenuController extends Controller {
                     return;
                 // 1 is mapped to saving the game
                 case 1:
-                    try {
-                        maze.saveCurrentMaze();
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
+                    setState( GameState.SAVING_GAME );
                     break;
                 // 2 is mapped to returning to the main menu
                 case 2:

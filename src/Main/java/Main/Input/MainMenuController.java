@@ -35,6 +35,7 @@ public class MainMenuController extends Controller {
                     // 2 is mapped to loading a saved game
                     case 2:
                         // TODO: introduce a way of saving games and the players
+                        setState( GameState.LOADING_SAVE );
                         break;
                     // 3 is mapped to exiting the game
                     case 3:

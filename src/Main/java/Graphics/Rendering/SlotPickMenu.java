@@ -50,13 +50,17 @@ public abstract class SlotPickMenu extends FlatRender {
             renderString(slots[i], selectedSlot != i, 1 + slots[i].length() / 2f, 0);
         }
 
-        // if the selected slot already contains a save file, show a screenshot of that file
+        // if the selected slot already contains a save file, show a screenshot of that file for reference
         if ( (new File( "src/Main/Java/Saves/Slot_" + selectedSlot + "/test.png" )).isFile() ) {
+            // FIXME: we can not make a new texture every time, that will slow down openGL
             Texture texture = new Texture( "src/Main/Java/Saves/Slot_" + selectedSlot + "/test.png" );
+
             transform.setScale( new Vector3f( 0.2f, 0.2f, 1 ) );
-            transform.setPosition( new Vector3f( 0, 0.35f - 0.5f * selectedSlot, 0 ) );
+            transform.setPosition( new Vector3f( -0.2f, 0.35f - 0.5f * selectedSlot, 0 ) );
             renderer.setTransform(transform);
             renderer.renderTile( texture, 0, 0, TileRenderer.FLOOR );
         }
+
+        // TODO: we now only show a screenshot, maybe we also want to show what level the player was on
     }
 }

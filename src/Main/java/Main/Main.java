@@ -117,6 +117,7 @@ public class Main {
                     mainController.decrementMovementCounter();
                 }
 
+                // check which state we are in, so we render the correct thing
                 if (state == GameState.MAIN_MENU) {
                     mainMenu.render();
                 } else if (state == GameState.IN_GAME) {
@@ -155,6 +156,8 @@ public class Main {
      */
     public static void setState(GameState state) {
         Main.state = state;
+        // communicate the fact that the state changed to the main controller
+        MainController.changedState();
     }
 
     /**

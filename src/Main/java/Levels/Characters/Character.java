@@ -1,12 +1,23 @@
 package Levels.Characters;
 
+import Graphics.OBJModel;
 import Graphics.OpenGL.Model;
 import Graphics.OpenGL.Shader;
 import Graphics.OpenGL.Texture;
+import Levels.Framework.joml.Vector3f;
 
 public abstract class Character {
-    Model model;
-    Texture texture;
+    // Holds the model
+    private OBJModel model;
+
+    // Holds the current position
+    private Vector3f position;
+
+    // Holds the scale
+    private float scale;
+
+    // holds the rotation
+    private Vector3f rotation;
 
     // the values for max health and mana
     int max_health;
@@ -16,8 +27,11 @@ public abstract class Character {
     int cur_health;
     int cur_mana;
 
-    public Character(Texture texture, int max_health, int max_mana) {
-        this.texture = texture;
+    public Character(int max_health, int max_mana, OBJModel model) {
+        this.model = model;
+        position = new Vector3f(0,0,0);
+        scale=1;
+        rotation = new Vector3f(0,0,0);
 
         // start the player off fresh, with full mana and health
         this.max_health = max_health;
@@ -26,18 +40,46 @@ public abstract class Character {
         cur_mana = max_mana;
     }
 
-    abstract void generateModel(float x_pos, float y_pos);
+//    abstract void generateModel(float x_pos, float y_pos);
 
     /**
      * renders the model specified in the subclass once
      */
     public void render(Shader shader, float x_pos, float y_pos) {
-        generateModel(x_pos, y_pos);
+//        generateModel(x_pos, y_pos);
 
-        texture.bind(0);
+        model.getTexture().bind(0);
         shader.setUniform("sampler", 0);
 
         model.render();
+    }
+
+    public OBJModel getModel() {
+        return model;
+    }
+
+    public Vector3f getPosition() {
+        return position;
+    }
+
+    public float getScale() {
+        return scale;
+    }
+
+    public Vector3f getRotation() {
+        return rotation;
+    }
+
+    public void setPosition(Vector3f position) {
+        this.position = position;
+    }
+
+    public void setScale(float scale) {
+        this.scale = scale;
+    }
+
+    public void setRotation(Vector3f rotation) {
+        this.rotation = rotation;
     }
 
     public int getHealth() {

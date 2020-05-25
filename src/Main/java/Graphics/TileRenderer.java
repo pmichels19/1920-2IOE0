@@ -36,7 +36,7 @@ public class TileRenderer {
      * @return {@code TileRenderer}
      */
     public static TileRenderer getInstance() {
-        if ( renderer == null ) {
+        if (renderer == null) {
             renderer = new TileRenderer();
         }
 
@@ -77,9 +77,9 @@ public class TileRenderer {
      * Renders a basic tile with the specified texture at the specified location
      *
      * @param texture the texture to apply to the model
-     * @param x the x coordinate to draw the tile at
-     * @param y the y coordinate to draw the tile at
-     * @param model the model to render based on assignments above
+     * @param x       the x coordinate to draw the tile at
+     * @param y       the y coordinate to draw the tile at
+     * @param model   the model to render based on assignments above
      */
     public void renderTile(Texture texture, float x, float y, int model) {
         if (model < CEILS || model > LEFTS) {
@@ -90,16 +90,48 @@ public class TileRenderer {
         shader.bind();
 
         // calculate the position of the tile
-        Matrix4f tilePosition = new Matrix4f().translate( new Vector3f(x * 2f, y * 2f, 0 ) );
+        Matrix4f tilePosition = new Matrix4f().translate(new Vector3f(x * 2f, y * 2f, 0));
 
         // set the shader uniforms, so the proper position and texture is used
-        shader.setUniform("tilePosition", tilePosition );
+        shader.setUniform("tilePosition", tilePosition);
         shader.setUniform("sampler", 0);
 
         // bind the provided texture
         texture.bind(0);
 
         // and finally render the selected model
-        Model.getModels()[ model ].render();
+        Model.getModels()[model].render();
     }
+
+
+    /**
+     * Renders a basic tile with the specified texture at the specified location
+     *
+     * @param texture the texture to apply to the model
+     * @param x       the x coordinate to draw the tile at
+     * @param y       the y coordinate to draw the tile at
+     * @param model   the model to render based on assignments above
+     */
+
+    public void renderModelOnTile(Texture texture, float x, float y, OBJModel model) {
+
+        // bind the shader
+        shader.bind();
+
+        // calculate the position of the tile
+//        Matrix4f tilePosition = new Matrix4f().rotate(90, 1, 0, 0).translate(new Vector3f(x * 2f, y * 2f, 1));
+        Matrix4f tilePosition = new Matrix4f().translate(new Vector3f(x * 2f, y * 2f, 0f));
+
+        // set the shader uniforms, so the proper position and texture is used
+        shader.setUniform("tilePosition", tilePosition);
+        shader.setUniform("sampler", 0);
+
+        // bind the provided texture
+        texture.bind(0);
+
+        // and finally render the selected model
+        model.render();
+
+    }
+
 }

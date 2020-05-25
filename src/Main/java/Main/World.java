@@ -1,6 +1,9 @@
 package Main;
 
+import Graphics.OBJLoader;
+import Graphics.OBJModel;
 import Graphics.OpenGL.Light;
+import Graphics.OpenGL.Texture;
 import Graphics.TileRenderer;
 import Graphics.Transforming.Camera;
 import Graphics.OpenGL.Shader;
@@ -10,10 +13,12 @@ import Levels.Framework.joml.*;
 import Levels.Assets.Tiles.*;
 import Levels.Framework.Maze;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 import static java.lang.Math.*;
+import static jdk.nashorn.internal.objects.Global.println;
 
 /**
  * Class for rendering the world and (for now) the player
@@ -40,6 +45,8 @@ public class World {
     // variables to keep track of the player location in the world
     private float xPlayer;
     private float yPlayer;
+
+    private OBJModel enemy;
 
     /**
      * initialises the global variables for the renderer
@@ -70,7 +77,17 @@ public class World {
                 (maze.getGrid().length - yPlayer) * 2 - 10,
                 16
         ) );
-      
+        try {
+            this.enemy = OBJLoader.loadObjModel("eyeball");
+        } catch (IOException e) {
+            println("ERROR");
+            e.printStackTrace();
+        }
+
+        Texture texture = new Texture("res/Models/eyeball.jpg");
+        this.enemy.setTexture(texture);
+
+
         // prepare the tile renderer for rendering
         renderer = TileRenderer.getInstance();
     }
@@ -145,7 +162,11 @@ public class World {
             renderer.renderTile( light.getTexture(), light.getPosition().x/2,  (light.getPosition().y)/2 + 0.65f, TileRenderer.FACES );
         }
 
-
+//        Transform transform1 = this.transform;
+//        transform1.setRotation(new Quaternionf(new AxisAngle4f(-90, 1f, 0f, 0f)));
+//        renderer.setTransform(transform1);
+        renderer.renderModelOnTile(enemy.getTexture(), 2,4, enemy);
+//        renderer.setTransform(this.transform);
 
         for ( Point point : ceilings ) {
             renderer.renderTile( Wall.CEILING.getTexture(), point.getX(), point.getY(), TileRenderer.CEILS );

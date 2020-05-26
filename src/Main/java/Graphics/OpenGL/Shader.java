@@ -145,14 +145,17 @@ public class Shader {
         }
     }
 
-    public void setLights(Light[] lights) {
-        if (lights.length > MAX_LIGHTS) {
+    public void setLights(Light[] lights, Light characterLight) {
+        if (lights.length > MAX_LIGHTS-1) {
             System.err.println("!!! Too many lights initialized !!!");
         }
 
         for (int i = 0; i < MAX_LIGHTS; i++) {
             Light light;
-            if (i < lights.length) {
+            if (i ==1){
+                light = characterLight;
+            }
+            else if (i < lights.length) {
                 light = lights[i];
             } else {
                 light = new Light(new Vector3f(0,0,0), new Vector3f(0,0,0), Wall.CEILING.getTexture());

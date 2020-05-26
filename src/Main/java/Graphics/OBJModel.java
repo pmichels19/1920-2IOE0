@@ -37,7 +37,6 @@ public class OBJModel {
     private Texture texture;
 
 
-
     public OBJModel(float[] vertices, float[] textCoords, float[] normals, int[] indices) {
         FloatBuffer verticesBuffer = null;
         FloatBuffer textCoordsBuffer = null;
@@ -163,8 +162,8 @@ public class OBJModel {
 
         glBindVertexArray(0);
         glBindTexture(GL_TEXTURE_2D, 0);
-        glDisable(GL_DEPTH_TEST);
 
+        glDisable(GL_DEPTH_TEST);
     }
 
     public int getVaoId() {

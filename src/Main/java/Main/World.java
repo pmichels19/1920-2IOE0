@@ -8,6 +8,8 @@ import Graphics.TileRenderer;
 import Graphics.Transforming.Camera;
 import Graphics.OpenGL.Shader;
 import Graphics.Transforming.Transform;
+import Levels.Characters.EyeBall;
+import Levels.Characters.Player;
 import Levels.Framework.Point;
 import Levels.Framework.joml.*;
 import Levels.Assets.Tiles.*;
@@ -35,9 +37,12 @@ public class World {
     private final Transform transform;
     // the tile renderer to actaully draw the world and the player
     private final TileRenderer renderer;
+
+    private final Light characterLight = new Light(new Vector3f(1,1,1.5f), new Vector3f(1f,1f,1f), Background.TORCH.getTexture(), new Vector3f(1,0.5f,0.05f));
+
     // the light object
     private final Light[] lights = {
-            new Light(new Vector3f(2,6,1.5f), new Vector3f(0.2f,1,0.2f), Background.TORCH.getTexture(), new Vector3f(1,0.5f,0.05f)),
+            new Light(new Vector3f(2,6,1.5f), new Vector3f(1f,1f,1f), Background.TORCH.getTexture(), new Vector3f(1,0.5f,0.05f)),
             new Light(new Vector3f(6,8,1.5f), new Vector3f(1,0.2f,0.2f), Background.TORCH.getTexture(), new Vector3f(1,0.5f,0.05f)),
             new Light(new Vector3f(8,4,1.5f), new Vector3f(0.2f,0.2f,1), Background.TORCH.getTexture(), new Vector3f(1,0.5f,0.05f)),
     };
@@ -46,7 +51,7 @@ public class World {
     private float xPlayer;
     private float yPlayer;
 
-    private OBJModel enemy;
+    private Player player;
 
     /**
      * initialises the global variables for the renderer
@@ -77,16 +82,9 @@ public class World {
                 (maze.getGrid().length - yPlayer) * 2 - 10,
                 16
         ) );
-        try {
-            this.enemy = OBJLoader.loadObjModel("eyeball");
-        } catch (IOException e) {
-            println("ERROR");
-            e.printStackTrace();
-        }
 
-        Texture texture = new Texture("res/Models/eyeball.jpg");
-        this.enemy.setTexture(texture);
 
+        this.player = Player.getInstance();
 
         // prepare the tile renderer for rendering
         renderer = TileRenderer.getInstance();
@@ -100,7 +98,7 @@ public class World {
         renderer.setShader(SHADER);
         renderer.setCamera(camera);
         renderer.setTransform(transform);
-        SHADER.setLights(lights);
+        SHADER.setLights(lights, characterLight);
 
         // sets used for gathering points to determine drawing locations of tiles
         Set<Point> floors = new HashSet<>();
@@ -155,9 +153,9 @@ public class World {
         for ( Point point : faceWalls ) {
             renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES );
         }
-
-        renderer.renderTile( Background.PLAYER.getTexture(), xPlayer, grid.length + 0.5f - yPlayer, TileRenderer.FACES );
-
+//        renderer.renderTile( Background.PLAYER.getTexture(), xPlayer, grid.length + 0.5f - yPlayer, TileRenderer.FACES );
+        player.setGridPosition(xPlayer, yPlayer, grid.length);
+        renderer.renderCharacter(player);
         for (Light light : lights) {
             renderer.renderTile( light.getTexture(), light.getPosition().x/2,  (light.getPosition().y)/2 + 0.65f, TileRenderer.FACES );
         }
@@ -165,7 +163,7 @@ public class World {
 //        Transform transform1 = this.transform;
 //        transform1.setRotation(new Quaternionf(new AxisAngle4f(-90, 1f, 0f, 0f)));
 //        renderer.setTransform(transform1);
-        renderer.renderModelOnTile(enemy.getTexture(), 2,4, enemy);
+
 //        renderer.setTransform(this.transform);
 
         for ( Point point : ceilings ) {
@@ -183,6 +181,10 @@ public class World {
         // calculate the amount of movement in the x and y direction
         xPlayer += vertical ? 0f : speed;
         yPlayer += vertical ? -speed : 0f;
+        Vector3f playerPos = this.player.getPosition();
+        playerPos.x += 0f;
+        playerPos.z = 1.5f;
+        characterLight.setPosition(playerPos);
 
         // upon moving the player, we also have to move the camera
         adjustCamera(speed * 2f, vertical);

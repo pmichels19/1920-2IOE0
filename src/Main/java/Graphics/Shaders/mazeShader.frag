@@ -30,4 +30,6 @@ void main() {
 
     gl_FragColor = vec4(totalDiffuse * texture.rgb, texture.a);
 
+
 }
+

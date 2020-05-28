@@ -1,15 +1,21 @@
 package AI.ImageRecognition;
 
-public class RunDrawingCanvas implements Runnable {
+public class RunDrawingCanvas {
 
-    DrawingCanvas drawingCanvas = new DrawingCanvas();
+    private DrawingCanvas canvas;
+    private boolean running = false;
 
-    public static void main(String[] args){
-        new Thread(new RunDrawingCanvas()).start();
+    public void start() {
+        // run at most one thread
+        if (!running) {
+            running = true;
+            canvas = new DrawingCanvas(this);
+            new Thread(canvas, "canvas_name").start();
+        }
     }
 
-    @Override
-    public void run() {
-
+    // no more threads
+    public void stop() {
+        running = false;
     }
 }

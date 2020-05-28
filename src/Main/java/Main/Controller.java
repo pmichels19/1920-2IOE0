@@ -1,5 +1,6 @@
 package Main;
 
+import AI.ImageRecognition.RunDrawingCanvas;
 import Graphics.IO.Window;
 import Levels.Characters.Player;
 import Levels.Framework.Maze;
@@ -23,6 +24,8 @@ public class Controller {
     private int movementCounter = 0;
     private float speed;
     private boolean vertical;
+    private RunDrawingCanvas canvas;
+    private boolean stopped;
 
     // the variable for controlling what inventory slot is highlighted
     private int switchCooldown = 0;
@@ -31,6 +34,8 @@ public class Controller {
         this.maze = maze;
         this.window = window;
         player = Player.getInstance();
+        this.canvas = new RunDrawingCanvas();
+        this.stopped = false;
     }
 
     public void checkInputs() {
@@ -45,6 +50,11 @@ public class Controller {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
+        }
+
+        // run drawing canvas on keypress
+        if ( window.buttonClicked(GLFW_KEY_L) ) {
+            canvas.start();
         }
 
         if (switchCooldown == 0) {

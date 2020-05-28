@@ -1,6 +1,7 @@
 package Main;
 
 import AI.ImageRecognition.OverlayedDrawingCanvas;
+import AI.ImageRecognition.RunDrawingCanvas;
 import Graphics.IO.Timer;
 import Graphics.IO.Window;
 import Levels.Characters.Player;
@@ -60,7 +61,7 @@ public class Main {
         // and start up the GUI
         GUI gui = new GUI();
         // drawing canvas
-        OverlayedDrawingCanvas overlay = new OverlayedDrawingCanvas(window.getWindow());
+        // OverlayedDrawingCanvas overlay = new OverlayedDrawingCanvas(window.getWindow());
         // and initialize the controller for input checking
         Controller controller = new Controller(maze, window);
 
@@ -113,7 +114,7 @@ public class Main {
                 // render the world
                 world.render();
                 gui.render();
-                overlay.render();
+                // overlay.render();
                 window.swapBuffers();
 
                 frames++;

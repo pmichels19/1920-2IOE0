@@ -15,11 +15,13 @@ import java.util.Iterator;
 /**
  * DrawingCanvas generates a window that allows for the drawing of spells which are then converted into a grid array with coloring values
  */
-public class DrawingCanvas extends JFrame {
-    private int verticalOffset = 27; // Offset for the title bar
+public class DrawingCanvas extends JFrame implements Runnable {
+
+    private RunDrawingCanvas rdc;
+
     private int bottomBarHeight = 50;
     private int windowX = 500; // Window width
-    private int windowY = 500 + verticalOffset + bottomBarHeight; // Window height + an offset for the title bar
+    private int windowY = 500 + bottomBarHeight;
 
     private int pixelSize = 2; // Size of a pixel
 
@@ -36,16 +38,22 @@ public class DrawingCanvas extends JFrame {
     private JPanel panel1;
     private JButton button1;
 
-    //GoogleConfig object for visionML
+    private volatile boolean exit = false;
+
+    // GoogleConfig object for visionML
     private GoogleConfig googleConfig = new GoogleConfig();
     private String defaultLabel = "Predicted class and score: ";
     private JLabel imageClass = new JLabel();
 
-    public DrawingCanvas() {
+    public DrawingCanvas(RunDrawingCanvas rdc) {
+        this.rdc = rdc; // allow set stop process
+
+        this.setUndecorated(true);  // remove border
         this.setTitle("Drawing Canvas");
         this.setSize(windowX, windowY);
         this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setVisible(true);
+        this.setLocationRelativeTo(null);   // place frame in center
         this.setResizable(false);
 
         this.setLayout(null);
@@ -97,6 +105,8 @@ public class DrawingCanvas extends JFrame {
                     System.out.println(ex);
                 }
 
+                // stop the thread
+                stop();
             }
         });
 
@@ -161,7 +171,7 @@ public class DrawingCanvas extends JFrame {
      * @return integer corresponding to grid pixel y index
      */
     public int ConvertYToGrid(int y) {
-        return (y - canvasY - verticalOffset) / pixelSize;
+        return (y - canvasY) / pixelSize;
     }
 
     /**
@@ -259,7 +269,6 @@ public class DrawingCanvas extends JFrame {
         }
     }
 
-
     public class Move implements MouseMotionListener {
 
         @Override
@@ -270,6 +279,8 @@ public class DrawingCanvas extends JFrame {
             current.add(point);
             // Calculate value for current point
             ColorForPoint(point);
+            // draw full line instead of separated dots
+            updateGrid();
             // Update canvas
             canvas.repaint();
         }
@@ -281,7 +292,6 @@ public class DrawingCanvas extends JFrame {
     }
 
     public class Click implements MouseListener {
-
 
         @Override
         public void mouseClicked(MouseEvent e) {
@@ -295,7 +305,7 @@ public class DrawingCanvas extends JFrame {
 
         @Override
         public void mouseReleased(MouseEvent e) {
-            updateGrid();
+            // updateGrid();
             repaint();
             // Reset current line points
             current = new ArrayList<>();
@@ -310,5 +320,20 @@ public class DrawingCanvas extends JFrame {
         public void mouseExited(MouseEvent e) {
 
         }
+    }
+
+    @Override
+    public void run() {
+        // keep running while exit is false
+        while (!exit) {
+        }
+
+        // neatly close thread
+        this.dispose();
+        rdc.stop();
+    }
+
+    public void stop() {
+        exit = true;
     }
 }

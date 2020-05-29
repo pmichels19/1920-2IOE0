@@ -61,9 +61,9 @@ public class Main {
         // and start up the GUI
         GUI gui = new GUI();
         // drawing canvas
-        // OverlayedDrawingCanvas overlay = new OverlayedDrawingCanvas(window.getWindow());
+        RunDrawingCanvas overlay = new RunDrawingCanvas();
         // and initialize the controller for input checking
-        Controller controller = new Controller(maze, window);
+        Controller controller = new Controller(maze, window, overlay);
 
         // Stuff to keep track of the fps
         double frame_time = 0;
@@ -114,7 +114,9 @@ public class Main {
                 // render the world
                 world.render();
                 gui.render();
-                // overlay.render();
+                if (overlay.isRunning()) {
+                    overlay.render();
+                }
                 window.swapBuffers();
 
                 frames++;

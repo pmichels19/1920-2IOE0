@@ -30,11 +30,11 @@ public class Controller {
     // the variable for controlling what inventory slot is highlighted
     private int switchCooldown = 0;
 
-    public Controller(Maze maze, Window window) {
+    public Controller(Maze maze, Window window, RunDrawingCanvas canvas) {
         this.maze = maze;
         this.window = window;
         player = Player.getInstance();
-        this.canvas = new RunDrawingCanvas();
+        this.canvas = canvas;
         this.stopped = false;
     }
 

@@ -19,13 +19,12 @@ public class DrawingCanvas extends JFrame implements Runnable {
 
     private RunDrawingCanvas rdc;
 
-    private int bottomBarHeight = 50;
     private int windowX = 500; // Window width
-    private int windowY = 500 + bottomBarHeight;
+    private int windowY = 500;
 
-    private int pixelSize = 2; // Size of a pixel
+    private int pixelSize = 5; // Size of a pixel
 
-    private int canvasSize = 475;
+    private int canvasSize = 500;
     private int gridX = canvasSize / pixelSize;
     private int gridY = canvasSize / pixelSize;
     private float[][] grid = new float[gridX][gridY];
@@ -35,8 +34,7 @@ public class DrawingCanvas extends JFrame implements Runnable {
     private int canvasY;
 
     private ArrayList<Point> current = new ArrayList<>();
-    private JPanel panel1;
-    private JButton button1;
+    private Color canvasColor = new Color(200, 100, 0);
 
     private volatile boolean exit = false;
 
@@ -55,64 +53,60 @@ public class DrawingCanvas extends JFrame implements Runnable {
         this.setVisible(true);
         this.setLocationRelativeTo(null);   // place frame in center
         this.setResizable(false);
-
         this.setLayout(null);
 
         canvas.setSize(canvasSize, canvasSize);
-        canvas.setLocation(7, 10);
         canvasX = canvas.getX();
         canvasY = canvas.getY();
         this.add(canvas);
 
 
-        JButton clearButton = new JButton();
-        JButton classifyButton = new JButton();
+//        JButton clearButton = new JButton();
+//        JButton classifyButton = new JButton();
 
         imageClass.setText(defaultLabel);
         imageClass.setSize(400, 100);
         imageClass.setVisible(true);
         imageClass.setLocation(240, 450);
 
-        clearButton.setText("Clear");
-        clearButton.setSize(100, 40);
-
-        clearButton.setVisible(true);
-        clearButton.setLocation(10, 500);
-
-        clearButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ResetGrid();
-                repaint();
-            }
-        });
-
-        classifyButton.setText("Classify");
-        classifyButton.setSize(100, 40);
-
-        classifyButton.setVisible(true);
-        classifyButton.setLocation(120, 500);
-
-        classifyButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-
-                    String[] tempData = googleConfig.predict(saveGridAsImage());
-                    imageClass.setText(defaultLabel + tempData[0] + ", " + tempData[1]);
-
-                } catch (Exception ex) {
-                    System.out.println(ex);
-                }
-
-                // stop the thread
-                stop();
-            }
-        });
+//        clearButton.setText("Clear");
+//        clearButton.setSize(100, 40);
+//
+//        clearButton.setVisible(true);
+//        clearButton.setLocation(10, 500);
+//
+//        clearButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                ResetGrid();
+//                repaint();
+//            }
+//        });
+//
+//        classifyButton.setText("Classify");
+//        classifyButton.setSize(100, 40);
+//
+//        classifyButton.setVisible(true);
+//        classifyButton.setLocation(120, 500);
+//
+//        classifyButton.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                try {
+//                    String[] tempData = googleConfig.predict(saveGridAsImage());
+//                    imageClass.setText(defaultLabel + tempData[0] + ", " + tempData[1]);
+//                } catch (Exception ex) {
+//                    System.out.println(ex);
+//                }
+//
+//                // stop the thread
+//                stop();
+//            }
+//        });
 
 
-        this.add(clearButton);
-        this.add(classifyButton);
+//        this.add(clearButton);
+//        this.add(classifyButton);
         this.add(imageClass);
 
 
@@ -129,13 +123,13 @@ public class DrawingCanvas extends JFrame implements Runnable {
     /**
      * Resets the grid to default 0 values
      */
-    public void ResetGrid() {
-        for (int i = 0; i < gridX; i++) {
-            for (int j = 0; j < gridY; j++) {
-                grid[i][j] = (float) 0.0;
-            }
-        }
-    }
+//    public void ResetGrid() {
+//        for (int i = 0; i < gridX; i++) {
+//            for (int j = 0; j < gridY; j++) {
+//                grid[i][j] = (float) 0.0;
+//            }
+//        }
+//    }
 
     /** Saves the drawing canvas as an image locally.
      *
@@ -182,8 +176,7 @@ public class DrawingCanvas extends JFrame implements Runnable {
             super.paintComponent(g);
             for (int i = 0; i < gridX; i++) {
                 for (int j = 0; j < gridY; j++) {
-                    int color = (int) (255 - (grid[i][j] * 255));
-                    g.setColor(new Color(color, color, color));
+                    g.setColor((grid[i][j] == 0 ? canvasColor : new Color(0, 0, 0)));
                     g.fillRect(i * pixelSize, j * pixelSize, pixelSize, pixelSize);
                 }
             }
@@ -240,40 +233,46 @@ public class DrawingCanvas extends JFrame implements Runnable {
         int i = ConvertXToGrid(xPixel);
         int j = ConvertYToGrid(yPixel);
 
-        // Amount of neighbouring grid points to color
-        int offset = 1;
-
-        // make the grid points close to the current line grey
-        for (int iOfs = -1 * offset; iOfs <= offset; iOfs++) {
-            for (int jOfs = -1 * offset; jOfs <= offset; jOfs++) {
-                int x = i + iOfs;
-                int y = j + jOfs;
-                // Check if we are still within grid bounds
-                if (x >= 0 && x < gridX && y >= 0 && y < gridY) {
-                    // if not directly drawn over, make less dark
-                    if (iOfs != 0 || jOfs != 0) {
-                        grid[x][y] += 0.25;
-                    } else {
-                        grid[x][y] += 1.0;
-                    }
-
-
-                    // Make sure the colors stay within color bounds
-                    if (grid[x][y] < (float) 0.0) {
-                        grid[x][y] = (float) 0.0;
-                    } else if (grid[x][y] > (float) 1.0) {
-                        grid[x][y] = (float) 1.0;
-                    }
-                }
-            }
+        int x = i;
+        int y = j;
+        // Check if we are still within grid bounds
+        if (x >= 0 && x < gridX && y >= 0 && y < gridY) {
+            // if not directly drawn over, make less dark
+            grid[x][y] = 1f;
         }
+
+//        // Amount of neighbouring grid points to color
+//        int offset = 1;
+//
+//        // make the grid points close to the current line grey
+//        for (int iOfs = -1 * offset; iOfs <= offset; iOfs++) {
+//            for (int jOfs = -1 * offset; jOfs <= offset; jOfs++) {
+//                int x = i + iOfs;
+//                int y = j + jOfs;
+//                // Check if we are still within grid bounds
+//                if (x >= 0 && x < gridX && y >= 0 && y < gridY) {
+//                    // if not directly drawn over, make less dark
+//                    if (iOfs != 0 || jOfs != 0) {
+//                        grid[x][y] += 0.25;
+//                    } else {
+//                        grid[x][y] += 1.0;
+//                    }
+//
+//                    // Make sure the colors stay within color bounds
+//                    if (grid[x][y] < (float) 0.0) {
+//                        grid[x][y] = (float) 0.0;
+//                    } else if (grid[x][y] > (float) 1.0) {
+//                        grid[x][y] = (float) 1.0;
+//                    }
+//                }
+//            }
+//        }
     }
 
     public class Move implements MouseMotionListener {
 
         @Override
         public void mouseDragged(MouseEvent e) {
-//            System.out.println("X is : " + e.getX() + ",    Y is: " + e.getY());
             Point point = new Point(e.getX(), e.getY());
             // Add point to current line list
             current.add(point);
@@ -309,6 +308,17 @@ public class DrawingCanvas extends JFrame implements Runnable {
             repaint();
             // Reset current line points
             current = new ArrayList<>();
+
+            // classify image with google classifier
+            try {
+                String[] tempData = googleConfig.predict(saveGridAsImage());
+                imageClass.setText(defaultLabel + tempData[0] + ", " + tempData[1]);
+            } catch (Exception ex) {
+                System.out.println(ex);
+            }
+
+            // stop the thread
+            stop();
         }
 
         @Override

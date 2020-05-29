@@ -63,4 +63,16 @@ public abstract class SlotPickMenu extends FlatRender {
 
         // TODO: we now only show a screenshot, maybe we also want to show what level the player was on
     }
+
+    /**
+     * renders a title to display above the slot picker
+     *
+     * @param title the title of the screen
+     */
+    void renderTitle(String title) {
+        transform.setPosition( new Vector3f(-1, 0.75f, 0) );
+        transform.setScale( new Vector3f( 0.06f * 1080f/1920f, 0.06f, 1 ) );
+        renderer.setTransform(transform);
+        renderString(title, true, 1 + (title.length() / 2f), 0);
+    }
 }

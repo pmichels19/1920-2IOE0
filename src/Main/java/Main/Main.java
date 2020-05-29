@@ -23,8 +23,9 @@ public class Main {
 
     // we start the game in the main menu
     private static GameState state = GameState.MAIN_MENU;
-    // and with no save slot selected:
-    private static int slot = -1;
+
+    // we want to make sure all objects use the same maze, we accomplish this by making it static
+    private static Maze maze;
 
     // cap at 60 fps for now
     private static final double FRAME_CAP = 1.0 / 60.0;
@@ -161,20 +162,20 @@ public class Main {
     }
 
     /**
-     * getter for the current save slot
+     * getter for the current maze
      *
-     * @return {@code slot}
+     * @return {@code maze}
      */
-    public static int getSlot() {
-        return slot;
+    public static Maze getMaze() {
+        return Main.maze;
     }
 
     /**
-     * sets the current slot to the provided slot
+     * sets the current maze to {@code maze} provided as a parameter
      *
-     * @param slot the new save slot
+     * @param maze the new maze
      */
-    public static void setSlot(int slot) {
-        Main.slot = slot;
+    public static void setMaze(Maze maze) {
+        Main.maze = maze;
     }
 }

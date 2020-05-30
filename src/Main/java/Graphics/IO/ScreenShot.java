@@ -11,7 +11,7 @@ import java.nio.ByteBuffer;
 import static org.lwjgl.opengl.GL11.*;
 
 public class ScreenShot {
-    public static void takeScreenShot() {
+    public static void takeScreenShot(String filePath) {
         glReadBuffer( GL_FRONT );
 
         int bpp = 4;
@@ -19,7 +19,7 @@ public class ScreenShot {
 
         glReadPixels(0, 0, 1920, 1080, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 
-        File file = new File( "src/Main/Java/Saves/Slot_0/test.png" );
+        File file = new File( filePath  );
         BufferedImage image = new BufferedImage(1920, 1080, BufferedImage.TYPE_INT_RGB);
 
         for(int x = 0; x < 1920; x++)

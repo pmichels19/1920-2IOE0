@@ -1,14 +1,12 @@
 package Main.Input;
 
 import Graphics.Rendering.MainMenu;
-import Graphics.Rendering.PauseScreen;
 import Main.GameState;
-
-import java.io.FileNotFoundException;
 
 import static Main.Main.setState;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
+import static Saves.SaveManager.loadLatest;
 
 /**
  * class that will take care of the inputs in the main menu
@@ -25,16 +23,16 @@ public class MainMenuController extends Controller {
                 switch ( MainMenu.getSelectedOption() ) {
                     // 0 is mapped to continuing from the latest game
                     case 0:
-                        // TODO: introduce a way of saving games and the players and also identifying the latest played
+                        if ( loadLatest() ) {
+                            setState( GameState.IN_GAME );
+                        }
                         break;
                     // 1 is mapped to starting a new game
                     case 1:
-                        // TODO: now we only start the game, but we should let the player select a save slot and start from level 1
                         setState( GameState.STARTING_GAME );
                         break;
                     // 2 is mapped to loading a saved game
                     case 2:
-                        // TODO: introduce a way of saving games and the players
                         setState( GameState.LOADING_SAVE );
                         break;
                     // 3 is mapped to exiting the game

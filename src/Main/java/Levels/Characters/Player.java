@@ -2,6 +2,7 @@ package Levels.Characters;
 
 import Graphics.OpenGL.Model;
 import Graphics.OpenGL.Texture;
+import Levels.Assets.Items.EmptyItem;
 import Levels.Assets.Items.Item;
 
 import java.io.File;
@@ -24,7 +25,13 @@ public class Player {
 
     private Player() {
         // start with an empty inventory of max size 5
-        inventory = new Item[5];
+        inventory = new Item[] {
+                new EmptyItem(),
+                new EmptyItem(),
+                new EmptyItem(),
+                new EmptyItem(),
+                new EmptyItem()
+        };
         // player starts at max health and mana
         current_health = max_health;
         current_mana = max_mana;
@@ -39,6 +46,10 @@ public class Player {
 
     public Item[] getInventory() {
         return inventory;
+    }
+
+    public void setInventory(Item[] inventory) {
+        this.inventory = inventory;
     }
 
     public void setSelectedItem(int selectedItem) {
@@ -77,7 +88,7 @@ public class Player {
         return current_mana;
     }
 
-    public void setCurrent_mana(int current_mana) {
+    public void setCurrentMana(int current_mana) {
         this.current_mana = current_mana;
     }
 
@@ -88,14 +99,5 @@ public class Player {
      */
     public void addItem(Item item) {
         inventory[selectedItem] = item;
-    }
-
-    /**
-     * loads data from the provided player_data file into the player object
-     *
-     * @param player_data the data to put into the player object
-     */
-    public void loadData(File player_data) {
-
     }
 }

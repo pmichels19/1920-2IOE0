@@ -11,7 +11,9 @@ public abstract class Item {
         if (id < 0 || id >= items.length) {
             throw new IllegalArgumentException("no item with id: " + id);
         }
-        return items[ id ];
+        // TODO: create items
+//        return items[ id ];
+        return new EmptyItem();
     }
 
     public int getId() {

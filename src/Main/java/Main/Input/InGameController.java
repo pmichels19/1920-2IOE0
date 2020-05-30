@@ -1,6 +1,5 @@
 package Main.Input;
 
-import Graphics.IO.ScreenShot;
 import Main.GameState;
 
 import java.io.FileNotFoundException;
@@ -40,10 +39,6 @@ public class InGameController extends Controller {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-        }
-
-        if ( window.buttonClicked( GLFW_KEY_F12 ) ) {
-            ScreenShot.takeScreenShot();
         }
 
         // we only check for inventory inputs if allowed and not paused

@@ -26,6 +26,7 @@ public class Main {
 
     // we want to make sure all objects use the same maze, we accomplish this by making it static
     private static Maze maze;
+    private static World world;
 
     // cap at 60 fps for now
     private static final double FRAME_CAP = 1.0 / 60.0;
@@ -58,10 +59,10 @@ public class Main {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // start the maze found in specified file and create the player object
-        Maze maze = new Maze("level_1");
+        maze = new Maze("level_1");
 
         // set up the world, corresponding GUI, the main menu and pause screen
-        World world = new World(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
+        world = new World(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
         GUI gui = new GUI();
         PauseScreen pauseScreen = new PauseScreen();
         MainMenu mainMenu = new MainMenu();
@@ -156,6 +157,8 @@ public class Main {
      * @param state the new game state
      */
     public static void setState(GameState state) {
+        // first we check if we go in game, if we do, we want to reset the camera position
+        world.resetCameraPosition();
         Main.state = state;
         // communicate the fact that the state changed to the main controller
         MainController.changedState();

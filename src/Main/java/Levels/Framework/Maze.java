@@ -63,6 +63,24 @@ public class Maze {
     }
 
     /**
+     * changes the player location both in the grid and the point that is kept as a record
+     *
+     * @param x the new x coordinate
+     * @param y the new y coordinate
+     */
+    public void setPlayerLocation(int x, int y) {
+        // remove the current player
+        grid[ playerLocation.getX() ][ playerLocation.getY() ] = ' ';
+
+        // set the x and y coordinates into the playerLocation
+        playerLocation.setX(x);
+        playerLocation.setY(y);
+
+        // place a player at the given x and y
+        grid[ playerLocation.getX() ][ playerLocation.getY() ] = 'P';
+    }
+
+    /**
      * Returns the position of th player in the grid as a point, if the player marker could not be found in the grid
      * an exception is thrown
      *

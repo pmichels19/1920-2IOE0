@@ -2,20 +2,16 @@ package Graphics.OpenGL;
 
 import org.lwjgl.BufferUtils;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.*;
+import static org.lwjgl.stb.STBImage.*;
 
 public class Texture {
 
-    private int id;
-    private int width;
-    private int height;
+    private final int id;
 
     /**
      * Creates a new Texture object with the texture file specified in the String {@code filepath}
@@ -23,62 +19,27 @@ public class Texture {
      * @param filepath the path to a texture
      */
     public Texture (String filepath) {
-        BufferedImage bufImg;
+        // the stbi_load requires buffers to store the width and height in
+        IntBuffer width = BufferUtils.createIntBuffer(1);
+        IntBuffer height = BufferUtils.createIntBuffer(1);
+        IntBuffer components = BufferUtils.createIntBuffer(1);
 
-        try {
-            bufImg = ImageIO.read( new File(filepath) );
+        // use STBImage to load the texture
+        ByteBuffer data = stbi_load( filepath, width, height, components, 4 );
 
-            width = bufImg.getWidth();
-            height = bufImg.getHeight();
+        // generate a texture id
+        id = glGenTextures();
+        // get the width and height of the texture
+        int img_width = width.get();
+        int img_height = height.get();
 
-            int[] pixelValues = bufImg.getRGB(0, 0, width, height, null, 0, width);
+        // bind the texture
+        glBindTexture(GL_TEXTURE_2D, id);
 
-            ByteBuffer pixels = toByteBuffer(pixelValues);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-            // we set the id
-            id = glGenTextures();
-
-            // bind the texture
-            glBindTexture(GL_TEXTURE_2D, id);
-
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-            glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Transforms the color values found in the {@code values} array into a ByteBuffer for compatibility with openGL
-     *
-     * @param values the color values to transform
-     * @return {@code pixels}
-     */
-    private ByteBuffer toByteBuffer(int[] values) {
-        // there are 4 color variables: r, g, b and a, so multiply width * height by 4
-        ByteBuffer pixels = BufferUtils.createByteBuffer(width * height * 4);
-
-        // loop over all the pixels in the texture provided
-        for (int i = 0; i < width; i++) {
-
-            // loop over all the color values in said pixel
-            for (int j = 0; j < height; j++) {
-                int pixel = values[i * width + j];
-
-                // take bitwise ands with the pixel value to obtain colors
-                pixels.put( (byte) ((pixel >> 16) & 255) );      // RED
-                pixels.put( (byte) ((pixel >> 8) & 255) );       // GREEN
-                pixels.put( (byte) (pixel & 255) );              // BLUE
-                pixels.put( (byte) ((pixel >> 24) & 255) );      // ALPHA
-            }
-        }
-
-        // openGL wants the texture flipped for some reason
-        pixels.flip();
-
-        return pixels;
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, img_width, img_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
     }
 
     /**

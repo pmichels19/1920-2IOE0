@@ -2,8 +2,9 @@ package Main;
 
 import Graphics.IO.Timer;
 import Graphics.IO.Window;
-import Levels.Characters.Player;
+import Graphics.Rendering.*;
 import Levels.Framework.Maze;
+import Main.Input.MainController;
 import org.lwjgl.opengl.GL;
 
 import java.io.IOException;
@@ -19,6 +20,13 @@ public class Main {
     // standard variables for width and height of the game
     private static final int SCREEN_WIDTH = 1920;
     private static final int SCREEN_HEIGHT = 1080;
+
+    // we start the game in the main menu
+    private static GameState state = GameState.MAIN_MENU;
+
+    // we want to make sure all objects use the same maze, we accomplish this by making it static
+    private static Maze maze;
+    private static World world;
 
     // cap at 60 fps for now
     private static final double FRAME_CAP = 1.0 / 60.0;
@@ -51,15 +59,19 @@ public class Main {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // start the maze found in specified file and create the player object
-        Maze maze = new Maze("level_1");
-        Player player = Player.getInstance();
+        maze = new Maze("level_1");
 
-        // set up the renderer with the player and maze created above
-        World world = new World(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
-        // and start up the GUI
+        // set up the world, corresponding GUI, the main menu and pause screen
+        world = new World(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
         GUI gui = new GUI();
+        PauseScreen pauseScreen = new PauseScreen();
+        MainMenu mainMenu = new MainMenu();
+        LoadMenu loadMenu = new LoadMenu();
+        SaveMenu saveMenu = new SaveMenu();
+        NewGameMenu newGameMenu = new NewGameMenu();
+
         // and initialize the controller for input checking
-        Controller controller = new Controller(maze, window);
+        MainController mainController = new MainController(maze, window);
 
         // Stuff to keep track of the fps
         double frame_time = 0;
@@ -99,21 +111,74 @@ public class Main {
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
                 // check the inputs done by the player
-                controller.checkInputs();
+                mainController.checkInputs();
 
                 // if the player still has movement frames left, execute those by moving the player
-                if ( controller.getMovementCounter() > 0 ) {
-                    world.movePlayer( controller.getSpeed(), controller.isVertical() );
-                    controller.decrementMovementCounter();
+                if ( mainController.getMovementCounter() > 0 ) {
+                    world.movePlayer( mainController.getSpeed(), mainController.isVertical() );
+                    mainController.decrementMovementCounter();
                 }
 
-                // render the world
-                world.render();
-                gui.render();
+                // check which state we are in, so we render the correct thing
+                if (state == GameState.MAIN_MENU) {
+                    mainMenu.render();
+                } else if (state == GameState.IN_GAME) {
+                    world.render();
+                    gui.render();
+                } else if (state == GameState.PAUSED) {
+                    pauseScreen.render();
+                } else if (state == GameState.LOADING_SAVE) {
+                    loadMenu.render();
+                } else if (state == GameState.SAVING_GAME) {
+                    saveMenu.render();
+                } else if (state == GameState.STARTING_GAME) {
+                    newGameMenu.render();
+                }
+
                 window.swapBuffers();
 
                 frames++;
             }
         }
+    }
+
+    /**
+     * getter for the current game state
+     *
+     * @return {@code state}
+     */
+    public static GameState getState() {
+        return Main.state;
+    }
+
+    /**
+     * sets the current game state to {@code state} provided in the parameter
+     *
+     * @param state the new game state
+     */
+    public static void setState(GameState state) {
+        // first we check if we go in game, if we do, we want to reset the camera position
+        world.resetCameraPosition();
+        Main.state = state;
+        // communicate the fact that the state changed to the main controller
+        MainController.changedState();
+    }
+
+    /**
+     * getter for the current maze
+     *
+     * @return {@code maze}
+     */
+    public static Maze getMaze() {
+        return Main.maze;
+    }
+
+    /**
+     * sets the current maze to {@code maze} provided as a parameter
+     *
+     * @param maze the new maze
+     */
+    public static void setMaze(Maze maze) {
+        Main.maze = maze;
     }
 }

@@ -34,8 +34,11 @@ public class DrawingCanvas extends JFrame implements Runnable {
     private int canvasY;
 
     private ArrayList<Point> current = new ArrayList<>();
+
+    // canvas background color
     private Color canvasColor = new Color(200, 100, 0);
 
+    // exit call
     private volatile boolean exit = false;
 
     // GoogleConfig object for visionML
@@ -46,6 +49,20 @@ public class DrawingCanvas extends JFrame implements Runnable {
     public DrawingCanvas(RunDrawingCanvas rdc) {
         this.rdc = rdc; // allow set stop process
 
+        // canvas settings
+        canvas.setSize(canvasSize, canvasSize);
+        canvasX = canvas.getX();
+        canvasY = canvas.getY();
+        this.add(canvas);
+
+        // image settings
+        imageClass.setText(defaultLabel);
+        imageClass.setSize(400, 100);
+        imageClass.setVisible(true);
+        imageClass.setLocation(240, 450);
+        this.add(imageClass);
+
+        // jframe settings
         this.setUndecorated(true);  // remove border
         this.setTitle("Drawing Canvas");
         this.setSize(windowX, windowY);
@@ -55,81 +72,29 @@ public class DrawingCanvas extends JFrame implements Runnable {
         this.setResizable(false);
         this.setLayout(null);
 
-        canvas.setSize(canvasSize, canvasSize);
-        canvasX = canvas.getX();
-        canvasY = canvas.getY();
-        this.add(canvas);
-
-
-//        JButton clearButton = new JButton();
-//        JButton classifyButton = new JButton();
-
-        imageClass.setText(defaultLabel);
-        imageClass.setSize(400, 100);
-        imageClass.setVisible(true);
-        imageClass.setLocation(240, 450);
-
-//        clearButton.setText("Clear");
-//        clearButton.setSize(100, 40);
-//
-//        clearButton.setVisible(true);
-//        clearButton.setLocation(10, 500);
-//
-//        clearButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                ResetGrid();
-//                repaint();
-//            }
-//        });
-//
-//        classifyButton.setText("Classify");
-//        classifyButton.setSize(100, 40);
-//
-//        classifyButton.setVisible(true);
-//        classifyButton.setLocation(120, 500);
-//
-//        classifyButton.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                try {
-//                    String[] tempData = googleConfig.predict(saveGridAsImage());
-//                    imageClass.setText(defaultLabel + tempData[0] + ", " + tempData[1]);
-//                } catch (Exception ex) {
-//                    System.out.println(ex);
-//                }
-//
-//                // stop the thread
-//                stop();
-//            }
-//        });
-
-
-//        this.add(clearButton);
-//        this.add(classifyButton);
-        this.add(imageClass);
-
-
         // Add listener for mouse movements
         Move move = new Move();
         this.addMouseMotionListener(move);
 
-        //Add listener for mouse clicks
+        // Add listener for mouse clicks
         Click click = new Click();
         this.addMouseListener(click);
 
+        // add keyboard listener
+        Keypress press = new Keypress();
+        this.addKeyListener(press);
     }
 
     /**
      * Resets the grid to default 0 values
      */
-//    public void ResetGrid() {
-//        for (int i = 0; i < gridX; i++) {
-//            for (int j = 0; j < gridY; j++) {
-//                grid[i][j] = (float) 0.0;
-//            }
-//        }
-//    }
+    public void resetGrid() {
+        for (int i = 0; i < gridX; i++) {
+            for (int j = 0; j < gridY; j++) {
+                grid[i][j] = (float) 0.0;
+            }
+        }
+    }
 
     /** Saves the drawing canvas as an image locally.
      *
@@ -170,6 +135,7 @@ public class DrawingCanvas extends JFrame implements Runnable {
 
     /**
      * Canvas holds the grid rectangles and has a function to draw the canvas based on the values in the grid array
+     * and draw the text on how to use the canvas on top of it
      */
     public class Canvas extends JPanel {
         public void paintComponent(Graphics g) {
@@ -180,6 +146,10 @@ public class DrawingCanvas extends JFrame implements Runnable {
                     g.fillRect(i * pixelSize, j * pixelSize, pixelSize, pixelSize);
                 }
             }
+            // drawing canvas usage text (may be placed in canvas border texture later)
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("DialogInput", Font.PLAIN, 20));
+            g.drawString("\'E\' to cast spell, \'Q\' to clear drawing", 5, 20);
         }
     }
 
@@ -240,33 +210,6 @@ public class DrawingCanvas extends JFrame implements Runnable {
             // if not directly drawn over, make less dark
             grid[x][y] = 1f;
         }
-
-//        // Amount of neighbouring grid points to color
-//        int offset = 1;
-//
-//        // make the grid points close to the current line grey
-//        for (int iOfs = -1 * offset; iOfs <= offset; iOfs++) {
-//            for (int jOfs = -1 * offset; jOfs <= offset; jOfs++) {
-//                int x = i + iOfs;
-//                int y = j + jOfs;
-//                // Check if we are still within grid bounds
-//                if (x >= 0 && x < gridX && y >= 0 && y < gridY) {
-//                    // if not directly drawn over, make less dark
-//                    if (iOfs != 0 || jOfs != 0) {
-//                        grid[x][y] += 0.25;
-//                    } else {
-//                        grid[x][y] += 1.0;
-//                    }
-//
-//                    // Make sure the colors stay within color bounds
-//                    if (grid[x][y] < (float) 0.0) {
-//                        grid[x][y] = (float) 0.0;
-//                    } else if (grid[x][y] > (float) 1.0) {
-//                        grid[x][y] = (float) 1.0;
-//                    }
-//                }
-//            }
-//        }
     }
 
     public class Move implements MouseMotionListener {
@@ -308,17 +251,6 @@ public class DrawingCanvas extends JFrame implements Runnable {
             repaint();
             // Reset current line points
             current = new ArrayList<>();
-
-            // classify image with google classifier
-            try {
-                String[] tempData = googleConfig.predict(saveGridAsImage());
-                imageClass.setText(defaultLabel + tempData[0] + ", " + tempData[1]);
-            } catch (Exception ex) {
-                System.out.println(ex);
-            }
-
-            // stop the thread
-            stop();
         }
 
         @Override
@@ -332,12 +264,52 @@ public class DrawingCanvas extends JFrame implements Runnable {
         }
     }
 
+    public class Keypress implements KeyListener {
+
+        private boolean released = true;
+        private boolean classify = false;
+
+        @Override
+        public void keyTyped(KeyEvent e) {
+
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            if (released && !classify) {
+                // classify image
+                if (e.getKeyChar() == 'e') {
+                    classify = true;
+                    // classify image with google classifier
+                    try {
+                        String[] tempData = googleConfig.predict(saveGridAsImage());
+                        imageClass.setText(defaultLabel + tempData[0] + ", " + tempData[1]);
+                    } catch (Exception ex) {
+                        System.out.println(ex);
+                    }
+                    // stop the thread
+                    released = false;
+                    stop();
+                // reset image
+                } else if (e.getKeyChar() == 'q') {
+                    resetGrid();
+                    repaint();
+                    released = false;
+                }
+            }
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+            released = true;
+        }
+    }
+
     @Override
     public void run() {
         // keep running while exit is false
         while (!exit) {
         }
-
         // neatly close thread
         this.dispose();
         rdc.stop();

@@ -1,6 +1,5 @@
 package Main;
 
-import AI.ImageRecognition.OverlayedDrawingCanvas;
 import AI.ImageRecognition.RunDrawingCanvas;
 import Graphics.IO.Timer;
 import Graphics.IO.Window;
@@ -61,9 +60,9 @@ public class Main {
         // and start up the GUI
         GUI gui = new GUI();
         // drawing canvas
-        RunDrawingCanvas overlay = new RunDrawingCanvas();
+        RunDrawingCanvas drawingCanvas = new RunDrawingCanvas();
         // and initialize the controller for input checking
-        Controller controller = new Controller(maze, window, overlay);
+        Controller controller = new Controller(maze, window, drawingCanvas);
 
         // Stuff to keep track of the fps
         double frame_time = 0;
@@ -114,8 +113,8 @@ public class Main {
                 // render the world
                 world.render();
                 gui.render();
-                if (overlay.isRunning()) {
-                    overlay.render();
+                if (drawingCanvas.isRunning()) {
+                    drawingCanvas.render();
                 }
                 window.swapBuffers();
 

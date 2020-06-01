@@ -131,7 +131,8 @@ public class TileRenderer {
 
         // set the shader uniforms, so the proper position and texture is used
 //        shader.setUniform("tilePosition", tilePosition);
-        shader.setUniform("sampler", 0);
+        shader.setUniform("diffuseMap", 0);
+        shader.setUniform("normalMapping", 0);
 
         // bind the provided texture
         character.getModel().getTexture().bind(0);

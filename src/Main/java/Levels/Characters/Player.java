@@ -13,7 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player extends Character {
-    private static String objModelFile = "character2";
+    // Name of the obj file in the res folder corresponding to the player model
+    private static String objModelFile = "character";
+
+    // Path to the texture of the model
+    private static String textureFile = "res/Models/eyeball.jpg";
+
+    // Path to the normal mapping of the model
+//    private static String normalMapFile = "res/Models/eyeball_normal.jpg";
+    private static String normalMapFile = null;
 
     private static Player player;
 
@@ -48,8 +56,15 @@ public class Player extends Character {
     public static Player getInstance() {
         if (player == null) {
             try {
+                // Create the model
                 OBJModel model =  OBJLoader.loadObjModel(objModelFile);
-                model.setTexture(new Texture("res/Models/eyeball.jpg"));
+                // Set the texture
+                model.setTexture(new Texture(textureFile));
+                // Add a normal map if there is one
+                if (normalMapFile != null) {
+                model.setNormalMap(new Texture(normalMapFile));
+                }
+                // Instantiate the player
                 player = new Player(100, 100,model);
             } catch (IOException e) {
                 e.printStackTrace();

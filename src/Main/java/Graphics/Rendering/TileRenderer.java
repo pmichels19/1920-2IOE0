@@ -134,8 +134,6 @@ public class TileRenderer {
         shader.setUniform("diffuseMap", 0);
         shader.setUniform("normalMapping", 0);
 
-        // bind the provided texture
-        character.getModel().getTexture().bind(0);
 
         // and finally render the selected model
         character.render(shader);

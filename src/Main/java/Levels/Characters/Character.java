@@ -56,10 +56,9 @@ public abstract class Character {
     public void render(Shader shader, float x_pos, float y_pos) {
 //        generateModel(x_pos, y_pos);
 
-        model.getTexture().bind(0);
-        shader.setUniform("sampler", 0);
 
-        model.render();
+
+        model.render(shader);
     }
 
     public void render(Shader shader) {
@@ -67,7 +66,7 @@ public abstract class Character {
         Matrix4f modelTransform = new Matrix4f();
         modelTransform.translate(position).rotate(rotationAngle, rotation).scale(scale);
         shader.setUniform("modelTransform", modelTransform);
-        model.render();
+        model.render(shader);
         shader.setUniform("transform", 0);
     }
 

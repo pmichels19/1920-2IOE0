@@ -1,6 +1,7 @@
 package Graphics;
 
 import Graphics.OpenGL.Model;
+import Graphics.OpenGL.Shader;
 import Graphics.OpenGL.Texture;
 import Levels.Framework.joml.Vector3f;
 import com.sun.org.apache.xpath.internal.operations.Mod;
@@ -35,6 +36,9 @@ public class OBJModel {
 
     // Texture
     private Texture texture;
+
+    // Normal map
+    private Texture normalMap;
 
 
     public OBJModel(float[] vertices, float[] textCoords, float[] normals, int[] indices) {
@@ -140,7 +144,30 @@ public class OBJModel {
         return this.colour;
     }
 
-    public void render() {
+    public Texture getNormalMap() {
+        return normalMap;
+    }
+
+    public void setNormalMap(Texture normalMap) {
+        this.normalMap = normalMap;
+    }
+
+    public boolean hasNormalMap(){
+        return this.normalMap != null;
+    }
+
+    public void render(Shader shader) {
+        if (isTextured()) {
+            this.texture.bind(0);
+            shader.setUniform("sampler", 0);
+        }
+
+         if (hasNormalMap()) {
+            shader.setUniform("normalMap", 1);
+            shader.setUniform("normalMapping", 1);
+            normalMap.bind(1);
+        }
+
         glEnable(GL_DEPTH_TEST);
         // Bind to the VAO
 

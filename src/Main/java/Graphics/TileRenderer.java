@@ -16,6 +16,9 @@ public class TileRenderer {
     private Transform transform;
     private Shader shader;
 
+    private boolean normalMapping = false;
+    private Texture normalMap;
+
     private static TileRenderer renderer;
 
     // the bindings to the models
@@ -94,11 +97,20 @@ public class TileRenderer {
         Matrix4f tilePosition = new Matrix4f().translate(new Vector3f(x * 2f, y * 2f, 0));
 
         // set the shader uniforms, so the proper position and texture is used
-        shader.setUniform("tilePosition", tilePosition);
-        shader.setUniform("sampler", 0);
+        shader.setUniform("tilePosition", tilePosition );
+        shader.setUniform("diffuseMap", 0);
+        shader.setUniform("normalMapping", 0);
 
         // bind the provided texture
         texture.bind(0);
+
+        // bind normalMapping
+        if (normalMapping) {
+            shader.setUniform("normalMap", 1);
+            shader.setUniform("normalMapping", 1);
+            normalMap.bind(1);
+            normalMapping = false;
+        }
 
         // and finally render the selected model
         Model.getModels()[model].render();
@@ -128,5 +140,11 @@ public class TileRenderer {
         character.render(shader);
 
     }
+
+    public void addNormalMap(Texture normalMap) {
+        normalMapping = true;
+        this.normalMap = normalMap;
+    }
+
 
 }

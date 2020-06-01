@@ -14,6 +14,12 @@ public enum Wall {
     ),
     CEILING (
             "src/Main/java/Textures/Wall/wall_ceiling.png"
+    ),
+    BRICKWALL (
+            "src/Main/java/Textures/Wall/brickwall.jpg"
+    ),
+    BRICKWALL_NORMAL (
+            "src/Main/java/Textures/Wall/brickwall_normal.jpg"
     );
 
     private final Texture texture;

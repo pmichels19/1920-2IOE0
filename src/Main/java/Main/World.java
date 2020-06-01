@@ -79,13 +79,20 @@ public class World {
 
         // initialize the camera by centering it on the player
         camera.setPosition( new Vector3f(
-                xPlayer * 2,
-                (maze.getGrid().length - yPlayer) * 2 - 10,
-                16
+                xPlayer + 1 ,
+                (maze.getGrid().length - yPlayer),
+                8
         ) );
 
 
         this.player = Player.getInstance();
+        
+        //TODO: set camera back
+//        camera.setPosition( new Vector3f(
+//                xPlayer/2 ,
+//                (maze.getGrid().length - yPlayer)/2 - 10,
+//                16
+//        ) );
 
         // prepare the tile renderer for rendering
         renderer = TileRenderer.getInstance();
@@ -144,15 +151,18 @@ public class World {
         }
 
         for ( Point point : leftWalls ) {
-            renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), TileRenderer.LEFTS );
+            renderer.addNormalMap( Wall.BRICKWALL_NORMAL.getTexture() );
+            renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.LEFTS );
         }
 
         for ( Point point : rightWalls ) {
-            renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), TileRenderer.RIGHT );
+            renderer.addNormalMap( Wall.BRICKWALL_NORMAL.getTexture() );
+            renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.RIGHT );
         }
 
         for ( Point point : faceWalls ) {
-            renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES );
+            renderer.addNormalMap( Wall.BRICKWALL_NORMAL.getTexture() );
+            renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES );
         }
 //        renderer.renderTile( Background.PLAYER.getTexture(), xPlayer, grid.length + 0.5f - yPlayer, TileRenderer.FACES );
         player.setGridPosition(xPlayer, yPlayer, grid.length);

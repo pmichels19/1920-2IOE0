@@ -41,7 +41,7 @@ public class Model {
                     ),
                     // the right side of a cube
                     new Model(
-                            new float[]{ 1, -1, 0,       1, 1, 0,        1, 1, 2,        1, -1, 2 },
+                            new float[]{ 1, 1, 0,       1, -1, 0,        1, -1, 2,        1, 1, 2 },
                             textures,
                             new float[] {
                                     1, 0, 0,

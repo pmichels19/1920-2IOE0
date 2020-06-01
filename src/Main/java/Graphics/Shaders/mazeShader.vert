@@ -15,12 +15,13 @@ uniform mat4 modelTransform;
 uniform int transform;
 
 // Light positions
-uniform vec3 lightPosition[5];
+uniform vec3 lightPosition[10];
 
 // To fragment shader
 out vec3 surfaceNormal;
 out vec2 textureCoords;
 out vec3 surfacePos;
+out vec3 toLightVector[10];
 
 void main() {
 
@@ -29,34 +30,26 @@ void main() {
     if (transform == 1) { modelToWorld = modelMatrix * viewMatrix * modelTransform; }
     else { modelToWorld = modelMatrix * tilePosition * viewMatrix; }
 
-    mat4 modelToScreen = projectionMatrix * modelToWorld;
-    mat3 normalToWorld = mat3(transpose(inverse(modelToWorld)));
-
     vec4 vertexWorldPosition;
     if (transform == 1) { vertexWorldPosition = modelMatrix * modelTransform * vertexPosition; }
     else { vertexWorldPosition = modelMatrix * tilePosition * vertexPosition; }
 
     if (transform == 1) { surfaceNormal = normalize(modelToWorld * vec4(vertexNormal, 0.0)).xyz; }
     else { surfaceNormal = (modelMatrix * tilePosition * vec4(vertexNormal, 0.0)).xyz; }
-out vec3 toLightVector[5];
-
-void main() {
-
-    // Compute seperately for efficiency
-    mat4 tileModelMatrix = modelMatrix * tilePosition;
 
     // Compute vectors pointing to the light sources
-    for (int i = 0; i < 5; i++) {
-        toLightVector[i] = vec3(modelMatrix * vec4(lightPosition[i], 1.0)) - (tileModelMatrix * vertexPosition).xyz;
+    for (int i = 0; i < 10; i++) {
+        if (transform==1) {
+            toLightVector[i] = vec3(modelMatrix * vec4(lightPosition[i], 1.0)) - (modelMatrix * modelTransform * vertexPosition).xyz;
+        } else {
+            toLightVector[i] = vec3(modelMatrix * vec4(lightPosition[i], 1.0)) - (modelMatrix * tilePosition * vertexPosition).xyz;
+        }
     }
-
-    // Compute the surface normal
-    surfaceNormal = (tileModelMatrix * vec4(vertexNormal, 0.0)).xyz;
 
     // Compute the texture coordinates
     textureCoords = vertexTexture;
 
     // Set the position
-    gl_Position = projectionMatrix * tileModelMatrix * viewMatrix * vertexPosition;
+    gl_Position = projectionMatrix * modelToWorld * vertexPosition;
 
 }

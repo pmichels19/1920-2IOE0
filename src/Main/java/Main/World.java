@@ -43,9 +43,15 @@ public class World {
     private final Light[] lights = {
             new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
             new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
-            new Light(new Vector3f(2,6,1.5f), new Vector3f(0.2f,1f,0.2f), Background.TORCH.getTexture(), DARK_ATTENUATION),
-            new Light(new Vector3f(6,8,1.5f), new Vector3f(1,0.2f,0.2f), Background.TORCH.getTexture(), DARK_ATTENUATION),
-            new Light(new Vector3f(10,4,1.5f), new Vector3f(0.2f,0.2f,1), Background.TORCH.getTexture(), DARK_ATTENUATION),
+
+            new Light(new Vector3f(2,6,1f), new Vector3f(0.2f,1f,0.2f), Background.TORCH.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(2,6,6f), new Vector3f(0.2f,1f,0.2f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+
+            new Light(new Vector3f(6,8,1f), new Vector3f(1,0.2f,0.2f), Background.TORCH.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(6,8,6f), new Vector3f(1,0.2f,0.2f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+
+            new Light(new Vector3f(10,4,1f), new Vector3f(0.2f,0.2f,1), Background.TORCH.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(10,4,6f), new Vector3f(0.2f,0.2f,1), Background.NOTHING.getTexture(), DARK_ATTENUATION),
     };
 
     // variables to keep track of the player location in the world
@@ -79,20 +85,13 @@ public class World {
 
         // initialize the camera by centering it on the player
         camera.setPosition( new Vector3f(
-                xPlayer + 1 ,
-                (maze.getGrid().length - yPlayer),
-                8
+                xPlayer *2 ,
+                (maze.getGrid().length - yPlayer) * 2 - 10,
+                16
         ) );
 
 
         this.player = Player.getInstance();
-        
-        //TODO: set camera back
-//        camera.setPosition( new Vector3f(
-//                xPlayer/2 ,
-//                (maze.getGrid().length - yPlayer)/2 - 10,
-//                16
-//        ) );
 
         // prepare the tile renderer for rendering
         renderer = TileRenderer.getInstance();
@@ -147,7 +146,8 @@ public class World {
         }
 
         for ( Point point : floors ) {
-            renderer.renderTile( Background.BASIC.getTexture(), point.getX(), point.getY(), TileRenderer.FLOOR );
+            renderer.addNormalMap( Background.DIRT_NORMAL.getTexture() );
+            renderer.renderTile( Background.DIRT.getTexture(), point.getX(), point.getY(), TileRenderer.FLOOR );
         }
 
         for ( Point point : leftWalls ) {

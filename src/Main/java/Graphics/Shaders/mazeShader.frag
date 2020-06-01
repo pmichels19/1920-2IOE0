@@ -10,14 +10,14 @@ uniform sampler2D normalMap;
 uniform int normalMapping;
 
 // Light attributes
-uniform vec3 lightPosition[5];
-uniform vec3 lightColor[5];
-uniform vec3 lightAttenuation[5];
+uniform vec3 lightPosition[10];
+uniform vec3 lightColor[10];
+uniform vec3 lightAttenuation[10];
 
 // From vertex shader
 in vec3 surfaceNormal;
 in vec2 textureCoords;
-in vec3 toLightVector[5];
+in vec3 toLightVector[10];
 
 void main() {
 
@@ -37,7 +37,7 @@ void main() {
 
     // Compute the diffuse for every light source
     vec3 totalDiffuse = vec3(0.0);
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 10; i++) {
         vec3 unitLightVector = normalize(toLightVector[i]);
         float distance = length(toLightVector[i]);
         float attFactor = lightAttenuation[i].x + lightAttenuation[i].y*distance + lightAttenuation[i].z*distance*distance;

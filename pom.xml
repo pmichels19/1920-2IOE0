@@ -7,6 +7,47 @@
     <groupId>5</groupId>
     <artifactId>Game</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <profiles>
+        <profile>
+            <id>windows-profile</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <properties>
+                <native.target>natives-windows</native.target>
+            </properties>
+        </profile>
+        <profile>
+            <id>linux-profile</id>
+            <activation>
+                <os>
+                    <family>Linux</family>
+                </os>
+            </activation>
+            <properties>
+                <native.target>natives-linux</native.target>
+            </properties>
+        </profile>
+        <profile>
+            <id>OSX-profile</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <properties>
+                <native.target>natives-osx</native.target>
+            </properties>
+        </profile>
+    </profiles>
+
+    <properties>
+        <joml.version>1.9.6</joml.version>
+        <lwjgl.version>2.9.3</lwjgl.version>
+        <pngdecoder.version>1.0</pngdecoder.version>
+    </properties>
     <build>
         <plugins>
             <plugin>
@@ -28,12 +69,22 @@
             <groupId>com.google.cloud</groupId>
             <artifactId>google-cloud-automl</artifactId>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.lwjgl/lwjgl -->
         <dependency>
-            <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl</artifactId>
-            <version>3.2.3</version>
+            <groupId>org.joml</groupId>
+            <artifactId>joml</artifactId>
+            <version>${joml.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.lwjgl.lwjgl</groupId>
+            <artifactId>lwjgl-platform</artifactId>
+            <version>${lwjgl.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+    <groupId>org.l33tlabs.twl</groupId>
+    <artifactId>pngdecoder</artifactId>
+    <version>${pngdecoder.version}</version>
+</dependency>
 
 
     </dependencies>

@@ -9,11 +9,20 @@ public enum Background {
     BASIC (
             "src/Main/java/Textures/Background/background.jpg"
     ),
+    DIRT (
+            "src/Main/java/Textures/Background/dirt.jpg"
+    ),
+    DIRT_NORMAL (
+            "src/Main/java/Textures/Background/dirt_normal.jpg"
+    ),
     PLAYER (
             "src/Main/java/Textures/Background/test_PC.png"
     ),
     TORCH (
             "src/Main/java/Textures/Background/torch.png"
+    ),
+    NOTHING (
+            "src/Main/java/Textures/Background/nothing.png"
     );
 
     private final Texture texture;

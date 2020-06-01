@@ -1,15 +1,20 @@
 package Levels.Characters;
 
+import Graphics.OBJLoader;
+import Graphics.OBJModel;
 import Graphics.OpenGL.Model;
 import Graphics.OpenGL.Texture;
 import Levels.Assets.Items.EmptyItem;
 import Levels.Assets.Items.Item;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Player {
+public class Player extends Character {
+    private static String objModelFile = "character2";
+
     private static Player player;
 
     // a list of items the player has collected so far
@@ -23,7 +28,9 @@ public class Player {
     private int current_health;
     private int current_mana;
 
-    private Player() {
+    private Player(int hp, int mp, OBJModel model) {
+        super(hp,mp,model);
+
         // start with an empty inventory of max size 5
         inventory = new Item[] {
                 new EmptyItem(),
@@ -32,14 +39,21 @@ public class Player {
                 new EmptyItem(),
                 new EmptyItem()
         };
-        // player starts at max health and mana
-        current_health = max_health;
-        current_mana = max_mana;
+
     }
+
+
+
 
     public static Player getInstance() {
         if (player == null) {
-            player = new Player();
+            try {
+                OBJModel model =  OBJLoader.loadObjModel(objModelFile);
+                model.setTexture(new Texture("res/Models/eyeball.jpg"));
+                player = new Player(100, 100,model);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return player;
     }

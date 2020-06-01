@@ -1,18 +1,25 @@
 package Graphics.Rendering;
 
+import Graphics.OBJLoader;
+import Graphics.OBJModel;
 import Graphics.OpenGL.Light;
+import Graphics.OpenGL.Texture;
 import Graphics.Transforming.Camera;
 import Graphics.OpenGL.Shader;
 import Graphics.Transforming.Transform;
+import Levels.Characters.EyeBall;
+import Levels.Characters.Player;
 import Levels.Framework.Point;
 import Levels.Framework.joml.*;
 import Levels.Assets.Tiles.*;
 import Levels.Framework.Maze;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 import static java.lang.Math.*;
+import static jdk.nashorn.internal.objects.Global.println;
 
 /**
  * Class for rendering the world and (for now) the player
@@ -28,17 +35,29 @@ public class World {
     // the transfomation to display the world in the proper position
     private final Transform transform;
     // the tile renderer to actaully draw the world and the player
-    private final TileRenderer renderer;
+    private TileRenderer renderer;
+
+    Vector3f DARK_ATTENUATION = new Vector3f(1,0.5f,0.2f);
     // the light object
     private final Light[] lights = {
-            new Light(new Vector3f(2,6,1.5f), new Vector3f(0.2f,1,0.2f), Background.TORCH.getTexture(), new Vector3f(1,0.5f,0.05f)),
-            new Light(new Vector3f(6,8,1.5f), new Vector3f(1,0.2f,0.2f), Background.TORCH.getTexture(), new Vector3f(1,0.5f,0.05f)),
-            new Light(new Vector3f(8,4,1.5f), new Vector3f(0.2f,0.2f,1), Background.TORCH.getTexture(), new Vector3f(1,0.5f,0.05f)),
+            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+
+            new Light(new Vector3f(2,6,1f), new Vector3f(0.2f,1f,0.2f), Background.TORCH.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(2,6,6f), new Vector3f(0.2f,1f,0.2f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+
+            new Light(new Vector3f(6,8,1f), new Vector3f(1,0.2f,0.2f), Background.TORCH.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(6,8,6f), new Vector3f(1,0.2f,0.2f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+
+            new Light(new Vector3f(10,4,1f), new Vector3f(0.2f,0.2f,1), Background.TORCH.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(10,4,6f), new Vector3f(0.2f,0.2f,1), Background.NOTHING.getTexture(), DARK_ATTENUATION),
     };
 
     // variables to keep track of the player location in the world
     private float xPlayer;
     private float yPlayer;
+
+    private Player player;
 
     /**
      * initialises the global variables for the renderer
@@ -76,10 +95,16 @@ public class World {
 
         // initialize the camera by centering it on the player
         camera.setPosition( new Vector3f(
-                xPlayer * 2,
+                xPlayer *2 ,
                 (maze.getGrid().length - yPlayer) * 2 - 10,
                 16
         ) );
+
+
+        this.player = Player.getInstance();
+
+        // prepare the tile renderer for rendering
+        renderer = TileRenderer.getInstance();
     }
 
     /**
@@ -131,26 +156,35 @@ public class World {
         }
 
         for ( Point point : floors ) {
-            renderer.renderTile( Background.BASIC.getTexture(), point.getX(), point.getY(), TileRenderer.FLOOR );
+            renderer.addNormalMap( Background.DIRT_NORMAL.getTexture() );
+            renderer.renderTile( Background.DIRT.getTexture(), point.getX(), point.getY(), TileRenderer.FLOOR );
         }
 
         for ( Point point : leftWalls ) {
-            renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), TileRenderer.LEFTS );
+            renderer.addNormalMap( Wall.BRICKWALL_NORMAL.getTexture() );
+            renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.LEFTS );
         }
 
         for ( Point point : rightWalls ) {
-            renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), TileRenderer.RIGHT );
+            renderer.addNormalMap( Wall.BRICKWALL_NORMAL.getTexture() );
+            renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.RIGHT );
         }
 
         for ( Point point : faceWalls ) {
-            renderer.renderTile( Wall.CASTLE_WALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES );
+            renderer.addNormalMap( Wall.BRICKWALL_NORMAL.getTexture() );
+            renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES );
         }
+
+        player.setGridPosition(xPlayer, yPlayer, grid.length);
+        renderer.renderCharacter(player);
+
+        lights[0].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 7f));
+        lights[1].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 1f));
 
         for (Light light : lights) {
             renderer.renderTile( light.getTexture(), light.getPosition().x/2,  (light.getPosition().y)/2 + 0.65f, TileRenderer.FACES );
         }
 
-        renderer.renderTile( Background.PLAYER.getTexture(), xPlayer, grid.length + 0.5f - yPlayer, TileRenderer.FACES );
 
         for ( Point point : ceilings ) {
             renderer.renderTile( Wall.CEILING.getTexture(), point.getX(), point.getY(), TileRenderer.CEILS );
@@ -167,6 +201,8 @@ public class World {
         // calculate the amount of movement in the x and y direction
         xPlayer += vertical ? 0f : speed;
         yPlayer += vertical ? -speed : 0f;
+        Vector3f playerPos = this.player.getPosition();
+        playerPos.z = 1.5f;
 
         // upon moving the player, we also have to move the camera
         adjustCamera(speed * 2f, vertical);

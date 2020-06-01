@@ -9,6 +9,13 @@ import java.util.List;
 
 public class OBJLoader {
 
+    /**
+     * Creates an OBJModel from a specific .OBJ Wavefront file
+     *
+     * @param fileName The name of the file that is in /res/Models
+     * @return an OBJModel of the .OBJ file
+     * @throws IOException If the specified file cannot be found
+     */
     public static OBJModel loadObjModel(String fileName) throws IOException {
         // Create a file reader object
         FileReader fr = null;
@@ -20,6 +27,7 @@ public class OBJLoader {
             e.printStackTrace();
         }
         // Transform the file reader to a buffered reader
+        assert fr != null;
         BufferedReader reader = new BufferedReader(fr);
         String line;                                    // holds the current line of the file
         List<Vector3f> vertices = new ArrayList<>();    // Create a list that holds al the 3d vertices
@@ -28,61 +36,7 @@ public class OBJLoader {
         List<Face> faces = new ArrayList<>();      // Create a list that holds the indices
 
 
-        // Now parse the first model part
-        while ((line = reader.readLine()) != null) {
-            String[] currentLine = line.split(" ");
-            String prefix = currentLine[0];   // get the prefix of the line
-            switch (prefix) {
-                case "v":  // add the vertex positions
-                    Vector3f vertex = new Vector3f(Float.parseFloat(currentLine[1]),
-                            Float.parseFloat(currentLine[2]), Float.parseFloat(currentLine[3]));
-                    // Store the extracted vertex
-                    vertices.add(vertex);
-                    break;
-                case "vt":  // add the texture coords
-                    Vector2f texture = new Vector2f(Float.parseFloat(currentLine[1]),
-                            Float.parseFloat(currentLine[2]));
-                    // Store the extracted texture
-                    textures.add(texture);
-                    break;
-                case "vn":  // add the normals
-                    Vector3f normal = new Vector3f(Float.parseFloat(currentLine[1]),
-                            Float.parseFloat(currentLine[2]), Float.parseFloat(currentLine[3]));
-                    // Store the extracted normal
-                    normals.add(normal);
-                    break;
-                case "f":  // keep track of the faces
-                    Face face = new Face(currentLine[1], currentLine[2], currentLine[3]);
-                    faces.add(face);
-                default:
-                    break;
-            }
-        }
-
-
-        return reorderLists(vertices, textures, normals, faces);
-    }
-
-    public static OBJModel loadTexturedObjModel(String fileName) throws IOException {
-        // Create a file reader object
-        FileReader fr = null;
-
-        try {
-            // Try to open the correct obj file
-            fr = new FileReader(new File("res/Models/" + fileName + ".obj"));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        // Transform the file reader to a buffered reader
-        BufferedReader reader = new BufferedReader(fr);
-        String line;                                    // holds the current line of the file
-        List<Vector3f> vertices = new ArrayList<>();    // Create a list that holds al the 3d vertices
-        List<Vector2f> textures = new ArrayList<>();    // Create a list that holds all the texture coordinates:
-        List<Vector3f> normals = new ArrayList<>();     // Create a list that holds the normal vectors.
-        List<Face> faces = new ArrayList<>();      // Create a list that holds the indices
-
-
-        // Now parse the first model part
+        // Parse the file until no lines are left
         while ((line = reader.readLine()) != null) {
             String[] currentLine = line.split(" ");
             String prefix = currentLine[0];   // get the prefix of the line

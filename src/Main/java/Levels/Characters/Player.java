@@ -58,12 +58,17 @@ public class Player extends Character {
             try {
                 // Create the model
                 OBJModel model =  OBJLoader.loadObjModel(objModelFile);
-                // Set the texture
-                model.setTexture(new Texture(textureFile));
+
+                if (textureFile != null) {
+                    // Set the texture
+                    model.setTexture(new Texture(textureFile));
+                }
+
                 // Add a normal map if there is one
                 if (normalMapFile != null) {
                 model.setNormalMap(new Texture(normalMapFile));
                 }
+
                 // Instantiate the player
                 player = new Player(100, 100,model);
             } catch (IOException e) {

@@ -118,7 +118,7 @@ public class TileRenderer {
 
 
     /**
-     * Renders a basic tile with the specified texture at the specified location
+     * Renders a character using the same shader as the maze
      *
      * @param character   the character to render based on assignments above
      */
@@ -132,7 +132,7 @@ public class TileRenderer {
         // set the shader uniforms, so the proper position and texture is used
 //        shader.setUniform("tilePosition", tilePosition);
         shader.setUniform("diffuseMap", 0);
-        shader.setUniform("normalMapping", 0);
+        shader.setUniform("normalMapping", 0); // Think this can be removed
 
 
         // and finally render the selected model

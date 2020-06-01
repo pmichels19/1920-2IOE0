@@ -22,7 +22,7 @@ import static org.lwjgl.system.MemoryUtil.memFree;
 public class OBJModel {
     private static final Vector3f DEFAULT_COLOUR = new Vector3f(1.0f, 1.0f, 1.0f);
 
-    // the amount in the model
+    // the amount of vertices in the model
     private final int vertexCount;
 
     // the id of the VAO
@@ -40,7 +40,14 @@ public class OBJModel {
     // Normal map
     private Texture normalMap;
 
-
+    /**
+     * Creates a model from a specified list of vertices, texture coordinates, normal vectors and indices.
+     *
+     * @param vertices list of vertex positions
+     * @param textCoords list of texture coordinates
+     * @param normals list of normal vectors
+     * @param indices list of indices
+     */
     public OBJModel(float[] vertices, float[] textCoords, float[] normals, int[] indices) {
         FloatBuffer verticesBuffer = null;
         FloatBuffer textCoordsBuffer = null;
@@ -156,6 +163,10 @@ public class OBJModel {
         return this.normalMap != null;
     }
 
+    /**
+     * Renders the mesh with a specific shader
+     * @param shader shader to bind uniforms to
+     */
     public void render(Shader shader) {
         if (isTextured()) {
             this.texture.bind(0);

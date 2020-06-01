@@ -21,38 +21,27 @@ out vec3 surfacePos;
 
 void main() {
 
-
     /* These calculations should be done on the CPU, and then send to the shader through uniforms... */
-    if (transform == 1) {
-        mat4 modelToWorld = modelMatrix * viewMatrix * modelTransform;
-        mat4 modelToScreen = projectionMatrix * modelToWorld;
-        mat3 normalToWorld = mat3(transpose(inverse(modelToWorld)));
+    mat4 modelToWorld;
+    if (transform == 1) { modelToWorld = modelMatrix * viewMatrix * modelTransform; }
+    else { modelToWorld = modelMatrix * tilePosition * viewMatrix; }
 
-        vec4 vertexWorldPosition = modelMatrix * modelTransform * vertexPosition;
-        surfaceNormal = normalize(modelToWorld * vec4(vertexNormal, 0.0)).xyz;
-        for (int i = 0; i < 5; i++) {
-            toLightVector[i] = vec3(modelMatrix * vec4(lightPosition[i], 1.0)) - vertexWorldPosition.xyz;
-        }
+    mat4 modelToScreen = projectionMatrix * modelToWorld;
+    mat3 normalToWorld = mat3(transpose(inverse(modelToWorld)));
 
-        textureCoords = vertexTexture;
+    vec4 vertexWorldPosition;
+    if (transform == 1) { vertexWorldPosition = modelMatrix * modelTransform * vertexPosition; }
+    else { vertexWorldPosition = modelMatrix * tilePosition * vertexPosition; }
 
-        gl_Position = modelToScreen * vertexPosition;
+    if (transform == 1) { surfaceNormal = normalize(modelToWorld * vec4(vertexNormal, 0.0)).xyz; }
+    else { surfaceNormal = (modelMatrix * tilePosition * vec4(vertexNormal, 0.0)).xyz; }
 
-    } else {
-        mat4 modelToWorld = modelMatrix * tilePosition * viewMatrix;
-        mat4 modelToScreen = projectionMatrix * modelToWorld;
-        mat3 normalToWorld = mat3(transpose(inverse(modelToWorld)));
-
-        vec4 vertexWorldPosition = modelMatrix * tilePosition * vertexPosition;
-        surfaceNormal = (modelMatrix * tilePosition * vec4(vertexNormal, 0.0)).xyz;
-        for (int i = 0; i < 5; i++) {
-            toLightVector[i] = vec3(modelMatrix * vec4(lightPosition[i], 1.0)) - vertexWorldPosition.xyz;
-        }
-
-        textureCoords = vertexTexture;
-
-        gl_Position = modelToScreen * vertexPosition;
+    for (int i = 0; i < 5; i++) {
+        toLightVector[i] = vec3(modelMatrix * vec4(lightPosition[i], 1.0)) - vertexWorldPosition.xyz;
     }
 
+    textureCoords = vertexTexture;
+
+    gl_Position = modelToScreen * vertexPosition;
 
 }

@@ -38,13 +38,14 @@ public class World {
     // the tile renderer to actaully draw the world and the player
     private final TileRenderer renderer;
 
-    private final Light characterLight = new Light(new Vector3f(1,1,1.5f), new Vector3f(1f,1f,1f), Background.TORCH.getTexture(), new Vector3f(1,0.5f,0.05f));
-
+    Vector3f DARK_ATTENUATION = new Vector3f(1,0.5f,0.2f);
     // the light object
     private final Light[] lights = {
-            new Light(new Vector3f(2,6,1.5f), new Vector3f(1f,1f,1f), Background.TORCH.getTexture(), new Vector3f(1,0.5f,0.05f)),
-            new Light(new Vector3f(6,8,1.5f), new Vector3f(1,0.2f,0.2f), Background.TORCH.getTexture(), new Vector3f(1,0.5f,0.05f)),
-            new Light(new Vector3f(8,4,1.5f), new Vector3f(0.2f,0.2f,1), Background.TORCH.getTexture(), new Vector3f(1,0.5f,0.05f)),
+            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(2,6,1.5f), new Vector3f(0.2f,1f,0.2f), Background.TORCH.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(6,8,1.5f), new Vector3f(1,0.2f,0.2f), Background.TORCH.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(10,4,1.5f), new Vector3f(0.2f,0.2f,1), Background.TORCH.getTexture(), DARK_ATTENUATION),
     };
 
     // variables to keep track of the player location in the world
@@ -98,7 +99,7 @@ public class World {
         renderer.setShader(SHADER);
         renderer.setCamera(camera);
         renderer.setTransform(transform);
-        SHADER.setLights(lights, characterLight);
+        SHADER.setLights(lights);
 
         // sets used for gathering points to determine drawing locations of tiles
         Set<Point> floors = new HashSet<>();
@@ -156,6 +157,11 @@ public class World {
 //        renderer.renderTile( Background.PLAYER.getTexture(), xPlayer, grid.length + 0.5f - yPlayer, TileRenderer.FACES );
         player.setGridPosition(xPlayer, yPlayer, grid.length);
         renderer.renderCharacter(player);
+
+
+        lights[0].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 7f));
+        lights[1].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 1f));
+
         for (Light light : lights) {
             renderer.renderTile( light.getTexture(), light.getPosition().x/2,  (light.getPosition().y)/2 + 0.65f, TileRenderer.FACES );
         }
@@ -182,9 +188,7 @@ public class World {
         xPlayer += vertical ? 0f : speed;
         yPlayer += vertical ? -speed : 0f;
         Vector3f playerPos = this.player.getPosition();
-        playerPos.x += 0f;
         playerPos.z = 1.5f;
-        characterLight.setPosition(playerPos);
 
         // upon moving the player, we also have to move the camera
         adjustCamera(speed * 2f, vertical);

@@ -18,7 +18,6 @@ void main() {
     vec3 unitNormal = normalize(surfaceNormal);
     vec3 totalDiffuse = vec3(0.0);
 
-
     for (int i = 0; i < 5; i++) {
         vec3 unitLightVector = normalize(toLightVector[i]);
         float distance = length(toLightVector[i]);

@@ -14,6 +14,9 @@ public enum Background {
     ),
     TORCH (
             "src/Main/java/Textures/Background/torch.png"
+    ),
+    NOTHING (
+            "src/Main/java/Textures/Background/nothing.png"
     );
 
     private final Texture texture;

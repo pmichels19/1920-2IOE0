@@ -1,5 +1,6 @@
 package Main.Input;
 
+import AI.ImageRecognition.RunDrawingCanvas;
 import Main.GameState;
 
 import static Graphics.IO.ScreenShot.takeScreenShot;
@@ -19,6 +20,9 @@ public class InGameController extends Controller {
     float speed = 0;
     boolean vertical;
 
+    // variables used for the drawing canvas
+    private RunDrawingCanvas drawingCanvas = new RunDrawingCanvas();
+    private boolean stopped = false;
 
     @Override
     void checkInputs() {
@@ -46,6 +50,10 @@ public class InGameController extends Controller {
         // we only check for movement inputs if movement is allowed
         if ( movementCounter == 0 ) {
             checkMovement();
+        }
+
+        if (window.buttonClicked(GLFW_KEY_L)) {
+            drawingCanvas.start();
         }
     }
 

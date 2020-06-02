@@ -1,7 +1,7 @@
 package AI.ImageRecognition;
 
 import Graphics.OpenGL.Shader;
-import Graphics.TileRenderer;
+import Graphics.Rendering.TileRenderer;
 import Graphics.Transforming.Camera;
 import Graphics.Transforming.Transform;
 import Levels.Assets.Tiles.GUIElements;

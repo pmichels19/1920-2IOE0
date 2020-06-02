@@ -20,8 +20,8 @@ uniform vec3 lightPosition[10];
 // To fragment shader
 out vec3 surfaceNormal;
 out vec2 textureCoords;
-out vec3 surfacePos;
 out vec3 toLightVector[10];
+out vec3 toCameraVector;
 
 void main() {
 
@@ -45,6 +45,9 @@ void main() {
             toLightVector[i] = vec3(modelMatrix * vec4(lightPosition[i], 1.0)) - (modelMatrix * tilePosition * vertexPosition).xyz;
         }
     }
+
+    // Compute vectors pointing to the camera
+    toCameraVector = (inverse(viewMatrix) * vec4(0,0,0,1.0)).xyz - vertexWorldPosition.xyz;
 
     // Compute the texture coordinates
     textureCoords = vertexTexture;

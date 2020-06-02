@@ -6,7 +6,7 @@ import Main.GameState;
 import static Main.Main.setState;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static Saves.SaveManager.loadLatest;
+import static Main.SaveManager.loadLatest;
 
 /**
  * class that will take care of the inputs in the main menu

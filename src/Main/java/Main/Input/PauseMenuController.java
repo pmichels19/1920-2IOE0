@@ -3,7 +3,7 @@ package Main.Input;
 import Graphics.Rendering.PauseScreen;
 import Main.GameState;
 
-import java.io.FileNotFoundException;
+import java.io.File;
 
 import static Main.Main.setState;
 import static org.lwjgl.glfw.GLFW.*;
@@ -18,10 +18,16 @@ public class PauseMenuController extends Controller {
 
     @Override
     void checkInputs() {
+        File screenshot = new File("Saves/lastSave.png");
+
         // first we check if the player wants to go back in game again
         if ( pauseCooldown == 0 ) {
             if (window.buttonClicked(GLFW_KEY_ESCAPE)) {
                 pauseCooldown = 10;
+                // when going back in game, get rid of the lastSave.png made when entering the pause menu
+                if ( !screenshot.delete() ) {
+                    throw new IllegalStateException("Could not delete the lastSave.png in the saves folder");
+                }
                 setState( GameState.IN_GAME );
                 return;
             }
@@ -34,6 +40,10 @@ public class PauseMenuController extends Controller {
             switch ( PauseScreen.getSelectedOption() ) {
                 // 0 is mapped to going back in game
                 case 0:
+                    // when going back in game, get rid of the lastSave.png made when entering the pause menu
+                    if ( !screenshot.delete() ) {
+                        throw new IllegalStateException("Could not delete the lastSave.png in the saves folder");
+                    }
                     setState( GameState.IN_GAME );
                     return;
                 // 1 is mapped to saving the game
@@ -42,10 +52,17 @@ public class PauseMenuController extends Controller {
                     break;
                 // 2 is mapped to returning to the main menu
                 case 2:
+                    // when going back to the main menu, get rid of the lastSave.png made when entering the pause menu
+                    if ( !screenshot.delete() ) {
+                        throw new IllegalStateException("Could not delete the lastSave.png in the saves folder");
+                    }
                     setState( GameState.MAIN_MENU );
                     return;
                 // 3 is mapped to exiting to desktop
                 case 3:
+                    // set the screenshot to be removed once the program stops running
+                    screenshot.deleteOnExit();
+                    // then give the command to close the window
                     glfwSetWindowShouldClose( window.getWindow(), true );
                     return;
             }

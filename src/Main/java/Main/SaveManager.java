@@ -1,4 +1,4 @@
-package Saves;
+package Main;
 
 import Graphics.OpenGL.Texture;
 import Levels.Assets.Items.Item;
@@ -7,7 +7,11 @@ import Levels.Framework.Point;
 import Main.Main;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Scanner;
 
 import static Graphics.IO.ScreenShot.takeScreenShot;
@@ -22,9 +26,9 @@ import static Levels.Assets.Items.Item.getItemById;
 public class SaveManager {
 
     private static final File[] SLOTS = new File[] {
-            new File("src/Main/Java/Saves/Slot_0"),
-            new File("src/Main/Java/Saves/Slot_1"),
-            new File("src/Main/Java/Saves/Slot_2")
+            new File("Saves/Slot_0"),
+            new File("Saves/Slot_1"),
+            new File("Saves/Slot_2")
     };
 
     private static final Texture[] SAVE_TEXTURES = new Texture[3];
@@ -61,7 +65,10 @@ public class SaveManager {
     public static void purgeSlot(int slot) {
         File[] save_data = SLOTS[slot].listFiles();
         for (File file : save_data) {
-            file.delete();
+            if ( !file.delete() ) {
+                // if the file could not be deleted, we have a problem
+                throw new IllegalStateException("Could not purge save slot " + slot);
+            }
         }
     }
 
@@ -120,8 +127,22 @@ public class SaveManager {
             e.printStackTrace();
         }
 
-        // also save a screenShot of the game to the save slot
-        takeScreenShot( SLOTS[slot].getPath() + "/lastSave.png" );
+        try {
+            // get the path objects from the lastSave.png made when opening the pause menu
+            Path screenshotLocation = (new File("Saves/lastSave.png")).toPath();
+            // get the destination path, inside a save slot folder
+            Path saveSlotLocation = (new File(SLOTS[slot] + "/lastSave.png")).toPath();
+            // and then copy the lastSave.png into the slot
+            Files.copy(
+                    screenshotLocation,
+                    saveSlotLocation,
+                    StandardCopyOption.REPLACE_EXISTING
+            );
+            // after updating, we need to update the texture for the save slot
+            SAVE_TEXTURES[slot] = new Texture(SLOTS[slot] + "/lastSave.png");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**

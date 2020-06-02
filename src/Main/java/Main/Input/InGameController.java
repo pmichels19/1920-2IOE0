@@ -2,8 +2,7 @@ package Main.Input;
 
 import Main.GameState;
 
-import java.io.FileNotFoundException;
-
+import static Graphics.IO.ScreenShot.takeScreenShot;
 import static Main.Main.setState;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -28,8 +27,8 @@ public class InGameController extends Controller {
             if (window.buttonClicked(GLFW_KEY_ESCAPE)) {
                 pauseCooldown = 10;
 
-                // TODO: make a screenshot and save it somewhere so we can easily move it into a save slot if needed
-
+                // take a screenshot and place it into the saves folder
+                takeScreenShot( "Saves/lastSave.png" );
                 setState( GameState.PAUSED );
             }
         } else {

@@ -3,9 +3,7 @@ package Graphics.Rendering;
 import Graphics.OpenGL.Texture;
 import Levels.Assets.Tiles.GUIElements;
 import Levels.Framework.joml.Vector3f;
-import Saves.SaveManager;
-
-import java.io.File;
+import Main.SaveManager;
 
 public abstract class SlotPickMenu extends FlatRender {
     // the save slot the player is currently selecting

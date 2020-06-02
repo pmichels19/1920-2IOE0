@@ -2,7 +2,7 @@ package Main.Input;
 
 import Main.GameState;
 
-import static Saves.SaveManager.*;
+import static Main.SaveManager.*;
 import static org.lwjgl.glfw.GLFW.*;
 import static Main.Main.getState;
 import static Main.Main.setState;
@@ -43,7 +43,6 @@ public class SlotPickController extends Controller {
             if (getState() == GameState.STARTING_GAME) {
                 // if you are starting a new game, all save data will be wiped and a new save will be started
                 purgeSlot( selectedSlot );
-                saveToSlot( selectedSlot );
                 setState(GameState.IN_GAME);
             } else if (getState() == GameState.LOADING_SAVE) {
                 if ( loadFromSlot( selectedSlot ) ) {
@@ -51,9 +50,6 @@ public class SlotPickController extends Controller {
                 }
             } else if (getState() == GameState.SAVING_GAME) {
                 // if you are saving the game, we save and return the player to the pause screen
-
-                // TODO: get the screenshot made from the InGameController and put it in the correct slot
-
                 saveToSlot( selectedSlot );
                 setState(GameState.PAUSED);
             }

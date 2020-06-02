@@ -27,18 +27,13 @@ public class InGameController extends Controller {
         if (pauseCooldown == 0) {
             if (window.buttonClicked(GLFW_KEY_ESCAPE)) {
                 pauseCooldown = 10;
+
+                // TODO: make a screenshot and save it somewhere so we can easily move it into a save slot if needed
+
                 setState( GameState.PAUSED );
             }
         } else {
             pauseCooldown--;
-        }
-
-        if ( window.buttonClicked( GLFW_KEY_F5 ) ) {
-            try {
-                maze.saveCurrentMaze();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
         }
 
         // we only check for inventory inputs if allowed and not paused

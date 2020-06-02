@@ -51,6 +51,9 @@ public class SlotPickController extends Controller {
                 }
             } else if (getState() == GameState.SAVING_GAME) {
                 // if you are saving the game, we save and return the player to the pause screen
+
+                // TODO: get the screenshot made from the InGameController and put it in the correct slot
+
                 saveToSlot( selectedSlot );
                 setState(GameState.PAUSED);
             }

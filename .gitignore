@@ -4,3 +4,4 @@
 *.kotlin_module
 out/*
 lib/*
+Game.iml

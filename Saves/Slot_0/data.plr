@@ -1,9 +1,9 @@
 # the inventory of the player (index:item_id)
 0:1
-1:0
-2:0
-3:0
-4:0
+1:2
+2:3
+3:4
+4:5
 # current health / max health
 100/100
 # current mana / max mana

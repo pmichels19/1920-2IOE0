@@ -10,7 +10,12 @@ public class Item {
     private static final Item[] items = new Item[10];
 
     private static final Item emptyItem = new Item("src/Main/java/Textures/GUIElements/item_background.png");
-    private static final Item bomb = new Item("src/Main/java/Textures/Items/bomb.png");
+    private static final Item heart = new Item("src/Main/java/Textures/Items/heart.png");
+    private static final Item mana = new Item("src/Main/java/Textures/Items/heart.png");
+    private static final Item boot = new Item("src/Main/java/Textures/Items/boot.png");
+    private static final Item coin = new Item("src/Main/java/Textures/Items/coin.png");
+    private static final Item hPot = new Item("src/Main/java/Textures/Items/health_potion.png");
+    private static final Item mPot = new Item("src/Main/java/Textures/Items/mana_potion.png");
 
     private final int id;
     private final Texture texture;

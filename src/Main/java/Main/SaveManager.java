@@ -90,7 +90,7 @@ public class SaveManager {
             stringBuilder
                     .append(i)
                     .append(":")
-                    .append(inventory[i].getId())
+                    .append( inventory[i] == null ? "0" : inventory[i].getId() )
                     .append("\n");
         }
 

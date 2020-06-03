@@ -73,6 +73,14 @@ public class GUI extends FlatRender {
             transform.setPosition(new Vector3f(1, (2f / 3f) - ((1f / 3f) * i), 0));
             renderer.setTransform(transform);
             renderer.renderTile(GUIElements.ITEM_BACKGROUND.getTexture(), -1, 0, TileRenderer.FLOOR);
+
+            // draw the items
+            renderer.renderTile(
+                    inventory[i] == null ? GUIElements.ITEM_BACKGROUND.getTexture() : inventory[i].getTexture(),
+                    -1,
+                    0,
+                    TileRenderer.FLOOR
+            );
         }
     }
 }

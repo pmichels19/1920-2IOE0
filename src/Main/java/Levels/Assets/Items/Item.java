@@ -9,7 +9,8 @@ public class Item {
     // the item id will specify the location in the items array
     private static final Item[] items = new Item[10];
 
-    private Item emptyItem = new Item("src/Main/java/Textures/GUIElements/item_background.png");
+    private static final Item emptyItem = new Item("src/Main/java/Textures/GUIElements/item_background.png");
+    private static final Item bomb = new Item("src/Main/java/Textures/Items/bomb.png");
 
     private final int id;
     private final Texture texture;

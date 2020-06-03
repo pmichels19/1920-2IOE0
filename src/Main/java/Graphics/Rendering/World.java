@@ -13,6 +13,8 @@ import Levels.Framework.Point;
 import Levels.Framework.joml.*;
 import Levels.Assets.Tiles.*;
 import Levels.Framework.Maze;
+import Levels.Objects.Object3D;
+import Levels.Objects.Treasure;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -40,17 +42,17 @@ public class World {
     Vector3f DARK_ATTENUATION = new Vector3f(1,0.5f,0.2f);
     // the light object
     private final Light[] lights = {
-            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
-            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), null, DARK_ATTENUATION),
 
-            new Light(new Vector3f(2,6,1f), new Vector3f(0.2f,1f,0.2f), Background.TORCH.getTexture(), DARK_ATTENUATION),
-            new Light(new Vector3f(2,6,6f), new Vector3f(0.2f,1f,0.2f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(2,6,1f), new Vector3f(0.2f,1f,0.2f), Treasure.getInstance(), DARK_ATTENUATION),
+            new Light(new Vector3f(2,6,6f), new Vector3f(0.2f,1f,0.2f), null, DARK_ATTENUATION),
 
-            new Light(new Vector3f(6,8,1f), new Vector3f(1,0.2f,0.2f), Background.TORCH.getTexture(), DARK_ATTENUATION),
-            new Light(new Vector3f(6,8,6f), new Vector3f(1,0.2f,0.2f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(6,8,1f), new Vector3f(1,0.2f,0.2f), Treasure.getInstance(), DARK_ATTENUATION),
+            new Light(new Vector3f(6,8,6f), new Vector3f(1,0.2f,0.2f), null, DARK_ATTENUATION),
 
-            new Light(new Vector3f(10,4,1f), new Vector3f(0.2f,0.2f,1), Background.TORCH.getTexture(), DARK_ATTENUATION),
-            new Light(new Vector3f(10,4,6f), new Vector3f(0.2f,0.2f,1), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(10,4,1f), new Vector3f(0.2f,0.2f,1), Treasure.getInstance(), DARK_ATTENUATION),
+            new Light(new Vector3f(10,4,6f), new Vector3f(0.2f,0.2f,1), null, DARK_ATTENUATION),
     };
 
     // variables to keep track of the player location in the world
@@ -182,9 +184,13 @@ public class World {
         lights[1].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 1f));
 
         for (Light light : lights) {
-            renderer.renderTile( light.getTexture(), light.getPosition().x/2,  (light.getPosition().y)/2 + 0.65f, TileRenderer.FACES );
+            Object3D obj = light.getObject();
+            if (light.getObject() != null) {
+                Vector3f pos = new Vector3f(light.getPosition().x, light.getPosition().y, 0f);
+                obj.setPosition(pos);
+                renderer.renderObject(obj);
+            }
         }
-
 
         for ( Point point : ceilings ) {
             renderer.renderTile( Wall.CEILING.getTexture(), point.getX(), point.getY(), TileRenderer.CEILS );

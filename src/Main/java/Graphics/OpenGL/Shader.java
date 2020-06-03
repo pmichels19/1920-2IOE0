@@ -155,7 +155,7 @@ public class Shader {
             if (i < lights.length) {
                 light = lights[i];
             } else {
-                light = new Light(new Vector3f(0,0,0), new Vector3f(0,0,0), Wall.CEILING.getTexture());
+                light = new Light(new Vector3f(0,0,0), new Vector3f(0,0,0), null);
             }
 
             if (LIGHT_POSITIONS[i] != -1)  {

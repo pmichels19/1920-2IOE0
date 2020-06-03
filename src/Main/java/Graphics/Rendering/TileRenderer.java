@@ -8,6 +8,7 @@ import Graphics.Transforming.Transform;
 import Levels.Characters.Character;
 import Levels.Framework.joml.Matrix4f;
 import Levels.Framework.joml.Vector3f;
+import Levels.Objects.Object3D;
 
 public class TileRenderer {
 
@@ -122,23 +123,35 @@ public class TileRenderer {
      *
      * @param character   the character to render based on assignments above
      */
-
     public void renderCharacter( Character character) {
-
         // bind the shader
         shader.bind();
 
-
         // set the shader uniforms, so the proper position and texture is used
-//        shader.setUniform("tilePosition", tilePosition);
         shader.setUniform("diffuseMap", 0);
-        shader.setUniform("normalMapping", 0); // Think this can be removed
-
+        shader.setUniform("normalMapping", 0);
 
         // and finally render the selected model
         character.render(shader);
-
     }
+
+    /**
+     * Renders a character using the same shader as the maze
+     *
+     * @param object   the character to render based on assignments above
+     */
+    public void renderObject(Object3D object) {
+        // bind the shader
+        shader.bind();
+
+        // set the shader uniforms, so the proper position and texture is used
+        shader.setUniform("diffuseMap", 0);
+        shader.setUniform("normalMapping", 0);
+
+        // and finally render the selected model
+        object.render(shader);
+    }
+
 
     public void addNormalMap(Texture normalMap) {
         normalMapping = true;

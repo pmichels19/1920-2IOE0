@@ -97,16 +97,16 @@ public class SaveManager {
         // append the current health to max health ratio
         stringBuilder
                 .append("# current health / max health\n")
-                .append(player.getCurrentHealth())
+                .append( player.getHealth() )
                 .append("/")
-                .append(player.getMaxHealth())
+                .append( player.getMaxHealth() )
                 .append("\n");
         // do the same for the mana
         stringBuilder
                 .append("# current mana / max mana\n")
-                .append(player.getCurrentMana())
+                .append( player.getMana() )
                 .append("/")
-                .append(player.getMaxMana())
+                .append( player.getMaxMana() )
                 .append("\n");
         // and finally append the current player location
         Point playerLocation = Main.getMaze().getPlayerLocation();
@@ -251,7 +251,7 @@ public class SaveManager {
         // then we read the current health and max health
         line = scanner.nextLine();
         splitLine = line.split("/");
-        player.setCurrentHealth( Integer.parseInt( splitLine[0] ) );
+        player.setHealth( Integer.parseInt( splitLine[0] ) );
         player.setMaxHealth( Integer.parseInt( splitLine[1] ) );
 
         // and we do the same for the mana
@@ -260,7 +260,7 @@ public class SaveManager {
         // then we read the current health and max health
         line = scanner.nextLine();
         splitLine = line.split("/");
-        player.setCurrentMana( Integer.parseInt( splitLine[0] ) );
+        player.setMana( Integer.parseInt( splitLine[0] ) );
         player.setMaxMana( Integer.parseInt( splitLine[1] ) );
 
         // finally we set the player location

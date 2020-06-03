@@ -5,8 +5,8 @@
 3:0
 4:0
 # current health / max health
-0/100
+100/100
 # current mana / max mana
-0/100
+100/100
 # player location
-1:7
+7:1

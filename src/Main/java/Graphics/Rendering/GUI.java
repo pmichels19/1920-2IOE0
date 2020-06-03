@@ -31,8 +31,8 @@ public class GUI extends FlatRender {
         renderer.renderTile( GUIElements.BACKGROUND.getTexture(), 0.5f, 0.5f, TileRenderer.FLOOR );
 
         // calculate the percentage of health and mana left
-        float healthPercent = ( (float) player.getCurrentHealth() ) / ( (float) player.getMaxHealth() );
-        float manaPercent = ( (float) player.getCurrentMana() ) / ( (float) player.getMaxMana() );
+        float healthPercent = ( (float) player.getHealth() ) / ( (float) player.getMaxHealth() );
+        float manaPercent = ( (float) player.getMana() ) / ( (float) player.getMaxMana() );
 
         // first we render the missing health bar
         transform.setScale( new Vector3f( 0.19f, 0.04f, 1 ) );

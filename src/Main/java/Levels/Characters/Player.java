@@ -24,13 +24,6 @@ public class Player extends Character {
     private Item[] inventory;
     private int selectedItem = 0;
 
-    // the max health and mana of the player
-    private int max_health = 100;
-    private int max_mana = 100;
-
-    private int current_health;
-    private int current_mana;
-
     private Player(int hp, int mp, OBJModel model) {
         super(hp,mp,model);
 
@@ -97,22 +90,6 @@ public class Player extends Character {
 
     public void setMaxMana(int max_mana) {
         this.max_mana = max_mana;
-    }
-
-    public int getCurrentHealth() {
-        return current_health;
-    }
-
-    public void setCurrentHealth(int current_health) {
-        this.current_health = current_health;
-    }
-
-    public int getCurrentMana() {
-        return current_mana;
-    }
-
-    public void setCurrentMana(int current_mana) {
-        this.current_mana = current_mana;
     }
 
     /**

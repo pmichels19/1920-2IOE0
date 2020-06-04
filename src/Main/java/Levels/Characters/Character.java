@@ -18,6 +18,7 @@ public abstract class Character {
     // holds the rotation
     private Vector3f rotation;
     private float rotationAngle;
+    protected int direction;
 
     private float gamePositionX;
     private float gamePositionY;
@@ -138,19 +139,27 @@ public abstract class Character {
         if (gamePositionX > this.gamePositionX) {
             this.rotationAngle = (float) ((-90f * Math.PI) / 180.0f);
             this.rotation = new Vector3f(0f, 0f, 1f);
+            // right
+            this.direction = 2;
         } else if (gamePositionX < this.gamePositionX) {
             this.rotationAngle = (float) ((90f * Math.PI) / 180.0f);
 
             this.rotation = new Vector3f(0f, 0f, 1f);
+            // left
+            this.direction = 0;
         }
         if (gamePositionY > this.gamePositionY) {
             this.rotationAngle = (float) ((-180f * Math.PI) / 180.0f);
 
             this.rotation = new Vector3f(0f, 0f, 1f);
+            // down
+            this.direction = 3;
         } else if (gamePositionY < this.gamePositionY) {
             this.rotationAngle = (float) ((0f * Math.PI) / 180.0f);
 
             this.rotation = new Vector3f(0f, 0f, 1f);
+            // up
+            this.direction = 1;
         }
         setGamePositionX(gamePositionX);
         setGridPositionY(gamePositionY, gridLength);

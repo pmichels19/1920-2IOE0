@@ -50,9 +50,6 @@ public class Player extends Character {
 
     }
 
-
-
-
     public static Player getInstance() {
         if (player == null) {
             try {
@@ -124,6 +121,10 @@ public class Player extends Character {
 
     public void setCurrentMana(int current_mana) {
         this.current_mana = current_mana;
+    }
+
+    public int getDirection() {
+        return direction;
     }
 
     /**

@@ -1,6 +1,6 @@
 package SpellCasting;
 
-public class Spell {
+public abstract class Spell {
 
     Spell spell;
 
@@ -8,8 +8,9 @@ public class Spell {
     }
 
     // game logic for all spells
-    public void castSpell() {
-
+    public void castSpell(String spellName) {
+        spell = determineSpell(spellName);
+        spell.castSpell();
     }
 
     // graphics for all spells
@@ -19,7 +20,7 @@ public class Spell {
 
     // make spell with string returned from google VisionML
     public Spell determineSpell(String spell) {
-        Spell ret = new Spell();
+        Spell ret;
         switch (spell) {
             case "illuminate":
                 ret = new SpellIlluminate();
@@ -59,6 +60,10 @@ public class Spell {
                 break;
             case "lightning":
                 ret = new SpellLightning();
+                break;
+            default:
+                // to cancel spellcasting
+                ret = new SpellEmpty();
                 break;
         }
         return ret;

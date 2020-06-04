@@ -1,8 +1,7 @@
 package SpellCasting;
 
-public class SpellScan extends Spell {
+public class SpellEmpty extends Spell {
 
-    @Override
     public void cast() {
 
     }

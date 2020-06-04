@@ -1,25 +1,20 @@
 package Graphics.Rendering;
 
-import Graphics.OBJLoader;
-import Graphics.OBJModel;
 import Graphics.OpenGL.Light;
-import Graphics.OpenGL.Texture;
-import Graphics.Transforming.Camera;
 import Graphics.OpenGL.Shader;
+import Graphics.Transforming.Camera;
 import Graphics.Transforming.Transform;
-import Levels.Characters.EyeBall;
+import Levels.Assets.Tiles.Background;
+import Levels.Assets.Tiles.Wall;
 import Levels.Characters.Player;
-import Levels.Framework.Point;
-import Levels.Framework.joml.*;
-import Levels.Assets.Tiles.*;
 import Levels.Framework.Maze;
+import Levels.Framework.Point;
+import Levels.Framework.joml.Vector3f;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import static java.lang.Math.*;
-import static jdk.nashorn.internal.objects.Global.println;
+import static java.lang.Math.toRadians;
 
 /**
  * Class for rendering the world and (for now) the player

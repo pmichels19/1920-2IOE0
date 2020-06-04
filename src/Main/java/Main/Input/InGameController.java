@@ -1,7 +1,6 @@
 package Main.Input;
 
 import AI.ImageRecognition.RunDrawingCanvas;
-import Levels.Characters.Player;
 import Main.GameState;
 import SpellCasting.Spell;
 
@@ -63,9 +62,9 @@ public class InGameController extends Controller {
         // spell testing
         if (window.buttonClicked(GLFW_KEY_E)) {
             if (released) {
-                Spell spell = Spell.determineSpell("fireball");
+                Spell spell = Spell.determineSpell("HEAL");
                 System.out.println(Spell.class);
-                spell.castSpell(new Object[]{Player.getInstance()});
+                spell.castSpell(new Object[]{maze});
                 released = false;
             }
         } else {

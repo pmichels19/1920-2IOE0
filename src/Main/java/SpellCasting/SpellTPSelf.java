@@ -2,29 +2,34 @@ package SpellCasting;
 
 import Levels.Characters.Player;
 import Levels.Framework.Maze;
+import Levels.Framework.joml.Vector3f;
 
 import java.util.Random;
 
 public class SpellTPSelf extends Spell {
 
-    private int manaCost = 10;
+    private final int manaCost = 10;
+
     private int newX = 0;
     private int newY = 0;
 
-    Maze maze;
     Random rand = new Random();
 
-    Player player;
+    Player player = Player.getInstance();
+    Maze maze;
 
     public void castSpell(Object[] args) {
+
+        maze = (Maze) args[0];
 
         int prevMana = player.getCurrentMana();
 
         if (prevMana < manaCost) {
-            // Spell will not be cast
+            // Not enough mana to cast spell
+            System.out.println("No Mana!");
         } else {
             // Use mana to cast spell
-            player.setCurrentMana(player.getMaxMana() - manaCost);
+            player.setCurrentMana(prevMana - manaCost);
 
             char[][] grid = maze.getGrid();
 
@@ -34,6 +39,8 @@ public class SpellTPSelf extends Spell {
             }
             // teleport the player to the position
             maze.setPlayerLocation(newX, newY);
+            player.setPosition(new Vector3f (newX, newY, 1.5f));
+            // TODO: move the model and the camera of the player in the maze, rather than just the player object
         }
     }
     
@@ -50,10 +57,10 @@ public class SpellTPSelf extends Spell {
     }
 
     private int getNewX(char[][] grid) {
-        return rand.nextInt(grid.length - 1);
+        return rand.nextInt(grid.length);
     }
 
     private int getNewY(char[][] grid, int newX) {
-        return rand.nextInt(grid[newX].length - 1);
+        return rand.nextInt(grid[newX].length);
     }
 }

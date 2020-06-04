@@ -2,24 +2,18 @@ package SpellCasting;
 
 public abstract class Spell {
 
-    Spell spell;
-
     public Spell() {
+
     }
 
     // game logic for all spells
-    public void castSpell(String spellName) {
-        spell = determineSpell(spellName);
-        spell.castSpell();
-    }
+    public abstract void castSpell(Object[] args);
 
     // graphics for all spells
-    public void renderSpell() {
-
-    }
+    public abstract void renderSpell();
 
     // make spell with string returned from google VisionML
-    public Spell determineSpell(String spell) {
+    public static Spell determineSpell(String spell) {
         Spell ret;
         switch (spell) {
             case "illuminate":

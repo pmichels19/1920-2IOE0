@@ -1,10 +1,13 @@
 package SpellCasting;
 
 public class SpellBeast extends Spell {
-
     @Override
-    public void cast() {
+    public void castSpell(Object[] args) {
 
     }
 
+    @Override
+    public void renderSpell() {
+
+    }
 }

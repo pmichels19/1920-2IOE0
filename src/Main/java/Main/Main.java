@@ -4,8 +4,10 @@ import AI.ImageRecognition.RunDrawingCanvas;
 import Graphics.IO.Timer;
 import Graphics.IO.Window;
 import Graphics.Rendering.*;
+import Levels.Characters.Player;
 import Levels.Framework.Maze;
 import Main.Input.MainController;
+import SpellCasting.Spell;
 import org.lwjgl.opengl.GL;
 
 import java.io.IOException;

@@ -16,7 +16,7 @@ public class SpellTPSelf extends Spell {
 
     Player player;
 
-    public void cast() {
+    public void castSpell(Object[] args) {
 
         int prevMana = player.getCurrentMana();
 
@@ -35,6 +35,11 @@ public class SpellTPSelf extends Spell {
             // teleport the player to the position
             maze.setPlayerLocation(newX, newY);
         }
+    }
+    
+    @Override
+    public void renderSpell() {
+        
     }
 
     private char getNewPositions(char[][] grid) {

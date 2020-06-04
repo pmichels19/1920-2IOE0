@@ -1,7 +1,9 @@
 package Main.Input;
 
 import AI.ImageRecognition.RunDrawingCanvas;
+import Levels.Characters.Player;
 import Main.GameState;
+import SpellCasting.Spell;
 
 import static Graphics.IO.ScreenShot.takeScreenShot;
 import static Main.Main.setState;
@@ -23,6 +25,8 @@ public class InGameController extends Controller {
     // variables used for the drawing canvas
     private RunDrawingCanvas drawingCanvas = new RunDrawingCanvas();
     private boolean stopped = false;
+
+    private boolean released = true;
 
     @Override
     void checkInputs() {
@@ -54,6 +58,18 @@ public class InGameController extends Controller {
 
         if (window.buttonClicked(GLFW_KEY_L)) {
             drawingCanvas.start();
+        }
+
+        // spell testing
+        if (window.buttonClicked(GLFW_KEY_E)) {
+            if (released) {
+                Spell spell = Spell.determineSpell("fireball");
+                System.out.println(Spell.class);
+                spell.castSpell(new Object[]{Player.getInstance()});
+                released = false;
+            }
+        } else {
+            released = true;
         }
     }
 

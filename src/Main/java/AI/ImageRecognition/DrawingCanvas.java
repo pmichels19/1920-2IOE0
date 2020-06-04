@@ -287,7 +287,7 @@ public class DrawingCanvas extends JFrame implements Runnable {
                     try {
                         String[] tempData = googleConfig.predict(saveGridAsImage());
                         imageClass.setText(defaultLabel + tempData[0] + ", " + tempData[1]);
-                        spell.castSpell(tempData[0]);
+                        spell.castSpell(new Object[] {tempData[0]});
                     } catch (Exception ex) {
                         System.out.println(ex);
                     }

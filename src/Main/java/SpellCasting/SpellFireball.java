@@ -3,14 +3,6 @@ package SpellCasting;
 import Levels.Characters.Player;
 
 public class SpellFireball extends Spell {
-<<<<<<< Updated upstream
-
-    @Override
-    public void cast() {
-
-    }
-
-=======
     @Override
     public void castSpell(Object[] args) {
         Player player = (Player) args[0];
@@ -20,5 +12,4 @@ public class SpellFireball extends Spell {
     public void renderSpell() {
 
     }
->>>>>>> Stashed changes
 }

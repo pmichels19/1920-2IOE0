@@ -1,14 +1,6 @@
 package SpellCasting;
 
 public class SpellHeal extends Spell {
-<<<<<<< Updated upstream
-
-    @Override
-    public void cast() {
-
-    }
-
-=======
     @Override
     public void castSpell(Object[] args) {
 
@@ -18,5 +10,4 @@ public class SpellHeal extends Spell {
     public void renderSpell() {
 
     }
->>>>>>> Stashed changes
 }

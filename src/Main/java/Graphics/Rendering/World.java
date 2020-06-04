@@ -201,8 +201,6 @@ public class World {
         // calculate the amount of movement in the x and y direction
         xPlayer += vertical ? 0f : speed;
         yPlayer += vertical ? -speed : 0f;
-        Vector3f playerPos = this.player.getPosition();
-        playerPos.z = 1.5f;
 
         // upon moving the player, we also have to move the camera
         adjustCamera(speed * 2f, vertical);

@@ -1,6 +1,7 @@
 package Main.Input;
 
 import Graphics.IO.Window;
+import Graphics.Rendering.World;
 import Levels.Framework.Maze;
 import Main.GameState;
 
@@ -24,8 +25,9 @@ public class MainController {
         startUpCooldown = 10;
     }
 
-    public MainController(Maze maze, Window window) {
+    public MainController(Maze maze, World world, Window window) {
         Controller.setWindow( window );
+        Controller.setWorld( world );
         Controller.setMaze( maze );
 
         mainMenuController = new MainMenuController();
@@ -55,37 +57,21 @@ public class MainController {
         }
     }
 
-    /**
-     * reduces the cooldown left on moving by one
-     */
-    public void decrementMovementCounter() {
-        gameController.decrementMovementCounter();
-    }
-
-    /**
-     * returns the cooldown left on moving
-     *
-     * @return {@code movementCounter}
-     */
-    public int getMovementCounter() {
-        return gameController.getMovementCounter();
-    }
-
-    /**
-     * returns the speed with which the player is currently moving
-     *
-     * @return {@code speed}
-     */
-    public float getSpeed() {
-        return gameController.getSpeed();
-    }
-
-    /**
-     * returns whether the current movement is vertical or not
-     *
-     * @return {@code vertical}
-     */
-    public boolean isVertical() {
-        return gameController.isVertical();
-    }
+//    /**
+//     * returns the speed with which the player is currently moving
+//     *
+//     * @return {@code speed}
+//     */
+//    public float getSpeed() {
+//        return gameController.getSpeed();
+//    }
+//
+//    /**
+//     * returns whether the current movement is vertical or not
+//     *
+//     * @return {@code vertical}
+//     */
+//    public boolean isVertical() {
+//        return gameController.isVertical();
+//    }
 }

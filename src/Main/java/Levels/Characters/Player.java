@@ -24,16 +24,13 @@ public class Player extends Character {
     private Item[] inventory;
     private int selectedItem = 0;
 
-    private Player(int hp, int mp, OBJModel model) {
-        super(hp,mp,model);
+    private Player(int hp, int mp, int speed, OBJModel model) {
+        super(hp, mp, speed, model);
 
         // start with an empty inventory of max size 5
         inventory = new Item[5];
 
     }
-
-
-
 
     public static Player getInstance() {
         if (player == null) {
@@ -52,7 +49,7 @@ public class Player extends Character {
                 }
 
                 // Instantiate the player
-                player = new Player(100, 100,model);
+                player = new Player(100, 100, 20,model);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -90,6 +87,26 @@ public class Player extends Character {
 
     public void setMaxMana(int max_mana) {
         this.max_mana = max_mana;
+    }
+
+    /**
+     * the player class overrides the getspeed to take the boots in the inventory into account
+     *
+     * @return the speed of the player, with boots
+     */
+    @Override
+    public int getSpeed() {
+        // check the amount of boots the player gathered
+        double bootCount = 1;
+        for (Item item : inventory) {
+            if (item != null && item.getId() == Item.BOOT) {
+                bootCount++;
+            }
+        }
+
+        int modifier = (int) Math.round( 1.25 * bootCount );
+
+        return super.getSpeed() / modifier;
     }
 
     /**

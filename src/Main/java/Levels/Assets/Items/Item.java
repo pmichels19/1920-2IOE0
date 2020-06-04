@@ -9,12 +9,25 @@ public class Item {
     // the item id will specify the location in the items array
     private static final Item[] items = new Item[10];
 
+    public static final int EMPTY = 0;
     private static final Item emptyItem = new Item("src/Main/java/Textures/GUIElements/item_background.png");
+
+    public static final int HEART = 1;
     private static final Item heart = new Item("src/Main/java/Textures/Items/heart.png");
+
+    public static final int MANA = 2;
     private static final Item mana = new Item("src/Main/java/Textures/Items/heart.png");
+
+    public static final int BOOT = 3;
     private static final Item boot = new Item("src/Main/java/Textures/Items/boot.png");
+
+    public static final int COIN = 4;
     private static final Item coin = new Item("src/Main/java/Textures/Items/coin.png");
+
+    public static final int H_POTION = 5;
     private static final Item hPot = new Item("src/Main/java/Textures/Items/health_potion.png");
+
+    public static final int M_POTION = 6;
     private static final Item mPot = new Item("src/Main/java/Textures/Items/mana_potion.png");
 
     private final int id;

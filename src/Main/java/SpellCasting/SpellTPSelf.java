@@ -1,8 +1,10 @@
 package SpellCasting;
 
+import Graphics.Rendering.World;
 import Levels.Characters.Player;
 import Levels.Framework.Maze;
 import Levels.Framework.joml.Vector3f;
+import Main.Main;
 
 import java.util.Random;
 
@@ -10,18 +12,16 @@ public class SpellTPSelf extends Spell {
 
     private final int manaCost = 10;
 
-    private int newX = 0;
-    private int newY = 0;
+    private int newX;
+    private int newY;
 
     Random rand = new Random();
 
     Player player = Player.getInstance();
-    Maze maze;
+    Maze maze = Main.getMaze();
+    World world = Main.getWorld();
 
     public void castSpell(Object[] args) {
-
-        maze = (Maze) args[0];
-
         int prevMana = player.getCurrentMana();
 
         if (prevMana < manaCost) {
@@ -33,14 +33,19 @@ public class SpellTPSelf extends Spell {
 
             char[][] grid = maze.getGrid();
 
-            // find a position to teleport the player to
-            while ( grid[newX][newY] != ' ') {
-                grid[newX][newY] = getNewPositions(grid);
+            char newPosition = Maze.MARKER_WALL;
+
+            // As long as the new positions is not an empty space, find a new location
+            while ( newPosition != Maze.MARKER_SPACE) {
+                // find a position to teleport the player to
+                newPosition = getNewPositions(grid);
             }
             // teleport the player to the position
             maze.setPlayerLocation(newX, newY);
-            player.setPosition(new Vector3f (newX, newY, 1.5f));
-            // TODO: move the model and the camera of the player in the maze, rather than just the player object
+            player.setPosition(new Vector3f(newX, newY, 1.5f));
+            //player.setGridPosition(newX, newY, grid.length);
+            world.resetCameraPosition();
+
         }
     }
     

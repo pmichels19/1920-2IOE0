@@ -58,18 +58,6 @@ public class InGameController extends Controller {
         if (window.buttonClicked(GLFW_KEY_L)) {
             drawingCanvas.start();
         }
-
-        // spell testing
-        if (window.buttonClicked(GLFW_KEY_E)) {
-            if (released) {
-                Spell spell = Spell.determineSpell("HEAL");
-                System.out.println(Spell.class);
-                spell.castSpell(new Object[]{maze});
-                released = false;
-            }
-        } else {
-            released = true;
-        }
     }
 
     /**
@@ -129,6 +117,19 @@ public class InGameController extends Controller {
                 vertical = false;
             }
         }
+
+        // spellcasting
+        if (window.buttonClicked(GLFW_KEY_1)) {
+            if (released) {
+                Spell spell = Spell.determineSpell("tp_self");
+                System.out.println(Spell.class);
+                spell.castSpell(new Object[]{maze});
+                released = false;
+            }
+        } else {
+            released = true;
+        }
+
     }
 
     /**

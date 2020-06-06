@@ -131,7 +131,7 @@ public class InGameController extends Controller {
         // spell casting
         if (window.buttonClicked(GLFW_KEY_1)) {
             if (released) {
-                Spell spell = Spell.determineSpell("agility");
+                Spell spell = Spell.determineSpell("tp_self");
                 spell.castSpell(new Object[]{maze});
                 released = false;
             }

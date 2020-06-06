@@ -22,14 +22,14 @@ public class SpellTPSelf extends Spell {
     World world = Main.getWorld();
 
     public void castSpell(Object[] args) {
-        int prevMana = player.getCurrentMana();
+        int prevMana = player.getMana();
 
         if (prevMana < manaCost) {
             // Not enough mana to cast spell
             System.out.println("No Mana!");
         } else {
             // Use mana to cast spell
-            player.setCurrentMana(prevMana - manaCost);
+            player.setMana(prevMana - manaCost);
 
             char[][] grid = maze.getGrid();
 

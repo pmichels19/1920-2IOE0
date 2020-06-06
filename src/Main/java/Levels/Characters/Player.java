@@ -2,15 +2,10 @@ package Levels.Characters;
 
 import Graphics.OBJLoader;
 import Graphics.OBJModel;
-import Graphics.OpenGL.Model;
 import Graphics.OpenGL.Texture;
-import Levels.Assets.Items.EmptyItem;
 import Levels.Assets.Items.Item;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Player extends Character {
     // Name of the obj file in the res folder corresponding to the player model

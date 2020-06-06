@@ -14,17 +14,17 @@ public class SpellHeal extends Spell {
     @Override
     public void castSpell(Object[] args) {
 
-        int prevMana = player.getCurrentMana();
+        int prevMana = player.getMana();
 
         if (prevMana < manaCost) {
             // Not enough mana to cast spell
             System.out.println("No Mana!");
         } else {
-            player.setCurrentMana(prevMana - manaCost);
-            int prevHP = player.getCurrentHealth();
-            player.setCurrentHealth(prevHP + lifeRestore);
+            player.setMana(prevMana - manaCost);
+            int prevHP = player.getHealth();
+            player.setHealth(prevHP + lifeRestore);
             if (prevHP + lifeRestore >= maxHP) {
-                player.setCurrentHealth(maxHP);
+                player.setHealth(maxHP);
             }
         }
     }

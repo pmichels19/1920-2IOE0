@@ -118,11 +118,10 @@ public class InGameController extends Controller {
             }
         }
 
-        // spellcasting
+        // spell casting
         if (window.buttonClicked(GLFW_KEY_1)) {
             if (released) {
-                Spell spell = Spell.determineSpell("tp_self");
-                System.out.println(Spell.class);
+                Spell spell = Spell.determineSpell("agility");
                 spell.castSpell(new Object[]{maze});
                 released = false;
             }

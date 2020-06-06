@@ -1,6 +1,7 @@
 package Main.Input;
 
 import AI.ImageRecognition.RunDrawingCanvas;
+import Levels.Assets.Items.Item;
 import Main.GameState;
 import SpellCasting.Spell;
 
@@ -53,6 +54,11 @@ public class InGameController extends Controller {
         // we only check for movement inputs if movement is allowed
         if ( movementCounter == 0 ) {
             checkMovement();
+        } else if (movementCounter > 0) {
+            // move the player with the specified speed and direction
+            world.movePlayer( speed, vertical );
+            // decrement the amount of movement frames left
+            movementCounter--;
         }
 
         if (window.buttonClicked(GLFW_KEY_L)) {
@@ -69,6 +75,10 @@ public class InGameController extends Controller {
             player.setSelectedItem( player.getSelectedItem() - 1 );
         } else if ( window.buttonClicked(GLFW_KEY_DOWN) ) {
             player.setSelectedItem( player.getSelectedItem() + 1 );
+        }
+
+        if (window.buttonClicked(GLFW_KEY_N)) {
+            player.addItem(Item.getItemById(Item.BOOT));
         }
 
         // set a cooldown of 5 frames, so the player has better control over what item he wants to select
@@ -88,32 +98,32 @@ public class InGameController extends Controller {
             if ( maze.canMoveUp() ) {
                 maze.moveUp();
 
-                movementCounter = MOVEMENT_CAP;
-                speed = 1f / (float) MOVEMENT_CAP;
+                movementCounter = player.getSpeed();
+                speed = 1f / (float) player.getSpeed();
                 vertical = true;
             }
         } else if ( window.buttonClicked( GLFW_KEY_A ) ) {
             if ( maze.canMoveLeft() ) {
                 maze.moveLeft();
 
-                movementCounter = MOVEMENT_CAP;
-                speed = -1f / (float) MOVEMENT_CAP;
+                movementCounter = player.getSpeed();
+                speed = -1f / (float) player.getSpeed();
                 vertical = false;
             }
         } else if ( window.buttonClicked( GLFW_KEY_S ) ) {
             if ( maze.canMoveDown() ) {
                 maze.moveDown();
 
-                movementCounter = MOVEMENT_CAP;
-                speed = -1f / (float) MOVEMENT_CAP;
+                movementCounter = player.getSpeed();
+                speed = -1f / (float) player.getSpeed();
                 vertical = true;
             }
         } else if ( window.buttonClicked( GLFW_KEY_D ) ) {
             if ( maze.canMoveRight() ) {
                 maze.moveRight();
 
-                movementCounter = MOVEMENT_CAP;
-                speed = 1f / (float) MOVEMENT_CAP;
+                movementCounter = player.getSpeed();
+                speed = 1f / (float) player.getSpeed();
                 vertical = false;
             }
         }

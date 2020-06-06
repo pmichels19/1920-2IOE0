@@ -81,7 +81,7 @@ public class Main {
         RunDrawingCanvas drawingCanvas = new RunDrawingCanvas();
 
         // and initialize the controller for input checking
-        MainController mainController = new MainController(maze, window);
+        MainController mainController = new MainController(maze, world, window);
 
         // Stuff to keep track of the fps
         double frame_time = 0;
@@ -122,12 +122,6 @@ public class Main {
 
                 // check the inputs done by the player
                 mainController.checkInputs();
-
-                // if the player still has movement frames left, execute those by moving the player
-                if ( mainController.getMovementCounter() > 0 ) {
-                    world.movePlayer( mainController.getSpeed(), mainController.isVertical() );
-                    mainController.decrementMovementCounter();
-                }
 
                 // check which state we are in, so we render the correct thing
                 if (state == GameState.MAIN_MENU) {

@@ -31,8 +31,8 @@ public class GUI extends FlatRender {
         renderer.renderTile( GUIElements.BACKGROUND.getTexture(), 0.5f, 0.5f, TileRenderer.FLOOR );
 
         // calculate the percentage of health and mana left
-        float healthPercent = ( (float) player.getCurrentHealth() ) / ( (float) player.getMaxHealth() );
-        float manaPercent = ( (float) player.getCurrentMana() ) / ( (float) player.getMaxMana() );
+        float healthPercent = ( (float) player.getHealth() ) / ( (float) player.getMaxHealth() );
+        float manaPercent = ( (float) player.getMana() ) / ( (float) player.getMaxMana() );
 
         // first we render the missing health bar
         transform.setScale( new Vector3f( 0.19f, 0.04f, 1 ) );
@@ -65,14 +65,22 @@ public class GUI extends FlatRender {
         renderer.setTransform( transform );
         renderer.renderTile( GUIElements.BACKGROUND.getTexture(), 0, 0, TileRenderer.FLOOR );
 
-        // set the scale for the inventory slots
-        transform.setScale( new Vector3f(0.09f * (1080f/1920f), 0.09f, 1 ) );
-
         // loop over all the inventory slots and render them
         for (int i = 0; i < inventory.length; i++) {
-            transform.setPosition(new Vector3f(1, (2f / 3f) - ((1f / 3f) * i), 0));
+            transform.setScale( new Vector3f(0.09f * (1080f/1920f), 0.09f, 1 ) );
+            transform.setPosition(new Vector3f(1, (2f - i) / 3f, 0));
             renderer.setTransform(transform);
             renderer.renderTile(GUIElements.ITEM_BACKGROUND.getTexture(), -1, 0, TileRenderer.FLOOR);
+
+            // draw the items
+            transform.setScale( new Vector3f(0.08f * (1080f/1920f), 0.08f, 1 ) );
+            renderer.setTransform(transform);
+            renderer.renderTile(
+                    inventory[i] == null ? GUIElements.ITEM_BACKGROUND.getTexture() : inventory[i].getTexture(),
+                    -(0.09f/0.08f),
+                    0,
+                    TileRenderer.FLOOR
+            );
         }
     }
 }

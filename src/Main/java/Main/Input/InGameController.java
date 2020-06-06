@@ -4,6 +4,7 @@ import AI.ImageRecognition.RunDrawingCanvas;
 import Levels.Assets.Items.Item;
 import Main.GameState;
 import SpellCasting.Spell;
+import SpellCasting.SpellAgility;
 
 import static Graphics.IO.ScreenShot.takeScreenShot;
 import static Main.Main.setState;
@@ -27,6 +28,8 @@ public class InGameController extends Controller {
     private boolean stopped = false;
 
     private boolean released = true;
+
+    private Spell spell;
 
     @Override
     void checkInputs() {
@@ -131,7 +134,7 @@ public class InGameController extends Controller {
         // spell casting
         if (window.buttonClicked(GLFW_KEY_1)) {
             if (released) {
-                Spell spell = Spell.determineSpell("tp_self");
+                spell = Spell.determineSpell("agility");
                 spell.castSpell(new Object[]{maze});
                 released = false;
             }
@@ -139,6 +142,12 @@ public class InGameController extends Controller {
             released = true;
         }
 
+        // handle spell countdown (can make array or something later for more spells)
+        if (spell != null) {
+            if (spell instanceof SpellAgility) {
+                ((SpellAgility) spell).countDown();
+            }
+        }
     }
 
     /**

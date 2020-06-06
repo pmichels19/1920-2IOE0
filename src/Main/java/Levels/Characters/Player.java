@@ -24,6 +24,9 @@ public class Player extends Character {
     private Item[] inventory;
     private int selectedItem = 0;
 
+    // agility spell
+    private double agilityPower = 0;
+
     private Player(int hp, int mp, int speed, OBJModel model) {
         super(hp, mp, speed, model);
 
@@ -104,7 +107,7 @@ public class Player extends Character {
             }
         }
 
-        int modifier = (int) Math.round( 1.25 * bootCount );
+        int modifier = (int) Math.round( 1.25 * (bootCount + agilityPower));
 
         return super.getSpeed() / modifier;
     }
@@ -120,5 +123,13 @@ public class Player extends Character {
      */
     public void addItem(Item item) {
         inventory[selectedItem] = item;
+    }
+
+    public void setAgilityPower(double agilityPower) {
+        this.agilityPower = agilityPower;
+    }
+
+    public double getAgilityPower() {
+        return agilityPower;
     }
 }

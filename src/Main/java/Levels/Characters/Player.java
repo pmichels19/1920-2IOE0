@@ -104,7 +104,7 @@ public class Player extends Character {
             }
         }
 
-        int modifier = (int) Math.round( 1.25 * bootCount );
+        int modifier = (int) Math.round( 0.75 * bootCount );
 
         return super.getSpeed() / modifier;
     }
@@ -116,5 +116,44 @@ public class Player extends Character {
      */
     public void addItem(Item item) {
         inventory[selectedItem] = item;
+    }
+
+    /**
+     * uses the selected item, if possible: the boot, coin and empty item have no use
+     */
+    public void useItem() {
+        // we check what kind of item the player has selected
+        switch ( inventory[selectedItem].getId() ) {
+            case Item.H_POTION:
+                // if a health potion is used, add 25 health to the current health
+                setHealth( getHealth() + 25 );
+                tossItem();
+                break;
+            case Item.M_POTION:
+                // if a mana potion is used, add 25 mana to the current mana
+                setMana( getMana() + 25 );
+                tossItem();
+                break;
+            case Item.HEART:
+                // if a heart is used, increase the max health and current health by 25
+                setMaxHealth( getMaxHealth() + 25 );
+                setHealth( getHealth() + 25 );
+                tossItem();
+                break;
+            case Item.MANA:
+                // if a heart is used, increase the max mana and current mana by 25
+                setMaxMana( getMaxMana() + 25 );
+                setMana( getMana() + 25 );
+                tossItem();
+                break;
+        }
+    }
+
+    /**
+     * removes the selected item from the player inventory and places the empty item back
+     */
+    public void tossItem() {
+        // replace the consumed item with the empty item
+        inventory[selectedItem] = Item.getItemById(Item.EMPTY);
     }
 }

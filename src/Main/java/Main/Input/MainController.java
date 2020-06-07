@@ -14,6 +14,7 @@ public class MainController {
     private final PauseMenuController pauseMenuController;
     private final SlotPickController slotPickController;
     private final DeathScreenController deathScreenController;
+    private final VictoryController victoryController;
 
     // when a menu is started up, we want to give the player 10 frames of cooldown time, so the player
     // does not skip the menu on accident
@@ -36,6 +37,7 @@ public class MainController {
         pauseMenuController = new PauseMenuController();
         slotPickController = new SlotPickController();
         deathScreenController = new DeathScreenController();
+        victoryController = new VictoryController();
     }
 
     /**
@@ -57,6 +59,8 @@ public class MainController {
                 controller = slotPickController;
             } else if (state == GameState.DEAD) {
                 controller = deathScreenController;
+            } else if (state == GameState.VICTORY) {
+                controller = victoryController;
             }
 
             assert controller != null;

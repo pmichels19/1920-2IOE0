@@ -13,6 +13,7 @@ public class MainController {
     private final InGameController gameController;
     private final PauseMenuController pauseMenuController;
     private final SlotPickController slotPickController;
+    private final DeathScreenController deathScreenController;
 
     // when a menu is started up, we want to give the player 10 frames of cooldown time, so the player
     // does not skip the menu on accident
@@ -34,6 +35,7 @@ public class MainController {
         gameController = new InGameController();
         pauseMenuController = new PauseMenuController();
         slotPickController = new SlotPickController();
+        deathScreenController = new DeathScreenController();
     }
 
     /**
@@ -43,15 +45,22 @@ public class MainController {
         if ( startUpCooldown == 0 ) {
             // depending on the current game state, we wish to check different inputs
             GameState state = Main.Main.getState();
+            Controller controller = null;
+
             if (state == GameState.IN_GAME) {
-                gameController.checkInputs();
+                controller = gameController;
             } else if (state == GameState.PAUSED) {
-                pauseMenuController.checkInputs();
+                controller = pauseMenuController;
             } else if (state == GameState.MAIN_MENU) {
-                mainMenuController.checkInputs();
+                controller = mainMenuController;
             } else if (state == GameState.STARTING_GAME || state == GameState.LOADING_SAVE || state == GameState.SAVING_GAME) {
-                slotPickController.checkInputs();
+                controller = slotPickController;
+            } else if (state == GameState.DEAD) {
+                controller = deathScreenController;
             }
+
+            assert controller != null;
+            controller.checkInputs();
         } else {
             startUpCooldown--;
         }

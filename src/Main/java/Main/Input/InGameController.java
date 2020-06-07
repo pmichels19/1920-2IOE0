@@ -15,7 +15,6 @@ public class InGameController extends Controller {
     private int inventoryCooldown = 0;
 
     // the variables used for player movement
-    final int MOVEMENT_CAP = 15;
     int movementCounter = 0;
     float speed = 0;
     boolean vertical;

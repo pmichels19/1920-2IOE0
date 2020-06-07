@@ -22,7 +22,7 @@ public class Main {
     private static final int SCREEN_HEIGHT = 1080;
 
     // we start the game in the main menu
-    private static GameState state = GameState.MAIN_MENU;
+    private static GameState state = GameState.DEAD;
 
     // we want to make sure all objects use the same maze, we accomplish this by making it static
     private static Maze maze;
@@ -69,6 +69,7 @@ public class Main {
         LoadMenu loadMenu = new LoadMenu();
         SaveMenu saveMenu = new SaveMenu();
         NewGameMenu newGameMenu = new NewGameMenu();
+        DeathScreen deathScreen = new DeathScreen();
 
         // and initialize the controller for input checking
         MainController mainController = new MainController(maze, world, window);
@@ -127,6 +128,8 @@ public class Main {
                     saveMenu.render();
                 } else if (state == GameState.STARTING_GAME) {
                     newGameMenu.render();
+                } else if (state == GameState.DEAD) {
+                    deathScreen.render();
                 }
 
                 window.swapBuffers();

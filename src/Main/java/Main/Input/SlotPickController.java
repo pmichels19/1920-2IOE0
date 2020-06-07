@@ -24,7 +24,7 @@ public class SlotPickController extends Controller {
                 // if you are starting a new game from and press escape, you will go back to the main menu
                 setState(GameState.MAIN_MENU);
             } else if (getState() == GameState.LOADING_SAVE) {
-                // if you are loading a save, you go back to the main meu as well
+                // if you are loading a save, you go back to the main menu as well
                 setState(GameState.MAIN_MENU);
             } else if (getState() == GameState.SAVING_GAME) {
                 // if you are saving the game, you go back to the pause screen

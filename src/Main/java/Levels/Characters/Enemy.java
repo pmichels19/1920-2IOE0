@@ -18,29 +18,48 @@ public abstract class Enemy extends Character {
     private int detectionDistance = 10;
 
 
+    /**
+     * Moves the enemy, either to a random location or the player (if it is close enough)
+     *
+     * @param playerLocation Current location of the player
+     * @param grid           Grid that holds the maze
+     */
     public void move(Point playerLocation, char[][] grid) {
         if (!isMoving()) {
             ArrayList<Point> pathToPlayer = getPathToPlayer(playerLocation, grid);
             if (pathToPlayer.size() > detectionDistance) {
+                // if the
                 doRandomMove(grid);
             } else {
-                moveToPoint(pathToPlayer.get(pathToPlayer.size()-1), grid.length);
+                // If player is in detection range, move towards the player
+                moveToPoint(pathToPlayer.get(pathToPlayer.size() - 1), grid.length);
             }
         } else {
+            // Updates the movement step if the enemy is already moving
             reposition(grid.length);
         }
     }
 
+    /**
+     * Sets the enemy to move to the next block from location
+     *
+     * @param location   the new location grid point that should be next to the current location of the enemy
+     * @param gridLength length of the grid for updating the y correctly
+     */
     private void moveToPoint(Point location, int gridLength) {
         // Set the new maze location of the enemy
-
         super.setMazePosition(location);
 
-
+        // Start moving the player
         reposition(gridLength);
 
     }
 
+    /**
+     * Updates the position of the player via steps
+     *
+     * @param gridLength length of the grid to update the y correctly
+     */
     private void reposition(int gridLength) {
         // Get the current position in world coordinates
         float currentX = super.getGamePositionX();
@@ -55,45 +74,65 @@ public abstract class Enemy extends Character {
         float newX = currentX;
         float newY = currentY;
 
-
-        if (currentX < locationX){
+        // Change in x
+        if (currentX < locationX) {
             newX += getSpeed();
-        } else if (currentX > locationX){
+        } else if (currentX > locationX) {
             newX -= getSpeed();
         }
 
-        if (currentY < locationY){
+        // Change in y
+        if (currentY < locationY) {
             newY += getSpeed();
-        } else if (currentY > locationY){
+        } else if (currentY > locationY) {
             newY -= getSpeed();
         }
 
-        if (Math.abs(locationX - newX) < getSpeed() + 0.01f){
+
+        // Fix differences between float and int
+        if (Math.abs(locationX - newX) < getSpeed() + 0.01f) {
             newX = locationX;
         }
-        if (Math.abs(locationY - newY) < getSpeed() + 0.01f){
+        if (Math.abs(locationY - newY) < getSpeed() + 0.01f) {
             newY = locationY;
         }
+
+        // Updates the location
         setGridPosition(newX, newY, gridLength);
 
     }
 
+    /**
+     * Picks a random location for the enemy on the grid
+     *
+     * @param grid holds the current maze
+     */
     private void doRandomMove(char[][] grid) {
         if (randomLocation == null) {
-            setRandomLocation();
+            setRandomLocation(grid);
         }
     }
 
+    /**
+     * Returns the shortest path from the enemy to the player from back to front (first move is path[-1])
+     *
+     * @param playerLocation Location of the player
+     * @param grid holds the current maze
+     * @return Shortest path enemy to the player, from back to front (first move is path[-1]
+     */
     public ArrayList<Point> getPathToPlayer(Point playerLocation, char[][] grid) {
         AStarSolver ass = new AStarSolver();
         return ass.CalculateShortestPath(this.getMazePosition(), playerLocation, grid);
     }
 
-    public void setRandomLocation() {
-        Point randomLocatoin;
+    public void setRandomLocation(char[][] grid) {
+        Point randomLocation = new Point(0,0);
         this.randomLocation = randomLocation;
     }
 
+    /**
+     * @return Whether the enemy is still moving
+     */
     private boolean isMoving() {
         return !((getGamePositionX() == (getMazePosition().getY()))
                 && (getGamePositionY() == getMazePosition().getX()));

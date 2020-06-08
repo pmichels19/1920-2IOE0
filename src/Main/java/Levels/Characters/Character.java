@@ -133,13 +133,13 @@ public abstract class Character {
         return gamePositionY;
     }
 
-    private void setGamePositionX(float gamePositionX) {
+    public void setGamePositionX(float gamePositionX) {
         this.gamePositionX = gamePositionX;
 
         this.position.x = gamePositionX * 2f;
     }
 
-    private void setGridPositionY(float gamePositionY, float gridLength) {
+    public void setGridPositionY(float gamePositionY, float gridLength) {
         this.gamePositionY = gamePositionY;
         this.position.y = (gridLength - 0.5f - gamePositionY) * 2f;
     }

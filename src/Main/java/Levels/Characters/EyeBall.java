@@ -26,7 +26,7 @@ public class EyeBall extends Enemy {
         OBJModel eyeModel = null;
         try {
             // Create the model
-             eyeModel = OBJLoader.loadObjModel(objModelFile);
+            eyeModel = OBJLoader.loadObjModel(objModelFile);
 
             if (textureFile != null) {
                 // Set the texture
@@ -48,5 +48,29 @@ public class EyeBall extends Enemy {
         setSpeed(speed);
         setDetectionDistance(10);
         setModel(eyeModel);
+    }
+
+    @Override
+    public void setGridPosition(float gamePositionX, float gamePositionY, float gridLength) {
+        if (gamePositionX > getGamePositionX()) {
+            float rotationAngle = (float) ((180f * Math.PI) / 180.0f);
+            Vector3f rotation = new Vector3f(0f, 0f, 1f);
+            setRotation(rotationAngle, rotation);
+        } else if (gamePositionX < getGamePositionX()) {
+            float rotationAngle = (float) ((0f * Math.PI) / 180.0f);
+            Vector3f rotation = new Vector3f(0f, 0f, 1f);
+            setRotation(rotationAngle, rotation);
+        }
+        if (gamePositionY > getGamePositionY()) {
+            float rotationAngle = (float) ((90f * Math.PI) / 180.0f);
+            Vector3f rotation = new Vector3f(0f, 0f, 1f);
+            setRotation(rotationAngle, rotation);
+        } else if (gamePositionY < getGamePositionY()) {
+            float rotationAngle = (float) ((-90f * Math.PI) / 180.0f);
+            Vector3f rotation = new Vector3f(0f, 0f, 1f);
+            setRotation(rotationAngle, rotation);
+        }
+        setGamePositionX(gamePositionX);
+        setGridPositionY(gamePositionY, gridLength);
     }
 }

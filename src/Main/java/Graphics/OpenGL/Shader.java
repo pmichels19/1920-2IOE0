@@ -114,6 +114,17 @@ public class Shader {
         }
     }
 
+    public void setUniform(String name, float value) {
+        // find where the provided uniform is stored
+        int location = glGetUniformLocation(program, name);
+
+        // test if the location is a valid one
+        if (location != -1) {
+            // replace the uniform if it is
+            glUniform1f(location, value);
+        }
+    }
+
     public void setCamera(Camera camera) {
         if (PROJECTION != -1)  {
             float[] matrix = new float[16];

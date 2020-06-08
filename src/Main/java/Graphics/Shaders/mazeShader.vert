@@ -19,6 +19,7 @@ uniform vec3 lightPosition[17];
 
 // To fragment shader
 out vec3 surfaceNormal;
+out vec4 vertexPos;
 out vec2 textureCoords;
 out vec3 toLightVector[17];
 out vec3 toCameraVector;
@@ -29,6 +30,8 @@ void main() {
     mat4 modelToWorld;
     if (transform == 1) { modelToWorld = modelMatrix * viewMatrix * modelTransform; }
     else { modelToWorld = modelMatrix * tilePosition * viewMatrix; }
+
+    vertexPos = vertexPosition;
 
     vec4 vertexWorldPosition = modelToWorld * vertexPosition;
     surfaceNormal = normalize(modelToWorld * vec4(vertexNormal, 0.0)).xyz;

@@ -86,7 +86,9 @@ public abstract class Character {
         Matrix4f modelTransform = new Matrix4f();
 
         //floating animation linked to Z-axis
-        position.z = (float)Math.cos(Math.toRadians(tVal * 106f));
+        float startingPoint = 1.5f;
+        float floatingSpeed = 150f;
+        position.z = (float) (startingPoint + Math.pow(Math.cos(Math.toRadians(tVal * floatingSpeed)),2)/2);
 
         modelTransform.translate(position).rotate(rotationAngle, rotation).scale(scale);
         shader.setUniform("modelTransform", modelTransform);

@@ -194,10 +194,10 @@ public class World {
         renderer.renderCharacter(player);
 
         lights[0].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 1f));
-        lights[1].setPosition(new Vector3f(player.getPosition().x+1f, player.getPosition().y, 4f));
-        lights[2].setPosition(new Vector3f(player.getPosition().x-1f, player.getPosition().y, 4f));
-        lights[3].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y+1f, 4f));
-        lights[4].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y-1f, 4f));
+        lights[1].setPosition(new Vector3f(player.getPosition().x+1f, player.getPosition().y, 5f));
+        lights[2].setPosition(new Vector3f(player.getPosition().x-1f, player.getPosition().y, 5f));
+        lights[3].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y+1f, 5f));
+        lights[4].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y-1f, 5f));
 
         for (Light light : lights) {
             Object3D obj = light.getObject();

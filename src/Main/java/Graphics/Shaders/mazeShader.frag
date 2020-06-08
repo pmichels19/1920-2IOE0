@@ -6,16 +6,23 @@ uniform sampler2D diffuseMap;
 // Normal map
 uniform sampler2D normalMap;
 
+// The time
+uniform float time;
+
 // Whether normal mapping is enabled
 uniform int normalMapping;
+// Whether changing color is enabled
+uniform int changingColor;
 
 // Light attributes
 uniform vec3 lightPosition[17];
 uniform vec3 lightColor[17];
 uniform vec3 lightAttenuation[17];
 
+
 // From vertex shader
 in vec3 surfaceNormal;
+in vec4 vertexPos;
 in vec2 textureCoords;
 in vec3 toLightVector[17];
 in vec3 toCameraVector;
@@ -57,6 +64,16 @@ void main() {
         totalDiffuse += (brightness * lightColor[i])/attFactor;
         totalSpecular += (0.05 * specular * lightColor[i])/attFactor;
     }
+
+    if (changingColor == 1) {
+        vec2 r = vec2(1,1);
+        vec2 p = (vertexPos.xy - r) / min(r.x, r.y);
+        float l = ceil(sin(length(p) * 100.0 + time * 50.0));
+        texture.rgb = vec3(l) * texture.rgb;
+    }
+
+
+
 
     // Compute the final fragment color
     gl_FragColor = vec4(totalDiffuse * texture.rgb, texture.a) + vec4(totalSpecular, 0.0);

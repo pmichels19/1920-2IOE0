@@ -5,6 +5,10 @@ import Graphics.OpenGL.Shader;
 import Levels.Framework.joml.Matrix4f;
 import Levels.Framework.joml.Vector3f;
 
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 public abstract class Object3D {
     // Holds the model
     private OBJModel model;
@@ -22,6 +26,9 @@ public abstract class Object3D {
     protected float gamePositionX;
     protected float gamePositionY;
 
+    private double tVal = 0.0;
+    Timer timer;
+
     public Object3D(OBJModel model) {
         this.model = model;
         position = new Vector3f(0, 0f, 1.5f);
@@ -31,7 +38,20 @@ public abstract class Object3D {
 
         gamePositionX = 1;
         gamePositionY = 1;
+
+        //Setting up the animation timer
+        timer = new Timer( 10, new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                tVal += 0.005;
+            } //increasing tVal
+        }
+        );
+
+        timer.start();
     }
+
 
     /**
      * renders the model specified in the subclass once
@@ -41,12 +61,20 @@ public abstract class Object3D {
     }
 
     public void render(Shader shader) {
+        float startingPoint = .5f;
+        float floatingSpeed = 150f;
+        position.z = (float) (startingPoint + Math.pow(Math.cos(Math.toRadians(tVal * floatingSpeed)),2)/4);
+
+
         shader.setUniform("transform", 1);
+        shader.setUniform("changingColor", 1);
+        shader.setUniform("time", (float) tVal);
         Matrix4f modelTransform = new Matrix4f();
         modelTransform.translate(position).rotate(rotationAngle, rotation).scale(scale);
         shader.setUniform("modelTransform", modelTransform);
         model.render(shader);
         shader.setUniform("transform", 0);
+        shader.setUniform("changingColor", 0);
     }
 
     public OBJModel getModel() {

@@ -7,6 +7,7 @@ import Graphics.OpenGL.Texture;
 import Graphics.Transforming.Camera;
 import Graphics.OpenGL.Shader;
 import Graphics.Transforming.Transform;
+import Levels.Characters.Enemy;
 import Levels.Characters.EyeBall;
 import Levels.Characters.Player;
 import Levels.Framework.Point;
@@ -15,7 +16,9 @@ import Levels.Assets.Tiles.*;
 import Levels.Framework.Maze;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static java.lang.Math.*;
@@ -59,6 +62,9 @@ public class World {
 
     private Player player;
 
+    // List that holds the enemies
+    private ArrayList<Enemy> enemyList = new ArrayList<>();
+
     /**
      * initialises the global variables for the renderer
      *
@@ -80,6 +86,12 @@ public class World {
 
         // position the camera
         resetCameraPosition();
+
+        // Initialize enemies
+        EyeBall eyeball = new EyeBall(100, 100);
+        eyeball.setMazePosition(new Point(1,1));
+        eyeball.setGridPosition(1f, 1f, maze.getGrid().length);
+        enemyList.add(eyeball);
       
         // prepare the tile renderer for rendering
         renderer = TileRenderer.getInstance();
@@ -175,6 +187,13 @@ public class World {
             renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES );
         }
 
+        // Render enemies
+        for (Enemy enemy : enemyList){
+            enemy.move(maze.getPlayerLocation(), maze.getGrid());
+            renderer.renderCharacter(enemy);
+        }
+
+        // Render player
         player.setGridPosition(xPlayer, yPlayer, grid.length);
         renderer.renderCharacter(player);
 

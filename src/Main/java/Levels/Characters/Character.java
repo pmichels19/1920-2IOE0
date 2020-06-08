@@ -2,6 +2,7 @@ package Levels.Characters;
 
 import Graphics.OBJModel;
 import Graphics.OpenGL.Shader;
+import Levels.Framework.Point;
 import Levels.Framework.joml.Matrix4f;
 import Levels.Framework.joml.Vector3f;
 
@@ -11,6 +12,9 @@ public abstract class Character {
 
     // Holds the current position
     private Vector3f position;
+
+    // Holds maze position
+    private Point mazePosition;
 
     // Holds the scale
     private float scale;
@@ -29,6 +33,9 @@ public abstract class Character {
     // the values for current health and mana
     int cur_health;
     int cur_mana;
+
+    // Speed of the character
+    private float speed;
 
     public Character(int max_health, int max_mana, OBJModel model) {
         this.model = model;
@@ -72,6 +79,10 @@ public abstract class Character {
 
     public OBJModel getModel() {
         return model;
+    }
+
+    public void setModel(OBJModel model) {
+        this.model = model;
     }
 
     public Vector3f getPosition() {
@@ -123,13 +134,13 @@ public abstract class Character {
         return gamePositionY;
     }
 
-    public void setGamePositionX(float gamePositionX) {
+    private void setGamePositionX(float gamePositionX) {
         this.gamePositionX = gamePositionX;
 
         this.position.x = gamePositionX * 2f;
     }
 
-    public void setGridPositionY(float gamePositionY, float gridLength) {
+    private void setGridPositionY(float gamePositionY, float gridLength) {
         this.gamePositionY = gamePositionY;
         this.position.y = (gridLength - 0.5f - gamePositionY) * 2f;
     }
@@ -154,5 +165,21 @@ public abstract class Character {
         }
         setGamePositionX(gamePositionX);
         setGridPositionY(gamePositionY, gridLength);
+    }
+
+    public Point getMazePosition() {
+        return mazePosition;
+    }
+
+    public void setMazePosition(Point mazePosition) {
+        this.mazePosition = mazePosition;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
     }
 }

@@ -145,7 +145,7 @@ public class InGameController extends Controller {
         // handle spell countdown (can make array or something later for more spells)
         if (spell != null) {
             if (spell instanceof SpellAgility) {
-                ((SpellAgility) spell).countDown();
+                ((SpellAgility) spell).checkDuration();
             }
         }
     }

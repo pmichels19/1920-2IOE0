@@ -22,7 +22,7 @@ public enum GUIElements {
             "GUI_background.png"
     ),
     CANVAS (
-            "canvas_bg.png"
+            "canvas_bg2.png"
     );
 
     private final Texture texture;

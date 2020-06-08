@@ -21,14 +21,12 @@ public class RunDrawingCanvas {
 
     public RunDrawingCanvas() {
         // rendering
-        // magic numbers subtracted from 550 to fit to screen
-        canvasTextureLoc = new Vector3f(-600f / 1920f, -600f / 1080f, 0f);
+        canvasTextureLoc = new Vector3f(-1124f / 1920f, -687f / 1080f, 0f);
         shader = new Shader("flatShader");
         camera = new Camera();
         transform = new Transform();
         transform.setPosition(canvasTextureLoc);
-        // the 620 should be 600 but window is weird
-        transform.setScale(new Vector3f(600f / 1920f, 620f / 1080, 1f));
+        transform.setScale(new Vector3f(1124f / 1920f, 700f / 1080f, 1f));
         renderer = TileRenderer.getInstance();
     }
 

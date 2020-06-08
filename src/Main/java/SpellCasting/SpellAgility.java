@@ -2,17 +2,13 @@ package SpellCasting;
 
 import Levels.Characters.Player;
 
-import java.util.concurrent.TimeUnit;
-
 public class SpellAgility extends Spell {
 
-    private int castTime = 0;
+    private long duration;
 
     @Override
     public void castSpell(Object[] args) {
-        System.out.println("cast");
-        // 5 seconds
-        castTime = 150;
+        duration = System.currentTimeMillis();
         Player.getInstance().setAgilityPower(1);
     }
 
@@ -21,10 +17,8 @@ public class SpellAgility extends Spell {
 
     }
 
-    public void countDown() {
-        if (castTime > 0) {
-            castTime--;
-        } else {
+    public void checkDuration() {
+        if (System.currentTimeMillis() - duration > 5000) {
             Player.getInstance().setAgilityPower(0);
         }
     }

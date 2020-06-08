@@ -21,7 +21,7 @@ public class EyeBall extends Enemy {
     // Speed of the eyeball
     private static float speed = 1f / 30f;
 
-    public EyeBall(int max_health, int max_mana, int x, int y) {
+    public EyeBall(int max_health, int max_mana) {
         super(max_health, max_mana, null);
         OBJModel eyeModel = null;
         try {

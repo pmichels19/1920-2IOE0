@@ -5,10 +5,6 @@ import Graphics.OpenGL.Shader;
 import Levels.Framework.joml.Matrix4f;
 import Levels.Framework.joml.Vector3f;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 public abstract class Character {
     // Holds the model
     private OBJModel model;
@@ -34,10 +30,6 @@ public abstract class Character {
     int cur_health;
     int cur_mana;
 
-    //Time related objects to link animation to
-    private double tVal = 0.0;
-    Timer timer;
-
     public Character(int max_health, int max_mana, OBJModel model) {
         this.model = model;
         position = new Vector3f(0, 0f, 1.5f);
@@ -53,18 +45,6 @@ public abstract class Character {
         this.max_mana = max_mana;
         cur_health = max_health;
         cur_mana = max_mana;
-
-        //Setting up the animation timer
-        timer = new Timer( 10, new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                tVal += 0.005;
-            } //increasing tVal
-        }
-        );
-
-        timer.start();
     }
 
 
@@ -84,10 +64,6 @@ public abstract class Character {
     public void render(Shader shader) {
         shader.setUniform("transform", 1);
         Matrix4f modelTransform = new Matrix4f();
-
-        //floating animation linked to Z-axis
-        position.z = (float)Math.cos(Math.toRadians(tVal * 106f));
-
         modelTransform.translate(position).rotate(rotationAngle, rotation).scale(scale);
         shader.setUniform("modelTransform", modelTransform);
         model.render(shader);

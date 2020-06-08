@@ -64,7 +64,6 @@ public abstract class Character {
 //        generateModel(x_pos, y_pos);
 
 
-
         model.render(shader);
     }
 
@@ -181,5 +180,17 @@ public abstract class Character {
 
     public void setSpeed(float speed) {
         this.speed = speed;
+    }
+
+    /**
+     * Initializes the starting position of the enemy
+     *
+     * @param x          x location
+     * @param y          y location
+     * @param gridLength length of the grid
+     */
+    public void initializePosition(int x, int y, int gridLength) {
+        setMazePosition(new Point(x, y));
+        setGridPosition((float) y, (float) x, gridLength);
     }
 }

@@ -89,8 +89,7 @@ public class World {
 
         // Initialize enemies
         EyeBall eyeball = new EyeBall(100, 100);
-        eyeball.setMazePosition(new Point(1,1));
-        eyeball.setGridPosition(1f, 1f, maze.getGrid().length);
+        eyeball.initializePosition(1,4, maze.getGrid().length);
         enemyList.add(eyeball);
       
         // prepare the tile renderer for rendering

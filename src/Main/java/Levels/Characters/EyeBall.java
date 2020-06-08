@@ -53,20 +53,20 @@ public class EyeBall extends Enemy {
     @Override
     public void setGridPosition(float gamePositionX, float gamePositionY, float gridLength) {
         if (gamePositionX > getGamePositionX()) {
-            float rotationAngle = (float) ((180f * Math.PI) / 180.0f);
+            float rotationAngle = (float) ((0f * Math.PI) / 180.0f);
             Vector3f rotation = new Vector3f(0f, 0f, 1f);
             setRotation(rotationAngle, rotation);
         } else if (gamePositionX < getGamePositionX()) {
-            float rotationAngle = (float) ((0f * Math.PI) / 180.0f);
+            float rotationAngle = (float) ((180f * Math.PI) / 180.0f);
             Vector3f rotation = new Vector3f(0f, 0f, 1f);
             setRotation(rotationAngle, rotation);
         }
         if (gamePositionY > getGamePositionY()) {
-            float rotationAngle = (float) ((90f * Math.PI) / 180.0f);
+            float rotationAngle = (float) ((-90f * Math.PI) / 180.0f);
             Vector3f rotation = new Vector3f(0f, 0f, 1f);
             setRotation(rotationAngle, rotation);
         } else if (gamePositionY < getGamePositionY()) {
-            float rotationAngle = (float) ((-90f * Math.PI) / 180.0f);
+            float rotationAngle = (float) ((90f * Math.PI) / 180.0f);
             Vector3f rotation = new Vector3f(0f, 0f, 1f);
             setRotation(rotationAngle, rotation);
         }

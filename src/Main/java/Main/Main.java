@@ -1,5 +1,6 @@
 package Main;
 
+import AI.ImageRecognition.RunDrawingCanvas;
 import Graphics.IO.Timer;
 import Graphics.IO.Window;
 import Graphics.Rendering.*;
@@ -64,11 +65,15 @@ public class Main {
         // set up the world, corresponding GUI, the main menu and pause screen
         world = new World(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
         GUI gui = new GUI();
+
         PauseScreen pauseScreen = new PauseScreen();
         MainMenu mainMenu = new MainMenu();
         LoadMenu loadMenu = new LoadMenu();
         SaveMenu saveMenu = new SaveMenu();
         NewGameMenu newGameMenu = new NewGameMenu();
+
+        // drawing canvas
+        RunDrawingCanvas drawingCanvas = new RunDrawingCanvas();
 
         // and initialize the controller for input checking
         MainController mainController = new MainController(maze, window);
@@ -98,7 +103,7 @@ public class Main {
 
                 if (frame_time >= 1.0) {
                     frame_time = 0;
-                    System.out.println("FPS: " + frames);
+                    // System.out.println("FPS: " + frames);
                     frames = 0;
                 }
             }
@@ -125,6 +130,9 @@ public class Main {
                 } else if (state == GameState.IN_GAME) {
                     world.render();
                     gui.render();
+                    if (drawingCanvas.isRunning()) {
+                        drawingCanvas.render();
+                    }
                 } else if (state == GameState.PAUSED) {
                     pauseScreen.render();
                 } else if (state == GameState.LOADING_SAVE) {

@@ -13,6 +13,7 @@ public class AStarSolver {
     private ArrayList<AStarPoint> closed;
     private AStarPoint destinationPoint;
 
+    private final Boolean allowDiagonal = false;
     private final int diagonalMoveCost = 14 * 99999999; //TODO: When diagonal movement is implemented change back to 14
     private final int normalMoveCost = 10;
 
@@ -95,8 +96,10 @@ public class AStarSolver {
 
                     // If we have reached the destination
                     if (successor.x == destinationPoint.x && successor.y == destinationPoint.y) {
-                        destinationPoint.parent = q;
-                        return;
+                        if ((allowDiagonal) || (q.x == successor.x || q.y == successor.y)) {
+                            destinationPoint.parent = q;
+                            return;
+                        }
                     }
 
                     // Calculate and set the new g value

@@ -15,12 +15,12 @@ uniform mat4 modelTransform;
 uniform int transform;
 
 // Light positions
-uniform vec3 lightPosition[10];
+uniform vec3 lightPosition[17];
 
 // To fragment shader
 out vec3 surfaceNormal;
 out vec2 textureCoords;
-out vec3 toLightVector[10];
+out vec3 toLightVector[17];
 out vec3 toCameraVector;
 
 void main() {
@@ -30,20 +30,12 @@ void main() {
     if (transform == 1) { modelToWorld = modelMatrix * viewMatrix * modelTransform; }
     else { modelToWorld = modelMatrix * tilePosition * viewMatrix; }
 
-    vec4 vertexWorldPosition;
-    if (transform == 1) { vertexWorldPosition = modelMatrix * modelTransform * vertexPosition; }
-    else { vertexWorldPosition = modelMatrix * tilePosition * vertexPosition; }
-
-    if (transform == 1) { surfaceNormal = normalize(modelToWorld * vec4(vertexNormal, 0.0)).xyz; }
-    else { surfaceNormal = (modelMatrix * tilePosition * vec4(vertexNormal, 0.0)).xyz; }
+    vec4 vertexWorldPosition = modelToWorld * vertexPosition;
+    surfaceNormal = normalize(modelToWorld * vec4(vertexNormal, 0.0)).xyz;
 
     // Compute vectors pointing to the light sources
-    for (int i = 0; i < 10; i++) {
-        if (transform==1) {
-            toLightVector[i] = vec3(modelMatrix * vec4(lightPosition[i], 1.0)) - (modelMatrix * modelTransform * vertexPosition).xyz;
-        } else {
-            toLightVector[i] = vec3(modelMatrix * vec4(lightPosition[i], 1.0)) - (modelMatrix * tilePosition * vertexPosition).xyz;
-        }
+    for (int i = 0; i < 17; i++) {
+        toLightVector[i] = vec3(modelMatrix * viewMatrix * vec4(lightPosition[i], 1.0)) - vertexWorldPosition.xyz;
     }
 
     // Compute vectors pointing to the camera

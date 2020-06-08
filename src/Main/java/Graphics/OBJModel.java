@@ -177,7 +177,11 @@ public class OBJModel {
             shader.setUniform("normalMap", 1);
             shader.setUniform("normalMapping", 1);
             normalMap.bind(1);
-        }
+        } else {
+             shader.setUniform("normalMapping", 0);
+         }
+
+
 
         glEnable(GL_DEPTH_TEST);
         // Bind to the VAO

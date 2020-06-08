@@ -10,14 +10,14 @@ uniform sampler2D normalMap;
 uniform int normalMapping;
 
 // Light attributes
-uniform vec3 lightPosition[10];
-uniform vec3 lightColor[10];
-uniform vec3 lightAttenuation[10];
+uniform vec3 lightPosition[17];
+uniform vec3 lightColor[17];
+uniform vec3 lightAttenuation[17];
 
 // From vertex shader
 in vec3 surfaceNormal;
 in vec2 textureCoords;
-in vec3 toLightVector[10];
+in vec3 toLightVector[17];
 in vec3 toCameraVector;
 
 void main() {
@@ -40,7 +40,7 @@ void main() {
     vec3 totalDiffuse = vec3(0.0);
     vec3 totalSpecular = vec3(0.0);
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 17; i++) {
         vec3 unitLightVector = normalize(toLightVector[i]);
         vec3 unitVectorToCamera = normalize(toCameraVector);
         vec3 lightDirection = -unitLightVector;

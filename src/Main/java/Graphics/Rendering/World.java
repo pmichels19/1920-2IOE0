@@ -39,20 +39,33 @@ public class World {
     // the tile renderer to actaully draw the world and the player
     private TileRenderer renderer;
 
-    Vector3f DARK_ATTENUATION = new Vector3f(1,0.5f,0.2f);
+    Vector3f DARK_ATTENUATION = new Vector3f(.5f,.2f,1.5f);
+    Vector3f LIGHT_ATTENUATION = new Vector3f(.5f,.2f,1f);
     // the light object
     private final Light[] lights = {
             new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), null, DARK_ATTENUATION),
             new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), null, DARK_ATTENUATION),
 
-            new Light(new Vector3f(2,6,1f), new Vector3f(0.2f,1f,0.2f), Treasure.getInstance(), DARK_ATTENUATION),
-            new Light(new Vector3f(2,6,6f), new Vector3f(0.2f,1f,0.2f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(2,4,1f), new Vector3f(1f,0.2f,0.2f), Treasure.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(2,4,3f), new Vector3f(1f,0.2f,0.2f), null, LIGHT_ATTENUATION),
 
-            new Light(new Vector3f(6,8,1f), new Vector3f(1,0.2f,0.2f), Treasure.getInstance(), DARK_ATTENUATION),
-            new Light(new Vector3f(6,8,6f), new Vector3f(1,0.2f,0.2f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(6,4,1f), new Vector3f(1f,1f,0.2f), Treasure.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(6,4,3f), new Vector3f(1f,1f,0.2f), null, LIGHT_ATTENUATION),
 
-            new Light(new Vector3f(10,4,1f), new Vector3f(0.2f,0.2f,1), Treasure.getInstance(), DARK_ATTENUATION),
-            new Light(new Vector3f(10,4,6f), new Vector3f(0.2f,0.2f,1), null, DARK_ATTENUATION),
+            new Light(new Vector3f(10,4,1f), new Vector3f(0.2f,1f,0.2f), Treasure.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(10,4,3f), new Vector3f(0.2f,1f,0.2f), null, LIGHT_ATTENUATION),
+
+            new Light(new Vector3f(2,16,1f), new Vector3f(1f,0.2f,1f), Treasure.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(2,16,3f), new Vector3f(1f,0.2f,1f), null, LIGHT_ATTENUATION),
+
+            new Light(new Vector3f(6,16,1f), new Vector3f(0.2f,0.2f,1f), Treasure.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(6,16,3f), new Vector3f(0.2f,0.2f,1f), null, LIGHT_ATTENUATION),
+
+            new Light(new Vector3f(10,16,1f), new Vector3f(0.2f,1f,1f), Treasure.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(10,16,3f), new Vector3f(0.2f,1f,1f), null, LIGHT_ATTENUATION)
     };
 
     // variables to keep track of the player location in the world
@@ -180,8 +193,11 @@ public class World {
         player.setGridPosition(xPlayer, yPlayer, grid.length);
         renderer.renderCharacter(player);
 
-        lights[0].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 7f));
-        lights[1].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 1f));
+        lights[0].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 1f));
+        lights[1].setPosition(new Vector3f(player.getPosition().x+1f, player.getPosition().y, 4f));
+        lights[2].setPosition(new Vector3f(player.getPosition().x-1f, player.getPosition().y, 4f));
+        lights[3].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y+1f, 4f));
+        lights[4].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y-1f, 4f));
 
         for (Light light : lights) {
             Object3D obj = light.getObject();

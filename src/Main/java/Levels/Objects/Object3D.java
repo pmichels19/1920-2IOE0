@@ -10,17 +10,17 @@ public abstract class Object3D {
     private OBJModel model;
 
     // Holds the current position
-    private Vector3f position;
+    protected Vector3f position;
 
     // Holds the scale
-    private float scale;
+    public float scale;
 
     // holds the rotation
-    private Vector3f rotation;
-    private float rotationAngle;
+    protected Vector3f rotation;
+    protected float rotationAngle;
 
-    private float gamePositionX;
-    private float gamePositionY;
+    protected float gamePositionX;
+    protected float gamePositionY;
 
     public Object3D(OBJModel model) {
         this.model = model;

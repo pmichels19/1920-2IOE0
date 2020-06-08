@@ -11,11 +11,10 @@ import java.io.IOException;
 
 public class Treasure extends Object3D {
     // Name of the obj file in the res folder corresponding to the player model
-    private static String objModelFile = "character" +
-            "";
+    private static String objModelFile = "ball";
 
     // Path to the texture of the model
-    private static String textureFile = "res/Models/eyeball.jpg";
+    private static String textureFile = "res/Models/nothing.png";
 
     // Path to the normal mapping of the model
 //    private static String normalMapFile = "res/Models/eyeball_normal.jpg";
@@ -25,6 +24,10 @@ public class Treasure extends Object3D {
 
     public Treasure(OBJModel model) {
         super(model);
+        position = new Vector3f(0, 0f, 0f);
+        scale = 2f;
+        rotationAngle = (float) ((-90f * Math.PI) / 180.0f);
+        rotation = new Vector3f(0f, 0f, 1f);
     }
 
     public static Treasure getInstance() {

@@ -25,7 +25,7 @@ public class Shader {
     // the fragment shader
     private int fs;
 
-    private final int MAX_LIGHTS = 10;
+    private final int MAX_LIGHTS = 17;
 
     private final int WORLD, OBJECT, PROJECTION;
     private final int EYE_POSITION;

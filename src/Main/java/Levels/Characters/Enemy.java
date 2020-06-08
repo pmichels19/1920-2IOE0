@@ -11,14 +11,17 @@ public abstract class Enemy extends Character {
         super(max_health, max_mana, model);
     }
 
+    // Holds the location the enemy is heading when the player is not close enough
     private Point randomLocation = null;
 
+    // The distance that an enemy should be from the player to move towards the player
+    private int detectionDistance = 10;
 
 
     public void move(Point playerLocation, char[][] grid) {
         if (!isMoving()) {
             ArrayList<Point> pathToPlayer = getPathToPlayer(playerLocation, grid);
-            if (pathToPlayer.size() > 10) {
+            if (pathToPlayer.size() > detectionDistance) {
                 doRandomMove(grid);
             } else {
                 moveToPoint(pathToPlayer.get(pathToPlayer.size()-1), grid.length);
@@ -94,5 +97,13 @@ public abstract class Enemy extends Character {
     private boolean isMoving() {
         return !((getGamePositionX() == (getMazePosition().getY()))
                 && (getGamePositionY() == getMazePosition().getX()));
+    }
+
+    public int getDetectionDistance() {
+        return detectionDistance;
+    }
+
+    public void setDetectionDistance(int detectionDistance) {
+        this.detectionDistance = detectionDistance;
     }
 }

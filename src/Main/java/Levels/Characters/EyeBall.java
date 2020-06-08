@@ -43,9 +43,10 @@ public class EyeBall extends Enemy {
             e.printStackTrace();
         }
 
-        super.setScale(0.4f);
-        super.setPosition(new Vector3f(1f, 1f, 2f));
-        super.setSpeed(speed);
-        super.setModel(eyeModel);
+        setScale(0.4f);
+        setPosition(new Vector3f(1f, 1f, 2f));
+        setSpeed(speed);
+        setDetectionDistance(10);
+        setModel(eyeModel);
     }
 }

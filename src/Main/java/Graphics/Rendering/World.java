@@ -14,12 +14,10 @@ import Levels.Framework.joml.*;
 import Levels.Assets.Tiles.*;
 import Levels.Framework.Maze;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 import static java.lang.Math.*;
-import static jdk.nashorn.internal.objects.Global.println;
 
 /**
  * Class for rendering the world and (for now) the player
@@ -35,7 +33,9 @@ public class World {
     // the transfomation to display the world in the proper position
     private final Transform transform;
     // the tile renderer to actaully draw the world and the player
-    private TileRenderer renderer;
+    private final TileRenderer renderer = TileRenderer.getInstance();
+    // the radius around the player that is actually rendered
+    private final int RADIUS = 8;
 
     Vector3f DARK_ATTENUATION = new Vector3f(1,0.5f,0.2f);
     // the light object
@@ -80,9 +80,6 @@ public class World {
 
         // position the camera
         resetCameraPosition();
-      
-        // prepare the tile renderer for rendering
-        renderer = TileRenderer.getInstance();
     }
 
     /**
@@ -100,12 +97,15 @@ public class World {
                 16
         ) );
 
-
         this.player = Player.getInstance();
-
-        // prepare the tile renderer for rendering
-        renderer = TileRenderer.getInstance();
     }
+
+    // sets used for gathering points to determine drawing locations of tiles
+    private final Set<Point> floors = new HashSet<>();
+    private final Set<Point> leftWalls = new HashSet<>();
+    private final Set<Point> rightWalls = new HashSet<>();
+    private final Set<Point> faceWalls = new HashSet<>();
+    private final Set<Point> ceilings = new HashSet<>();
 
     /**
      * renders the maze
@@ -117,16 +117,28 @@ public class World {
         renderer.setTransform(transform);
         SHADER.setLights(lights);
 
-        // sets used for gathering points to determine drawing locations of tiles
-        Set<Point> floors = new HashSet<>();
-        Set<Point> leftWalls = new HashSet<>();
-        Set<Point> rightWalls = new HashSet<>();
-        Set<Point> faceWalls = new HashSet<>();
-        Set<Point> ceilings = new HashSet<>();
+        fillRenderSets();
+        renderSets();
+        clearRenderSets();
+    }
 
+    /**
+     * fills the sets of points that are rendered in the render method
+     */
+    private void fillRenderSets() {
         char[][] grid = maze.getGrid();
-        for ( int i = 0; i < grid.length; i++ ) {
-            for ( int j = 0; j < grid[i].length; j++ ) {
+
+        int x_player = maze.getPlayerLocation().getX();
+        int y_player = maze.getPlayerLocation().getY();
+
+        // get the start and end coordinates of both x and y axis
+        int x_start = Math.max( x_player - RADIUS, 0 );
+        int y_start = Math.max( y_player - RADIUS, 0 );
+        int x_end = Math.min( x_player + RADIUS + 1, grid.length );
+        int y_end = Math.min( y_player + RADIUS + 1, grid[x_player].length );
+
+        for ( int i = x_start; i < x_end; i++ ) {
+            for ( int j = y_start; j < y_end; j++ ) {
                 // determine what tile needs to be drawn and fill that into the sets made above
                 if ( grid[i][j] == Maze.MARKER_WALL ) {
                     // we check if the tile to left is also a wall
@@ -136,7 +148,7 @@ public class World {
                     }
 
                     // we check if the tile to right is also a wall
-                    if ( j < grid.length - 1 && grid[i][j + 1] != Maze.MARKER_WALL ) {
+                    if ( j < grid[i].length - 1 && grid[i][j + 1] != Maze.MARKER_WALL ) {
                         // if there is no wall to the right, we wish to draw the right side of this wall
                         rightWalls.add( new Point(j, grid.length - i) );
                     }
@@ -154,7 +166,12 @@ public class World {
                 }
             }
         }
+    }
 
+    /**
+     * renders the tiles as specified in the sets filled in in {@code fillRenderSets}
+     */
+    private void renderSets() {
         for ( Point point : floors ) {
             renderer.addNormalMap( Background.DIRT_NORMAL.getTexture() );
             renderer.renderTile( Background.DIRT.getTexture(), point.getX(), point.getY(), TileRenderer.FLOOR );
@@ -175,7 +192,7 @@ public class World {
             renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES );
         }
 
-        player.setGridPosition(xPlayer, yPlayer, grid.length);
+        player.setGridPosition(xPlayer, yPlayer, maze.getGrid().length);
         renderer.renderCharacter(player);
 
         lights[0].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 7f));
@@ -192,6 +209,17 @@ public class World {
     }
 
     /**
+     * clears all the sets with points specifying render positions
+     */
+    private void clearRenderSets() {
+        floors.clear();
+        leftWalls.clear();
+        rightWalls.clear();
+        faceWalls.clear();
+        ceilings.clear();
+    }
+
+    /**
      * moves the player character as specified by the parameters
      *
      * @param speed the distance covered in a single frame
@@ -201,8 +229,6 @@ public class World {
         // calculate the amount of movement in the x and y direction
         xPlayer += vertical ? 0f : speed;
         yPlayer += vertical ? -speed : 0f;
-        Vector3f playerPos = this.player.getPosition();
-        playerPos.z = 1.5f;
 
         // upon moving the player, we also have to move the camera
         adjustCamera(speed * 2f, vertical);

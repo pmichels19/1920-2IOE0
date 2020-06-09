@@ -4,6 +4,7 @@ import AI.ImageRecognition.RunDrawingCanvas;
 import Graphics.IO.Timer;
 import Graphics.IO.Window;
 import Graphics.Rendering.*;
+import Levels.Characters.Player;
 import Levels.Framework.Maze;
 import Main.Input.MainController;
 import org.lwjgl.opengl.GL;
@@ -71,12 +72,14 @@ public class Main {
         LoadMenu loadMenu = new LoadMenu();
         SaveMenu saveMenu = new SaveMenu();
         NewGameMenu newGameMenu = new NewGameMenu();
+        DeathScreen deathScreen = new DeathScreen();
+        VictoryScreen victoryScreen = new VictoryScreen();
 
         // drawing canvas
         RunDrawingCanvas drawingCanvas = new RunDrawingCanvas();
 
         // and initialize the controller for input checking
-        MainController mainController = new MainController(maze, window);
+        MainController mainController = new MainController(maze, world, window);
 
         // Stuff to keep track of the fps
         double frame_time = 0;
@@ -118,12 +121,6 @@ public class Main {
                 // check the inputs done by the player
                 mainController.checkInputs();
 
-                // if the player still has movement frames left, execute those by moving the player
-                if ( mainController.getMovementCounter() > 0 ) {
-                    world.movePlayer( mainController.getSpeed(), mainController.isVertical() );
-                    mainController.decrementMovementCounter();
-                }
-
                 // check which state we are in, so we render the correct thing
                 if (state == GameState.MAIN_MENU) {
                     mainMenu.render();
@@ -141,6 +138,10 @@ public class Main {
                     saveMenu.render();
                 } else if (state == GameState.STARTING_GAME) {
                     newGameMenu.render();
+                } else if (state == GameState.DEAD) {
+                    deathScreen.render();
+                } else if (state == GameState.VICTORY) {
+                    victoryScreen.render();
                 }
 
                 window.swapBuffers();

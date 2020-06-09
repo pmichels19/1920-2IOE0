@@ -1,11 +1,13 @@
 package Main.Input;
 
 import Graphics.IO.Window;
+import Graphics.Rendering.World;
 import Levels.Characters.Player;
 import Levels.Framework.Maze;
 
 abstract class Controller {
     static Window window;
+    static World world;
     static Maze maze;
 
     static Player player = Player.getInstance();
@@ -30,6 +32,15 @@ abstract class Controller {
      */
     public static void setMaze(Maze maze) {
         Controller.maze = maze;
+    }
+
+    /**
+     * sets the world to apply changes to
+     *
+     * @param world the world the controller is used on
+     */
+    public static void setWorld(World world) {
+        Controller.world = world;
     }
 
     /**

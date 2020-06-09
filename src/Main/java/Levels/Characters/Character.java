@@ -22,6 +22,9 @@ public abstract class Character {
     private float gamePositionX;
     private float gamePositionY;
 
+    // the amount of frames needed to move one tile
+    private int speed;
+
     // the values for max health and mana
     int max_health;
     int max_mana;
@@ -30,7 +33,7 @@ public abstract class Character {
     int cur_health;
     int cur_mana;
 
-    public Character(int max_health, int max_mana, OBJModel model) {
+    public Character(int max_health, int max_mana, int speed, OBJModel model) {
         this.model = model;
         position = new Vector3f(0, 0f, 1.5f);
         scale = 1.2f;
@@ -45,6 +48,8 @@ public abstract class Character {
         this.max_mana = max_mana;
         cur_health = max_health;
         cur_mana = max_mana;
+
+        this.speed = speed;
     }
 
 
@@ -121,6 +126,14 @@ public abstract class Character {
 
     public float getGamePositionY() {
         return gamePositionY;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 
     public void setGamePositionX(float gamePositionX) {

@@ -22,13 +22,8 @@ public class GUI extends FlatRender {
         // make sure the camera is set correctly
         renderer.setCamera(camera);
 
-        // we want to draw the resourcebars in the bottom left of the screen
-        transform.setPosition( new Vector3f(-1, -1, 0) );
-
-        // render the background for the resource bars
-        transform.setScale( new Vector3f( 0.2f, 0.1f, 1 ) );
-        renderer.setTransform(transform);
-        renderer.renderTile( GUIElements.BACKGROUND.getTexture(), 0.5f, 0.5f, TileRenderer.FLOOR );
+        // we want to draw the resourcebars in the top left of the screen
+        transform.setPosition( new Vector3f(-1, 1, 0) );
 
         // calculate the percentage of health and mana left
         float healthPercent = ( (float) player.getHealth() ) / ( (float) player.getMaxHealth() );
@@ -37,22 +32,22 @@ public class GUI extends FlatRender {
         // first we render the missing health bar
         transform.setScale( new Vector3f( 0.19f, 0.04f, 1 ) );
         renderer.setTransform(transform);
-        renderer.renderTile( GUIElements.MISSING_HEALTH.getTexture(), 0.5f, 1.75f, TileRenderer.FLOOR );
+        renderer.renderTile( GUIElements.MISSING_HEALTH.getTexture(), 0.5f, -1.75f, TileRenderer.FLOOR );
 
         // then the current health bar
         transform.setScale( new Vector3f( 0.19f * healthPercent, 0.04f, 1 ) );
         renderer.setTransform(transform);
-        renderer.renderTile( GUIElements.HEALTH.getTexture(), 0.5f, 1.75f, TileRenderer.FLOOR );
+        renderer.renderTile( GUIElements.HEALTH.getTexture(), 0.5f, -1.75f, TileRenderer.FLOOR );
 
         // then the missing mana bar
         transform.setScale( new Vector3f( 0.19f, 0.04f, 1 ) );
         renderer.setTransform(transform);
-        renderer.renderTile( GUIElements.MISSING_MANA.getTexture(), 0.5f, 0.5f, TileRenderer.FLOOR );
+        renderer.renderTile( GUIElements.MISSING_MANA.getTexture(), 0.5f, -0.5f, TileRenderer.FLOOR );
 
         // and finally the current mana bar
         transform.setScale( new Vector3f( 0.19f * manaPercent, 0.04f, 1 ) );
         renderer.setTransform(transform);
-        renderer.renderTile( GUIElements.MANA.getTexture(), 0.5f, 0.5f, TileRenderer.FLOOR );
+        renderer.renderTile( GUIElements.MANA.getTexture(), 0.5f, -0.5f, TileRenderer.FLOOR );
     }
 
     private void renderInventory() {

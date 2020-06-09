@@ -3,6 +3,7 @@ package Main;
 import Graphics.IO.Timer;
 import Graphics.IO.Window;
 import Graphics.Rendering.*;
+import Levels.Characters.Player;
 import Levels.Framework.Maze;
 import Main.Input.MainController;
 import org.lwjgl.opengl.GL;
@@ -59,7 +60,7 @@ public class Main {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // start the maze found in specified file and create the player object
-        maze = new Maze("target");
+        maze = new Maze("level_1");
 
         // set up the world, corresponding GUI, the main menu and pause screen
         world = new World(maze, SCREEN_WIDTH, SCREEN_HEIGHT);

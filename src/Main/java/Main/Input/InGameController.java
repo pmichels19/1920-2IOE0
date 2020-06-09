@@ -71,8 +71,8 @@ public class InGameController extends Controller {
             player.setSelectedItem( player.getSelectedItem() + 1 );
         }
 
-        if (window.buttonClicked(GLFW_KEY_N)) {
-            player.addItem(Item.getItemById(Item.BOOT));
+        if (window.buttonClicked( GLFW_KEY_ENTER )) {
+            player.useItem();
         }
 
         // set a cooldown of 5 frames, so the player has better control over what item he wants to select

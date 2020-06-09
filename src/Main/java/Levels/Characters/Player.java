@@ -49,7 +49,7 @@ public class Player extends Character {
                 }
 
                 // Instantiate the player
-                player = new Player(100, 100, 20,model);
+                player = new Player(100, 100, 12,model);
             } catch (IOException e) {
                 e.printStackTrace();
             }

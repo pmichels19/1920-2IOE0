@@ -79,7 +79,7 @@ public class Maze {
         int x_end = Math.min( x_player + radius + 1, grid.length );
         int y_end = Math.min( y_player + radius + 1, grid[x_player].length );
 
-        char[][] chunk = new char[x_end - x_start + 1][y_end - y_start + 1];
+        char[][] chunk = new char[x_end - x_start][y_end - y_start];
         for (int y = y_start; y < y_end; y++) {
             for (int x = x_start; x < x_end; x++) {
                 chunk[x - x_start][y - y_start] = grid[x][y];

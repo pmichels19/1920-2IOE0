@@ -96,7 +96,7 @@ public class World {
                 (maze.getGrid().length - yPlayer) * 2 - 10,
                 16
         ) );
-        
+
         this.player = Player.getInstance();
     }
 
@@ -117,7 +117,9 @@ public class World {
         Set<Point> faceWalls = new HashSet<>();
         Set<Point> ceilings = new HashSet<>();
 
-        char[][] grid = maze.getGrid();
+//        char[][] grid = maze.getGrid();
+        char[][] grid = maze.getChunk(10);
+
         for ( int i = 0; i < grid.length; i++ ) {
             for ( int j = 0; j < grid[i].length; j++ ) {
                 // determine what tile needs to be drawn and fill that into the sets made above

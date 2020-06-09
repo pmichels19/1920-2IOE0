@@ -35,7 +35,7 @@ public class World {
     // the transfomation to display the world in the proper position
     private final Transform transform;
     // the tile renderer to actaully draw the world and the player
-    private TileRenderer renderer;
+    private final TileRenderer renderer = TileRenderer.getInstance();
 
     Vector3f DARK_ATTENUATION = new Vector3f(1,0.5f,0.2f);
     // the light object
@@ -80,9 +80,6 @@ public class World {
 
         // position the camera
         resetCameraPosition();
-      
-        // prepare the tile renderer for rendering
-        renderer = TileRenderer.getInstance();
     }
 
     /**
@@ -99,12 +96,8 @@ public class World {
                 (maze.getGrid().length - yPlayer) * 2 - 10,
                 16
         ) );
-
-
+        
         this.player = Player.getInstance();
-
-        // prepare the tile renderer for rendering
-        renderer = TileRenderer.getInstance();
     }
 
     /**

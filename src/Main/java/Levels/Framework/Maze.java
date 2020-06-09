@@ -63,6 +63,33 @@ public class Maze {
     }
 
     /**
+     * retrieves a chunk of the maze centered around the player of the specified chunk size
+     *
+     * @param radius the radius of the chunk that is to be returned
+     * @return a piece of the grid of at most {@code 2 * radius + 1} by {@code 2 * radius + 1}
+     */
+    public char[][] getChunk(int radius) {
+        // get the player coordinates
+        int x_player = playerLocation.getX();
+        int y_player = playerLocation.getY();
+
+        // get the start and end coordinates of both x and y axis
+        int x_start = Math.max( x_player - radius, 0 );
+        int y_start = Math.max( y_player - radius, 0 );
+        int x_end = Math.min( x_player + radius + 1, grid.length );
+        int y_end = Math.min( y_player + radius + 1, grid[x_player].length );
+
+        char[][] chunk = new char[x_end - x_start + 1][y_end - y_start + 1];
+        for (int y = y_start; y < y_end; y++) {
+            for (int x = x_start; x < x_end; x++) {
+                chunk[x - x_start][y - y_start] = grid[x][y];
+            }
+        }
+
+        return chunk;
+    }
+
+    /**
      * changes the player location both in the grid and the point that is kept as a record
      *
      * @param x the new x coordinate
@@ -70,14 +97,14 @@ public class Maze {
      */
     public void setPlayerLocation(int x, int y) {
         // remove the current player
-        grid[ playerLocation.getX() ][ playerLocation.getY() ] = ' ';
+        grid[ playerLocation.getX() ][ playerLocation.getY() ] = MARKER_SPACE;
 
         // set the x and y coordinates into the playerLocation
         playerLocation.setX(x);
         playerLocation.setY(y);
 
         // place a player at the given x and y
-        grid[ playerLocation.getX() ][ playerLocation.getY() ] = 'P';
+        grid[ playerLocation.getX() ][ playerLocation.getY() ] = MARKER_PLAYER;
     }
 
     /**

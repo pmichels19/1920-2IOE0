@@ -1,6 +1,7 @@
 package Main.Input;
 
 import Levels.Assets.Items.Item;
+import AI.ImageRecognition.RunDrawingCanvas;
 import Main.GameState;
 
 import static Graphics.IO.ScreenShot.takeScreenShot;
@@ -19,6 +20,9 @@ public class InGameController extends Controller {
     float speed = 0;
     boolean vertical;
 
+    // variables used for the drawing canvas
+    private RunDrawingCanvas drawingCanvas = new RunDrawingCanvas();
+    private boolean stopped = false;
 
     @Override
     void checkInputs() {
@@ -57,6 +61,10 @@ public class InGameController extends Controller {
             world.movePlayer( speed, vertical );
             // decrement the amount of movement frames left
             movementCounter--;
+        }
+
+        if (window.buttonClicked(GLFW_KEY_L)) {
+            drawingCanvas.start();
         }
     }
 

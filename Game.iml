@@ -13,6 +13,8 @@
     <orderEntry type="library" name="lwjgl-release-3.2" level="project" />
     <orderEntry type="library" name="Maven: org.joml:joml:1.9.6" level="project" />
     <orderEntry type="library" name="Maven: org.l33tlabs.twl:pngdecoder:1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.joml:joml:1.9.6" level="project" />
+    <orderEntry type="library" name="Maven: org.l33tlabs.twl:pngdecoder:1.0" level="project" />
     <orderEntry type="library" name="Maven: com.google.cloud:google-cloud-vision:1.99.3" level="project" />
     <orderEntry type="library" name="Maven: io.grpc:grpc-api:1.29.0" level="project" />
     <orderEntry type="library" name="Maven: io.grpc:grpc-context:1.29.0" level="project" />

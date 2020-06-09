@@ -1,20 +1,16 @@
 package Graphics.Rendering;
 
-import Graphics.OBJLoader;
-import Graphics.OBJModel;
 import Graphics.OpenGL.Light;
-import Graphics.OpenGL.Texture;
 import Graphics.Transforming.Camera;
 import Graphics.OpenGL.Shader;
 import Graphics.Transforming.Transform;
-import Levels.Characters.EyeBall;
 import Levels.Characters.Player;
 import Levels.Framework.Point;
 import Levels.Framework.joml.*;
 import Levels.Assets.Tiles.*;
 import Levels.Framework.Maze;
 import Levels.Objects.Object3D;
-import Levels.Objects.Treasure;
+import Levels.Objects.MagicBall;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -49,22 +45,22 @@ public class World {
             new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), null, DARK_ATTENUATION),
             new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), null, DARK_ATTENUATION),
 
-            new Light(new Vector3f(2,4,1f), new Vector3f(1f,0.2f,0.2f), Treasure.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(2,4,1f), new Vector3f(1f,0.2f,0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
             new Light(new Vector3f(2,4,5f), new Vector3f(1f,0.2f,0.2f), null, LIGHT_ATTENUATION),
 
-            new Light(new Vector3f(6,4,1f), new Vector3f(1f,1f,0.2f), Treasure.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(6,4,1f), new Vector3f(1f,1f,0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
             new Light(new Vector3f(6,4,5f), new Vector3f(1f,1f,0.2f), null, LIGHT_ATTENUATION),
 
-            new Light(new Vector3f(10,4,1f), new Vector3f(0.2f,1f,0.2f), Treasure.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(10,4,1f), new Vector3f(0.2f,1f,0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
             new Light(new Vector3f(10,4,5f), new Vector3f(0.2f,1f,0.2f), null, LIGHT_ATTENUATION),
 
-            new Light(new Vector3f(2,16,1f), new Vector3f(1f,0.2f,1f), Treasure.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(2,16,1f), new Vector3f(1f,0.2f,1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
             new Light(new Vector3f(2,16,5f), new Vector3f(1f,0.2f,1f), null, LIGHT_ATTENUATION),
 
-            new Light(new Vector3f(6,16,1f), new Vector3f(0.2f,0.2f,1f), Treasure.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(6,16,1f), new Vector3f(0.2f,0.2f,1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
             new Light(new Vector3f(6,16,5f), new Vector3f(0.2f,0.2f,1f), null, LIGHT_ATTENUATION),
 
-            new Light(new Vector3f(10,16,1f), new Vector3f(0.2f,1f,1f), Treasure.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(10,16,1f), new Vector3f(0.2f,1f,1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
             new Light(new Vector3f(10,16,5f), new Vector3f(0.2f,1f,1f), null, LIGHT_ATTENUATION)
     };
 

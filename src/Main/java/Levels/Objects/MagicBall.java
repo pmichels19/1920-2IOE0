@@ -3,13 +3,11 @@ package Levels.Objects;
 import Graphics.OBJLoader;
 import Graphics.OBJModel;
 import Graphics.OpenGL.Texture;
-import Levels.Characters.Player;
-import Levels.Framework.joml.Vector3f;
 
 import java.io.IOException;
 
 
-public class Treasure extends Object3D {
+public class MagicBall extends Object3D {
     // Name of the obj file in the res folder corresponding to the player model
     private static String objModelFile = "ball";
 
@@ -20,14 +18,14 @@ public class Treasure extends Object3D {
 //    private static String normalMapFile = "res/Models/eyeball_normal.jpg";
     private static String normalMapFile = null;
 
-    private static Treasure object;
+    private static MagicBall object;
 
-    public Treasure(OBJModel model) {
+    public MagicBall(OBJModel model) {
         super(model);
         scale = 2.5f;
     }
 
-    public static Treasure getInstance() {
+    public static MagicBall getInstance() {
         if (object == null) {
             try {
                 // Create the model
@@ -44,7 +42,7 @@ public class Treasure extends Object3D {
                 }
 
                 // Instantiate the player
-                object = new Treasure(model);
+                object = new MagicBall(model);
             } catch (IOException e) {
                 e.printStackTrace();
             }

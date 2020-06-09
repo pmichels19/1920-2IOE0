@@ -118,7 +118,7 @@ public class World {
         Set<Point> ceilings = new HashSet<>();
 
 //        char[][] grid = maze.getGrid();
-        char[][] grid = maze.getChunk(10);
+        char[][] grid = maze.getChunk(5);
 
         for ( int i = 0; i < grid.length; i++ ) {
             for ( int j = 0; j < grid[i].length; j++ ) {
@@ -131,7 +131,7 @@ public class World {
                     }
 
                     // we check if the tile to right is also a wall
-                    if ( j < grid.length - 1 && grid[i][j + 1] != Maze.MARKER_WALL ) {
+                    if ( j < grid[i].length - 1 && grid[i][j + 1] != Maze.MARKER_WALL ) {
                         // if there is no wall to the right, we wish to draw the right side of this wall
                         rightWalls.add( new Point(j, grid.length - i) );
                     }

@@ -100,6 +100,13 @@ public class World {
         this.player = Player.getInstance();
     }
 
+    // sets used for gathering points to determine drawing locations of tiles
+    private final Set<Point> floors = new HashSet<>();
+    private final Set<Point> leftWalls = new HashSet<>();
+    private final Set<Point> rightWalls = new HashSet<>();
+    private final Set<Point> faceWalls = new HashSet<>();
+    private final Set<Point> ceilings = new HashSet<>();
+
     /**
      * renders the maze
      */
@@ -110,13 +117,15 @@ public class World {
         renderer.setTransform(transform);
         SHADER.setLights(lights);
 
-        // sets used for gathering points to determine drawing locations of tiles
-        Set<Point> floors = new HashSet<>();
-        Set<Point> leftWalls = new HashSet<>();
-        Set<Point> rightWalls = new HashSet<>();
-        Set<Point> faceWalls = new HashSet<>();
-        Set<Point> ceilings = new HashSet<>();
+        fillRenderSets();
+        renderSets();
+        clearRenderSets();
+    }
 
+    /**
+     * fills the sets of points that are rendered in the render method
+     */
+    private void fillRenderSets() {
         char[][] grid = maze.getGrid();
 
         int x_player = maze.getPlayerLocation().getX();
@@ -157,7 +166,12 @@ public class World {
                 }
             }
         }
+    }
 
+    /**
+     * renders the tiles as specified in the sets filled in in {@code fillRenderSets}
+     */
+    private void renderSets() {
         for ( Point point : floors ) {
             renderer.addNormalMap( Background.DIRT_NORMAL.getTexture() );
             renderer.renderTile( Background.DIRT.getTexture(), point.getX(), point.getY(), TileRenderer.FLOOR );
@@ -178,7 +192,7 @@ public class World {
             renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES );
         }
 
-        player.setGridPosition(xPlayer, yPlayer, grid.length);
+        player.setGridPosition(xPlayer, yPlayer, maze.getGrid().length);
         renderer.renderCharacter(player);
 
         lights[0].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 7f));
@@ -192,6 +206,17 @@ public class World {
         for ( Point point : ceilings ) {
             renderer.renderTile( Wall.CEILING.getTexture(), point.getX(), point.getY(), TileRenderer.CEILS );
         }
+    }
+
+    /**
+     * clears all the sets with points specifying render positions
+     */
+    private void clearRenderSets() {
+        floors.clear();
+        leftWalls.clear();
+        rightWalls.clear();
+        faceWalls.clear();
+        ceilings.clear();
     }
 
     /**

@@ -13,6 +13,7 @@ uniform float time;
 uniform int normalMapping;
 // Whether changing color is enabled
 uniform int changingColor;
+uniform vec3 objectColor;
 
 // Light attributes
 uniform vec3 lightPosition[17];
@@ -66,17 +67,16 @@ void main() {
     }
 
     if (changingColor == 1) {
-        vec2 r = vec2(1,1);
-        vec2 p = (vertexPos.xy - r) / min(r.x, r.y);
-        float l = ceil(sin(length(p) * 100.0 + time * 50.0));
-        texture.rgb = vec3(l) * texture.rgb;
+        vec3 p = vertexPos.xyz;
+        float lxy = max(sin(length(p.xy) * 25.0 + time * 15.0) + 2, 0.3);
+        float lz = max(pow(sin(length(p.z) * 50.0 + time * 30.0),2) + 2, 0.3);
+        float l = min(lz,lxy);
+
+        gl_FragColor = vec4(totalDiffuse * l * objectColor.rgb, texture.a) + vec4(totalSpecular, 0.0);
+    } else {
+        gl_FragColor = vec4(totalDiffuse * texture.rgb, texture.a) + vec4(totalSpecular, 0.0);
     }
 
-
-
-
-    // Compute the final fragment color
-    gl_FragColor = vec4(totalDiffuse * texture.rgb, texture.a) + vec4(totalSpecular, 0.0);
 
 
 }

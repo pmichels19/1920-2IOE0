@@ -5,11 +5,18 @@ attribute vec4 vertexPosition;
 attribute vec2 vertexTexture;
 attribute vec3 vertexNormal;
 
+// The time
+uniform float time;
+
 // Transformation matrices
 uniform mat4 projectionMatrix;
 uniform mat4 modelMatrix;
 uniform mat4 tilePosition;
 uniform mat4 viewMatrix;
+
+// Whether changing color is enabled
+uniform int changingColor;
+uniform vec3 objectColor;
 
 uniform mat4 modelTransform;
 uniform int transform;
@@ -49,5 +56,7 @@ void main() {
 
     // Set the position
     gl_Position = projectionMatrix * modelToWorld * vertexPosition;
-
 }
+
+
+

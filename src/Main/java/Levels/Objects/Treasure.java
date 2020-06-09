@@ -24,10 +24,7 @@ public class Treasure extends Object3D {
 
     public Treasure(OBJModel model) {
         super(model);
-        position = new Vector3f(0, 0f, 0f);
-        scale = 2f;
-        rotationAngle = (float) ((-90f * Math.PI) / 180.0f);
-        rotation = new Vector3f(0f, 0f, 1f);
+        scale = 2.5f;
     }
 
     public static Treasure getInstance() {

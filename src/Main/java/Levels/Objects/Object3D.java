@@ -16,6 +16,8 @@ public abstract class Object3D {
     // Holds the current position
     protected Vector3f position;
 
+    public Vector3f color;
+
     // Holds the scale
     public float scale;
 
@@ -32,7 +34,7 @@ public abstract class Object3D {
     public Object3D(OBJModel model) {
         this.model = model;
         position = new Vector3f(0, 0f, 1.5f);
-        scale = 1.2f;
+        scale = 1f;
         rotationAngle = (float) ((-90f * Math.PI) / 180.0f);
         rotation = new Vector3f(0f, 0f, 1f);
 
@@ -61,13 +63,14 @@ public abstract class Object3D {
     }
 
     public void render(Shader shader) {
-        float startingPoint = .5f;
+        float startingPoint = .2f;
         float floatingSpeed = 150f;
         position.z = (float) (startingPoint + Math.pow(Math.cos(Math.toRadians(tVal * floatingSpeed)),2)/4);
 
 
         shader.setUniform("transform", 1);
         shader.setUniform("changingColor", 1);
+        shader.setUniform("objectColor", color);
         shader.setUniform("time", (float) tVal);
         Matrix4f modelTransform = new Matrix4f();
         modelTransform.translate(position).rotate(rotationAngle, rotation).scale(scale);
@@ -75,6 +78,7 @@ public abstract class Object3D {
         model.render(shader);
         shader.setUniform("transform", 0);
         shader.setUniform("changingColor", 0);
+        shader.setUniform("objectColor", new Vector3f(1,1,1));
     }
 
     public OBJModel getModel() {
@@ -99,6 +103,10 @@ public abstract class Object3D {
 
     public void setScale(float scale) {
         this.scale = scale;
+    }
+
+    public void setColor(Vector3f color) {
+        this.color = color;
     }
 
     public void setRotation(float angle, Vector3f vector) {

@@ -14,12 +14,10 @@ import Levels.Framework.joml.*;
 import Levels.Assets.Tiles.*;
 import Levels.Framework.Maze;
 
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 import static java.lang.Math.*;
-import static jdk.nashorn.internal.objects.Global.println;
 
 /**
  * Class for rendering the world and (for now) the player
@@ -36,6 +34,8 @@ public class World {
     private final Transform transform;
     // the tile renderer to actaully draw the world and the player
     private final TileRenderer renderer = TileRenderer.getInstance();
+    // the radius around the player that is actually rendered
+    private final int RADIUS = 8;
 
     Vector3f DARK_ATTENUATION = new Vector3f(1,0.5f,0.2f);
     // the light object
@@ -117,11 +117,19 @@ public class World {
         Set<Point> faceWalls = new HashSet<>();
         Set<Point> ceilings = new HashSet<>();
 
-//        char[][] grid = maze.getGrid();
-        char[][] grid = maze.getChunk(5);
+        char[][] grid = maze.getGrid();
 
-        for ( int i = 0; i < grid.length; i++ ) {
-            for ( int j = 0; j < grid[i].length; j++ ) {
+        int x_player = maze.getPlayerLocation().getX();
+        int y_player = maze.getPlayerLocation().getY();
+
+        // get the start and end coordinates of both x and y axis
+        int x_start = Math.max( x_player - RADIUS, 0 );
+        int y_start = Math.max( y_player - RADIUS, 0 );
+        int x_end = Math.min( x_player + RADIUS + 1, grid.length );
+        int y_end = Math.min( y_player + RADIUS + 1, grid[x_player].length );
+
+        for ( int i = x_start; i < x_end; i++ ) {
+            for ( int j = y_start; j < y_end; j++ ) {
                 // determine what tile needs to be drawn and fill that into the sets made above
                 if ( grid[i][j] == Maze.MARKER_WALL ) {
                     // we check if the tile to left is also a wall

@@ -7,4 +7,6 @@ public enum GameState {
     IN_GAME,
     PAUSED,
     SAVING_GAME,
+    DEAD,
+    VICTORY
 }

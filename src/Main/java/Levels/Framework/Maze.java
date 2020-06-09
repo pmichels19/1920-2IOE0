@@ -70,14 +70,14 @@ public class Maze {
      */
     public void setPlayerLocation(int x, int y) {
         // remove the current player
-        grid[ playerLocation.getX() ][ playerLocation.getY() ] = ' ';
+        grid[ playerLocation.getX() ][ playerLocation.getY() ] = MARKER_SPACE;
 
         // set the x and y coordinates into the playerLocation
         playerLocation.setX(x);
         playerLocation.setY(y);
 
         // place a player at the given x and y
-        grid[ playerLocation.getX() ][ playerLocation.getY() ] = 'P';
+        grid[ playerLocation.getX() ][ playerLocation.getY() ] = MARKER_PLAYER;
     }
 
     /**

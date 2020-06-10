@@ -46,5 +46,5 @@ abstract class Controller {
     /**
      * checks the inputs as specified by the subclass
      */
-    abstract void checkInputs();
+    abstract void checkInputs() throws InterruptedException;
 }

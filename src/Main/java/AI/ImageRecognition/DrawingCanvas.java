@@ -1,9 +1,10 @@
 package AI.ImageRecognition;
 
+import SpellCasting.Spell;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.Color;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -18,6 +19,8 @@ import java.util.Iterator;
 public class DrawingCanvas extends JFrame implements Runnable {
 
     private RunDrawingCanvas rdc;
+
+    private Spell spell;
 
     private int windowX = 500; // Window width
     private int windowY = 500;
@@ -284,6 +287,7 @@ public class DrawingCanvas extends JFrame implements Runnable {
                     try {
                         String[] tempData = googleConfig.predict(saveGridAsImage());
                         imageClass.setText(defaultLabel + tempData[0] + ", " + tempData[1]);
+                        spell.castSpell(new Object[] {tempData[0]});
                     } catch (Exception ex) {
                         System.out.println(ex);
                     }

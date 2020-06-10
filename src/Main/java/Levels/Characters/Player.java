@@ -24,6 +24,9 @@ public class Player extends Character {
     private Item[] inventory;
     private int selectedItem = 0;
 
+    // agility spell
+    private double agilityPower = 0;
+
     private Player(int hp, int mp, int speed, OBJModel model) {
         super(hp, mp, speed, model);
 
@@ -104,9 +107,13 @@ public class Player extends Character {
             }
         }
 
-        int modifier = (int) Math.round(0.75 * bootCount);
+        int modifier = (int) Math.round( 0.75 * (bootCount + agilityPower));
 
         return super.getSpeed() / modifier;
+    }
+
+    public int getDirection() {
+        return direction;
     }
 
     /**
@@ -155,5 +162,13 @@ public class Player extends Character {
     public void tossItem() {
         // replace the consumed item with the empty item
         inventory[selectedItem] = Item.getItemById(Item.EMPTY);
+    }
+
+    public void setAgilityPower(double agilityPower) {
+        this.agilityPower = agilityPower;
+    }
+
+    public double getAgilityPower() {
+        return agilityPower;
     }
 }

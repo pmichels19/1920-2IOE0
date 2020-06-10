@@ -1,25 +1,20 @@
 package SpellCasting;
 
-public class Spell {
-
-    Spell spell;
+public abstract class Spell {
 
     public Spell() {
+
     }
 
     // game logic for all spells
-    public void castSpell() {
-
-    }
+    public abstract void castSpell(Object[] args);
 
     // graphics for all spells
-    public void renderSpell() {
-
-    }
+    public abstract void renderSpell();
 
     // make spell with string returned from google VisionML
-    public Spell determineSpell(String spell) {
-        Spell ret = new Spell();
+    public static Spell determineSpell(String spell) {
+        Spell ret;
         switch (spell) {
             case "illuminate":
                 ret = new SpellIlluminate();
@@ -59,6 +54,10 @@ public class Spell {
                 break;
             case "lightning":
                 ret = new SpellLightning();
+                break;
+            default:
+                // to cancel spellcasting
+                ret = new SpellEmpty();
                 break;
         }
         return ret;

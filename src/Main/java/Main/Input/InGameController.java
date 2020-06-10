@@ -3,6 +3,8 @@ package Main.Input;
 import Levels.Assets.Items.Item;
 import AI.ImageRecognition.RunDrawingCanvas;
 import Main.GameState;
+import SpellCasting.Spell;
+import SpellCasting.SpellAgility;
 
 import static Graphics.IO.ScreenShot.takeScreenShot;
 import static Main.Main.setState;
@@ -23,6 +25,10 @@ public class InGameController extends Controller {
     // variables used for the drawing canvas
     private RunDrawingCanvas drawingCanvas = new RunDrawingCanvas();
     private boolean stopped = false;
+
+    private boolean released = true;
+
+    private Spell spell;
 
     @Override
     void checkInputs() {
@@ -127,6 +133,24 @@ public class InGameController extends Controller {
                 movementCounter = (int) player.getSpeed();
                 speed = 1f / player.getSpeed();
                 vertical = false;
+            }
+        }
+
+        // spell casting
+        if (window.buttonClicked(GLFW_KEY_1)) {
+            if (released) {
+                spell = Spell.determineSpell("agility");
+                spell.castSpell(new Object[]{maze});
+                released = false;
+            }
+        } else {
+            released = true;
+        }
+
+        // handle spell countdown (can make array or something later for more spells)
+        if (spell != null) {
+            if (spell instanceof SpellAgility) {
+                ((SpellAgility) spell).checkDuration();
             }
         }
     }

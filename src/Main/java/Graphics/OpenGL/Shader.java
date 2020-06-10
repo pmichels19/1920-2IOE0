@@ -25,7 +25,7 @@ public class Shader {
     // the fragment shader
     private int fs;
 
-    private final int MAX_LIGHTS = 10;
+    private final int MAX_LIGHTS = 17;
 
     private final int WORLD, OBJECT, PROJECTION;
     private final int EYE_POSITION;
@@ -114,6 +114,28 @@ public class Shader {
         }
     }
 
+    public void setUniform(String name, float value) {
+        // find where the provided uniform is stored
+        int location = glGetUniformLocation(program, name);
+
+        // test if the location is a valid one
+        if (location != -1) {
+            // replace the uniform if it is
+            glUniform1f(location, value);
+        }
+    }
+
+    public void setUniform(String name, Vector3f value) {
+        // find where the provided uniform is stored
+        int location = glGetUniformLocation(program, name);
+
+        // test if the location is a valid one
+        if (location != -1) {
+            // replace the uniform if it is
+            glUniform3f(location, value.x, value.y, value.z);
+        }
+    }
+
     public void setCamera(Camera camera) {
         if (PROJECTION != -1)  {
             float[] matrix = new float[16];
@@ -155,7 +177,7 @@ public class Shader {
             if (i < lights.length) {
                 light = lights[i];
             } else {
-                light = new Light(new Vector3f(0,0,0), new Vector3f(0,0,0), Wall.CEILING.getTexture());
+                light = new Light(new Vector3f(0,0,0), new Vector3f(0,0,0), null);
             }
 
             if (LIGHT_POSITIONS[i] != -1)  {

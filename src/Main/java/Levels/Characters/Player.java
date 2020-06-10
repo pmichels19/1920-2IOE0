@@ -2,15 +2,10 @@ package Levels.Characters;
 
 import Graphics.OBJLoader;
 import Graphics.OBJModel;
-import Graphics.OpenGL.Model;
 import Graphics.OpenGL.Texture;
-import Levels.Assets.Items.EmptyItem;
 import Levels.Assets.Items.Item;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Player extends Character {
     // Name of the obj file in the res folder corresponding to the player model
@@ -29,29 +24,13 @@ public class Player extends Character {
     private Item[] inventory;
     private int selectedItem = 0;
 
-    // the max health and mana of the player
-    private int max_health = 100;
-    private int max_mana = 100;
-
-    private int current_health;
-    private int current_mana;
-
-    private Player(int hp, int mp, OBJModel model) {
-        super(hp,mp,model);
+    private Player(int hp, int mp, int speed, OBJModel model) {
+        super(hp, mp, speed, model);
 
         // start with an empty inventory of max size 5
-        inventory = new Item[] {
-                new EmptyItem(),
-                new EmptyItem(),
-                new EmptyItem(),
-                new EmptyItem(),
-                new EmptyItem()
-        };
+        inventory = new Item[5];
 
     }
-
-
-
 
     public static Player getInstance() {
         if (player == null) {
@@ -70,7 +49,7 @@ public class Player extends Character {
                 }
 
                 // Instantiate the player
-                player = new Player(100, 100,model);
+                player = new Player(100, 100, 12,model);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -110,20 +89,24 @@ public class Player extends Character {
         this.max_mana = max_mana;
     }
 
-    public int getCurrentHealth() {
-        return current_health;
-    }
+    /**
+     * the player class overrides the getspeed to take the boots in the inventory into account
+     *
+     * @return the speed of the player, with boots
+     */
+    @Override
+    public int getSpeed() {
+        // check the amount of boots the player gathered
+        double bootCount = 1;
+        for (Item item : inventory) {
+            if (item != null && item.getId() == Item.BOOT) {
+                bootCount++;
+            }
+        }
 
-    public void setCurrentHealth(int current_health) {
-        this.current_health = current_health;
-    }
+        int modifier = (int) Math.round( 0.75 * bootCount );
 
-    public int getCurrentMana() {
-        return current_mana;
-    }
-
-    public void setCurrentMana(int current_mana) {
-        this.current_mana = current_mana;
+        return super.getSpeed() / modifier;
     }
 
     /**
@@ -133,5 +116,44 @@ public class Player extends Character {
      */
     public void addItem(Item item) {
         inventory[selectedItem] = item;
+    }
+
+    /**
+     * uses the selected item, if possible: the boot, coin and empty item have no use
+     */
+    public void useItem() {
+        // we check what kind of item the player has selected
+        switch ( inventory[selectedItem].getId() ) {
+            case Item.H_POTION:
+                // if a health potion is used, add 25 health to the current health
+                setHealth( getHealth() + 25 );
+                tossItem();
+                break;
+            case Item.M_POTION:
+                // if a mana potion is used, add 25 mana to the current mana
+                setMana( getMana() + 25 );
+                tossItem();
+                break;
+            case Item.HEART:
+                // if a heart is used, increase the max health and current health by 25
+                setMaxHealth( getMaxHealth() + 25 );
+                setHealth( getHealth() + 25 );
+                tossItem();
+                break;
+            case Item.MANA:
+                // if a heart is used, increase the max mana and current mana by 25
+                setMaxMana( getMaxMana() + 25 );
+                setMana( getMana() + 25 );
+                tossItem();
+                break;
+        }
+    }
+
+    /**
+     * removes the selected item from the player inventory and places the empty item back
+     */
+    public void tossItem() {
+        // replace the consumed item with the empty item
+        inventory[selectedItem] = Item.getItemById(Item.EMPTY);
     }
 }

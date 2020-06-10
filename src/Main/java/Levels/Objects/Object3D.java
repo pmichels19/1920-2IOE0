@@ -1,8 +1,7 @@
-package Levels.Characters;
+package Levels.Objects;
 
 import Graphics.OBJModel;
 import Graphics.OpenGL.Shader;
-import Levels.Framework.Point;
 import Levels.Framework.joml.Matrix4f;
 import Levels.Framework.joml.Vector3f;
 
@@ -10,61 +9,37 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public abstract class Character {
+public abstract class Object3D {
     // Holds the model
     private OBJModel model;
 
     // Holds the current position
-    private Vector3f position;
+    protected Vector3f position;
 
-    // Holds maze position
-    private Point mazePosition;
+    public Vector3f color;
 
     // Holds the scale
-    private float scale;
+    public float scale;
 
     // holds the rotation
-    private Vector3f rotation;
-    private float rotationAngle;
+    protected Vector3f rotation;
+    protected float rotationAngle;
 
-    private float gamePositionX;
-    private float gamePositionY;
+    protected float gamePositionX;
+    protected float gamePositionY;
 
-    // the amount of frames needed to move one tile
-    //private int speed;
-
-    // the values for max health and mana
-    int max_health;
-    int max_mana;
-
-    // the values for current health and mana
-    int cur_health;
-    int cur_mana;
-
-    // Speed of the character
-    private float speed;
-
-    //Time related objects to link animation to
     private double tVal = 0.0;
     Timer timer;
 
-    public Character(int max_health, int max_mana, OBJModel model) {
+    public Object3D(OBJModel model) {
         this.model = model;
         position = new Vector3f(0, 0f, 1.5f);
-        scale = 1.2f;
+        scale = 1f;
         rotationAngle = (float) ((-90f * Math.PI) / 180.0f);
         rotation = new Vector3f(0f, 0f, 1f);
 
         gamePositionX = 1;
         gamePositionY = 1;
-
-        // start the player off fresh, with full mana and health
-        this.max_health = max_health;
-        this.max_mana = max_mana;
-        cur_health = max_health;
-        cur_mana = max_mana;
-
-        this.speed = speed;
 
         //Setting up the animation timer
         timer = new Timer( 10, new ActionListener() {
@@ -80,39 +55,34 @@ public abstract class Character {
     }
 
 
-//    abstract void generateModel(float x_pos, float y_pos);
-
     /**
      * renders the model specified in the subclass once
      */
     public void render(Shader shader, float x_pos, float y_pos) {
-//        generateModel(x_pos, y_pos);
-
-
         model.render(shader);
     }
 
     public void render(Shader shader) {
-        shader.setUniform("transform", 1);
-        Matrix4f modelTransform = new Matrix4f();
-
-        //floating animation linked to Z-axis
-        float startingPoint = 1.5f;
+        float startingPoint = .2f;
         float floatingSpeed = 150f;
-        position.z = (float) (startingPoint + Math.pow(Math.cos(Math.toRadians(tVal * floatingSpeed)),2)/2);
+        position.z = (float) (startingPoint + Math.pow(Math.cos(Math.toRadians(tVal * floatingSpeed)),2)/4);
 
+
+        shader.setUniform("transform", 1);
+        shader.setUniform("changingColor", 1);
+        shader.setUniform("objectColor", color);
+        shader.setUniform("time", (float) tVal);
+        Matrix4f modelTransform = new Matrix4f();
         modelTransform.translate(position).rotate(rotationAngle, rotation).scale(scale);
         shader.setUniform("modelTransform", modelTransform);
         model.render(shader);
         shader.setUniform("transform", 0);
+        shader.setUniform("changingColor", 0);
+        shader.setUniform("objectColor", new Vector3f(1,1,1));
     }
 
     public OBJModel getModel() {
         return model;
-    }
-
-    public void setModel(OBJModel model) {
-        this.model = model;
     }
 
     public Vector3f getPosition() {
@@ -135,25 +105,13 @@ public abstract class Character {
         this.scale = scale;
     }
 
+    public void setColor(Vector3f color) {
+        this.color = color;
+    }
+
     public void setRotation(float angle, Vector3f vector) {
         this.rotationAngle = angle;
         this.rotation = vector;
-    }
-
-    public int getHealth() {
-        return cur_health;
-    }
-
-    public int getMana() {
-        return cur_mana;
-    }
-
-    public void setHealth(int health) {
-        cur_health = health;
-    }
-
-    public void setMana(int mana) {
-        cur_mana = mana;
     }
 
     public float getGamePositionX() {
@@ -162,14 +120,6 @@ public abstract class Character {
 
     public float getGamePositionY() {
         return gamePositionY;
-    }
-
-//    public int getSpeed() {
-//        return speed;
-//    }
-
-    public void setSpeed(int speed) {
-        this.speed = speed;
     }
 
     public void setGamePositionX(float gamePositionX) {
@@ -203,33 +153,5 @@ public abstract class Character {
         }
         setGamePositionX(gamePositionX);
         setGridPositionY(gamePositionY, gridLength);
-    }
-
-    public Point getMazePosition() {
-        return mazePosition;
-    }
-
-    public void setMazePosition(Point mazePosition) {
-        this.mazePosition = mazePosition;
-    }
-
-    public float getSpeed() {
-        return speed;
-    }
-
-    public void setSpeed(float speed) {
-        this.speed = speed;
-    }
-
-    /**
-     * Initializes the starting position of the enemy
-     *
-     * @param x          x location
-     * @param y          y location
-     * @param gridLength length of the grid
-     */
-    public void initializePosition(int x, int y, int gridLength) {
-        setMazePosition(new Point(x, y));
-        setGridPosition((float) y, (float) x, gridLength);
     }
 }

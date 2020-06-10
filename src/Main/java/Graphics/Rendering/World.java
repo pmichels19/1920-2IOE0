@@ -1,9 +1,6 @@
 package Graphics.Rendering;
 
-import Graphics.OBJLoader;
-import Graphics.OBJModel;
 import Graphics.OpenGL.Light;
-import Graphics.OpenGL.Texture;
 import Graphics.Transforming.Camera;
 import Graphics.OpenGL.Shader;
 import Graphics.Transforming.Transform;
@@ -14,6 +11,8 @@ import Levels.Framework.Point;
 import Levels.Framework.joml.*;
 import Levels.Assets.Tiles.*;
 import Levels.Framework.Maze;
+import Levels.Objects.Object3D;
+import Levels.Objects.MagicBall;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.Set;
 
 import static java.lang.Math.*;
-import static jdk.nashorn.internal.objects.Global.println;
 
 /**
  * Class for rendering the world and (for now) the player
@@ -38,22 +36,37 @@ public class World {
     // the transfomation to display the world in the proper position
     private final Transform transform;
     // the tile renderer to actaully draw the world and the player
-    private TileRenderer renderer;
+    private final TileRenderer renderer = TileRenderer.getInstance();
+    // the radius around the player that is actually rendered
+    private final int RADIUS = 8;
 
-    Vector3f DARK_ATTENUATION = new Vector3f(1, 0.5f, 0.2f);
+    Vector3f DARK_ATTENUATION = new Vector3f(.5f,.2f,1.5f);
+    Vector3f LIGHT_ATTENUATION = new Vector3f(.5f,.2f,.5f);
     // the light object
     private final Light[] lights = {
-            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
-            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), null, DARK_ATTENUATION),
 
-            new Light(new Vector3f(2, 6, 1f), new Vector3f(0.2f, 1f, 0.2f), Background.TORCH.getTexture(), DARK_ATTENUATION),
-            new Light(new Vector3f(2, 6, 6f), new Vector3f(0.2f, 1f, 0.2f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(2,4,1f), new Vector3f(1f,0.2f,0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(2,4,5f), new Vector3f(1f,0.2f,0.2f), null, LIGHT_ATTENUATION),
 
-            new Light(new Vector3f(6, 8, 1f), new Vector3f(1, 0.2f, 0.2f), Background.TORCH.getTexture(), DARK_ATTENUATION),
-            new Light(new Vector3f(6, 8, 6f), new Vector3f(1, 0.2f, 0.2f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(6,4,1f), new Vector3f(1f,1f,0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(6,4,5f), new Vector3f(1f,1f,0.2f), null, LIGHT_ATTENUATION),
 
-            new Light(new Vector3f(10, 4, 1f), new Vector3f(0.2f, 0.2f, 1), Background.TORCH.getTexture(), DARK_ATTENUATION),
-            new Light(new Vector3f(10, 4, 6f), new Vector3f(0.2f, 0.2f, 1), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(10,4,1f), new Vector3f(0.2f,1f,0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(10,4,5f), new Vector3f(0.2f,1f,0.2f), null, LIGHT_ATTENUATION),
+
+            new Light(new Vector3f(2,16,1f), new Vector3f(1f,0.2f,1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(2,16,5f), new Vector3f(1f,0.2f,1f), null, LIGHT_ATTENUATION),
+
+            new Light(new Vector3f(6,16,1f), new Vector3f(0.2f,0.2f,1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(6,16,5f), new Vector3f(0.2f,0.2f,1f), null, LIGHT_ATTENUATION),
+
+            new Light(new Vector3f(10,16,1f), new Vector3f(0.2f,1f,1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(10,16,5f), new Vector3f(0.2f,1f,1f), null, LIGHT_ATTENUATION)
     };
 
     // variables to keep track of the player location in the world
@@ -112,12 +125,15 @@ public class World {
                 16
         ));
 
-
         this.player = Player.getInstance();
-
-        // prepare the tile renderer for rendering
-        renderer = TileRenderer.getInstance();
     }
+
+    // sets used for gathering points to determine drawing locations of tiles
+    private final Set<Point> floors = new HashSet<>();
+    private final Set<Point> leftWalls = new HashSet<>();
+    private final Set<Point> rightWalls = new HashSet<>();
+    private final Set<Point> faceWalls = new HashSet<>();
+    private final Set<Point> ceilings = new HashSet<>();
 
     /**
      * renders the maze
@@ -129,62 +145,79 @@ public class World {
         renderer.setTransform(transform);
         SHADER.setLights(lights);
 
-        // sets used for gathering points to determine drawing locations of tiles
-        Set<Point> floors = new HashSet<>();
-        Set<Point> leftWalls = new HashSet<>();
-        Set<Point> rightWalls = new HashSet<>();
-        Set<Point> faceWalls = new HashSet<>();
-        Set<Point> ceilings = new HashSet<>();
+        fillRenderSets();
+        renderSets();
+        clearRenderSets();
+    }
 
+    /**
+     * fills the sets of points that are rendered in the render method
+     */
+    private void fillRenderSets() {
         char[][] grid = maze.getGrid();
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
+
+        int x_player = maze.getPlayerLocation().getX();
+        int y_player = maze.getPlayerLocation().getY();
+
+        // get the start and end coordinates of both x and y axis
+        int x_start = Math.max( x_player - RADIUS, 0 );
+        int y_start = Math.max( y_player - RADIUS, 0 );
+        int x_end = Math.min( x_player + RADIUS + 1, grid.length );
+        int y_end = Math.min( y_player + RADIUS + 1, grid[x_player].length );
+
+        for ( int i = x_start; i < x_end; i++ ) {
+            for ( int j = y_start; j < y_end; j++ ) {
                 // determine what tile needs to be drawn and fill that into the sets made above
-                if (grid[i][j] == Maze.MARKER_WALL) {
+                if ( grid[i][j] == Maze.MARKER_WALL ) {
                     // we check if the tile to left is also a wall
-                    if (j > 0 && grid[i][j - 1] != Maze.MARKER_WALL) {
+                    if ( j > 0 && grid[i][j - 1] != Maze.MARKER_WALL ) {
                         // if there is no wall to the left, we wish to draw the left side of this wall
-                        leftWalls.add(new Point(j, grid.length - i));
+                        leftWalls.add( new Point(j, grid.length - i) );
                     }
 
                     // we check if the tile to right is also a wall
-                    if (j < grid.length - 1 && grid[i][j + 1] != Maze.MARKER_WALL) {
+                    if ( j < grid[i].length - 1 && grid[i][j + 1] != Maze.MARKER_WALL ) {
                         // if there is no wall to the right, we wish to draw the right side of this wall
-                        rightWalls.add(new Point(j, grid.length - i));
+                        rightWalls.add( new Point(j, grid.length - i) );
                     }
 
                     // we check if the tile in front is also a wall
-                    if (i < grid.length - 1 && grid[i + 1][j] != Maze.MARKER_WALL) {
+                    if ( i < grid.length - 1 && grid[i + 1][j] != Maze.MARKER_WALL ) {
                         // if there is no wall in front, we wish to draw the face of this wall
-                        faceWalls.add(new Point(j, grid.length - i));
+                        faceWalls.add( new Point(j, grid.length - i) );
                     }
 
                     // we always want to render a ceiling:
-                    ceilings.add(new Point(j, grid.length - i));
-                } else if (grid[i][j] == Maze.MARKER_SPACE || grid[i][j] == Maze.MARKER_PLAYER) {
-                    floors.add(new Point(j, grid.length - i));
+                    ceilings.add( new Point(j, grid.length - i) );
+                } else if ( grid[i][j] == Maze.MARKER_SPACE || grid[i][j] == Maze.MARKER_PLAYER ) {
+                    floors.add( new Point( j, grid.length - i ) );
                 }
             }
         }
+    }
 
-        for (Point point : floors) {
-            renderer.addNormalMap(Background.DIRT_NORMAL.getTexture());
-            renderer.renderTile(Background.DIRT.getTexture(), point.getX(), point.getY(), TileRenderer.FLOOR);
+    /**
+     * renders the tiles as specified in the sets filled in in {@code fillRenderSets}
+     */
+    private void renderSets() {
+        for ( Point point : floors ) {
+            renderer.addNormalMap( Background.DIRT_NORMAL.getTexture() );
+            renderer.renderTile( Background.DIRT.getTexture(), point.getX(), point.getY(), TileRenderer.FLOOR );
         }
 
-        for (Point point : leftWalls) {
-            renderer.addNormalMap(Wall.BRICKWALL_NORMAL.getTexture());
-            renderer.renderTile(Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.LEFTS);
+        for ( Point point : leftWalls ) {
+            renderer.addNormalMap( Wall.BRICKWALL_NORMAL.getTexture() );
+            renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.LEFTS );
         }
 
-        for (Point point : rightWalls) {
-            renderer.addNormalMap(Wall.BRICKWALL_NORMAL.getTexture());
-            renderer.renderTile(Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.RIGHT);
+        for ( Point point : rightWalls ) {
+            renderer.addNormalMap( Wall.BRICKWALL_NORMAL.getTexture() );
+            renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.RIGHT );
         }
 
-        for (Point point : faceWalls) {
-            renderer.addNormalMap(Wall.BRICKWALL_NORMAL.getTexture());
-            renderer.renderTile(Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES);
+        for ( Point point : faceWalls ) {
+            renderer.addNormalMap( Wall.BRICKWALL_NORMAL.getTexture() );
+            renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES );
         }
 
         // Render enemies
@@ -194,20 +227,39 @@ public class World {
         }
 
         // Render player
-        player.setGridPosition(xPlayer, yPlayer, grid.length);
+        player.setGridPosition(xPlayer, yPlayer, maze.getGrid().length);
         renderer.renderCharacter(player);
 
-        lights[0].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 7f));
-        lights[1].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 1f));
+        lights[0].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 1f));
+        lights[1].setPosition(new Vector3f(player.getPosition().x+1f, player.getPosition().y, 5f));
+        lights[2].setPosition(new Vector3f(player.getPosition().x-1f, player.getPosition().y, 5f));
+        lights[3].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y+1f, 5f));
+        lights[4].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y-1f, 5f));
 
         for (Light light : lights) {
-            renderer.renderTile(light.getTexture(), light.getPosition().x / 2, (light.getPosition().y) / 2 + 0.65f, TileRenderer.FACES);
+            Object3D obj = light.getObject();
+            if (light.getObject() != null) {
+                Vector3f pos = new Vector3f(light.getPosition().x, light.getPosition().y, 0f);
+                obj.setPosition(pos);
+                obj.setColor(light.getColor());
+                renderer.renderObject(obj);
+            }
         }
 
-
-        for (Point point : ceilings) {
-            renderer.renderTile(Wall.CEILING.getTexture(), point.getX(), point.getY(), TileRenderer.CEILS);
+        for ( Point point : ceilings ) {
+            renderer.renderTile( Wall.CEILING.getTexture(), point.getX(), point.getY(), TileRenderer.CEILS );
         }
+    }
+
+    /**
+     * clears all the sets with points specifying render positions
+     */
+    private void clearRenderSets() {
+        floors.clear();
+        leftWalls.clear();
+        rightWalls.clear();
+        faceWalls.clear();
+        ceilings.clear();
     }
 
     /**
@@ -230,20 +282,20 @@ public class World {
     /**
      * moves the camera, as specified by the parameters
      *
-     * @param speed    the distance covered by the movement in a single frame
+     * @param speed the distance covered by the movement in a single frame
      * @param vertical whether movement is supposed to be vertical or not
      */
     private void adjustCamera(float speed, boolean vertical) {
         // calculate the new camera position
         Vector3f cameraPos = camera.getPosition();
-        camera.setPosition(new Vector3f(
-                cameraPos.x + (vertical ? 0 : speed),
-                cameraPos.y + (vertical ? speed : 0),
+        camera.setPosition( new Vector3f(
+                cameraPos.x + ( vertical ? 0 : speed ),
+                cameraPos.y + ( vertical ? speed : 0 ),
                 cameraPos.z
-        ));
+        ) );
 
         // adjust the camera for the shader, so it actually has an effect on the position of the render
-        SHADER.setCamera(camera);
+        SHADER.setCamera( camera );
     }
 }
 

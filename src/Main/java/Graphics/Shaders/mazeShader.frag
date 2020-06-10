@@ -6,18 +6,26 @@ uniform sampler2D diffuseMap;
 // Normal map
 uniform sampler2D normalMap;
 
+// The time
+uniform float time;
+
 // Whether normal mapping is enabled
 uniform int normalMapping;
+// Whether changing color is enabled
+uniform int changingColor;
+uniform vec3 objectColor;
 
 // Light attributes
-uniform vec3 lightPosition[10];
-uniform vec3 lightColor[10];
-uniform vec3 lightAttenuation[10];
+uniform vec3 lightPosition[17];
+uniform vec3 lightColor[17];
+uniform vec3 lightAttenuation[17];
+
 
 // From vertex shader
 in vec3 surfaceNormal;
+in vec4 vertexPos;
 in vec2 textureCoords;
-in vec3 toLightVector[10];
+in vec3 toLightVector[17];
 in vec3 toCameraVector;
 
 void main() {
@@ -40,7 +48,7 @@ void main() {
     vec3 totalDiffuse = vec3(0.0);
     vec3 totalSpecular = vec3(0.0);
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 17; i++) {
         vec3 unitLightVector = normalize(toLightVector[i]);
         vec3 unitVectorToCamera = normalize(toCameraVector);
         vec3 lightDirection = -unitLightVector;
@@ -58,8 +66,17 @@ void main() {
         totalSpecular += (0.05 * specular * lightColor[i])/attFactor;
     }
 
-    // Compute the final fragment color
-    gl_FragColor = vec4(totalDiffuse * texture.rgb, texture.a) + vec4(totalSpecular, 0.0);
+    if (changingColor == 1) {
+        vec3 p = vertexPos.xyz;
+        float lxy = max(sin(length(p.xy) * 25.0 + time * 15.0) + 2, 0.3);
+        float lz = max(pow(sin(length(p.z) * 50.0 + time * 30.0),2) + 2, 0.3);
+        float l = min(lz,lxy);
+
+        gl_FragColor = vec4(totalDiffuse * l * objectColor.rgb, texture.a) + vec4(totalSpecular, 0.0);
+    } else {
+        gl_FragColor = vec4(totalDiffuse * texture.rgb, texture.a) + vec4(totalSpecular, 0.0);
+    }
+
 
 
 }

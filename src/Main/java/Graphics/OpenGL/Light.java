@@ -1,24 +1,25 @@
 package Graphics.OpenGL;
 
 import Levels.Framework.joml.Vector3f;
+import Levels.Objects.Object3D;
 
 public class Light {
 
     private Vector3f position;
     private Vector3f color;
     private Vector3f attenuation = new Vector3f(1,0,0);
-    private Texture texture;
+    private Object3D object;
 
-    public Light(Vector3f position, Vector3f color, Texture texture) {
+    public Light(Vector3f position, Vector3f color, Object3D object) {
         this.position = position;
         this.color = color;
-        this.texture = texture;
+        this.object = object;
     }
 
-    public Light(Vector3f position, Vector3f color, Texture texture, Vector3f attenuation) {
+    public Light(Vector3f position, Vector3f color, Object3D object, Vector3f attenuation) {
         this.position = position;
         this.color = color;
-        this.texture = texture;
+        this.object = object;
         this.attenuation = attenuation;
     }
 
@@ -38,12 +39,12 @@ public class Light {
         this.color = color;
     }
 
-    public Texture getTexture() {
-        return texture;
+    public Object3D getObject() {
+        return object;
     }
 
-    public void setTexture(Texture texture) {
-        this.texture = texture;
+    public void setObject(Object3D object) {
+        this.object = object;
     }
 
     public Vector3f getAttenuation() {

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public abstract class Enemy extends Character {
     public Enemy(int max_health, int max_mana, OBJModel model) {
-        super(max_health, max_mana, model);
+        super(max_health, max_mana, 15, model);
     }
 
     // Holds the location the enemy is heading when the player is not close enough

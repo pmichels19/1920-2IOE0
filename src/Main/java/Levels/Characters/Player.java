@@ -36,7 +36,7 @@ public class Player extends Character {
         if (player == null) {
             try {
                 // Create the model
-                OBJModel model =  OBJLoader.loadObjModel(objModelFile);
+                OBJModel model = OBJLoader.loadObjModel(objModelFile);
 
                 if (textureFile != null) {
                     // Set the texture
@@ -45,11 +45,11 @@ public class Player extends Character {
 
                 // Add a normal map if there is one
                 if (normalMapFile != null) {
-                model.setNormalMap(new Texture(normalMapFile));
+                    model.setNormalMap(new Texture(normalMapFile));
                 }
 
                 // Instantiate the player
-                player = new Player(100, 100, 12,model);
+                player = new Player(100, 100, 12, model);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -95,7 +95,7 @@ public class Player extends Character {
      * @return the speed of the player, with boots
      */
     @Override
-    public int getSpeed() {
+    public float getSpeed() {
         // check the amount of boots the player gathered
         double bootCount = 1;
         for (Item item : inventory) {
@@ -104,7 +104,7 @@ public class Player extends Character {
             }
         }
 
-        int modifier = (int) Math.round( 0.75 * bootCount );
+        int modifier = (int) Math.round(0.75 * bootCount);
 
         return super.getSpeed() / modifier;
     }
@@ -123,27 +123,27 @@ public class Player extends Character {
      */
     public void useItem() {
         // we check what kind of item the player has selected
-        switch ( inventory[selectedItem].getId() ) {
+        switch (inventory[selectedItem].getId()) {
             case Item.H_POTION:
                 // if a health potion is used, add 25 health to the current health
-                setHealth( getHealth() + 25 );
+                setHealth(getHealth() + 25);
                 tossItem();
                 break;
             case Item.M_POTION:
                 // if a mana potion is used, add 25 mana to the current mana
-                setMana( getMana() + 25 );
+                setMana(getMana() + 25);
                 tossItem();
                 break;
             case Item.HEART:
                 // if a heart is used, increase the max health and current health by 25
-                setMaxHealth( getMaxHealth() + 25 );
-                setHealth( getHealth() + 25 );
+                setMaxHealth(getMaxHealth() + 25);
+                setHealth(getHealth() + 25);
                 tossItem();
                 break;
             case Item.MANA:
                 // if a heart is used, increase the max mana and current mana by 25
-                setMaxMana( getMaxMana() + 25 );
-                setMana( getMana() + 25 );
+                setMaxMana(getMaxMana() + 25);
+                setMana(getMana() + 25);
                 tossItem();
                 break;
         }

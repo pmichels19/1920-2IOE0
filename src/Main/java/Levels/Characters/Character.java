@@ -48,7 +48,7 @@ public abstract class Character {
     private double tVal = 0.0;
     Timer timer;
 
-    public Character(int max_health, int max_mana, OBJModel model) {
+    public Character(int max_health, int max_mana, int speed, OBJModel model) {
         this.model = model;
         position = new Vector3f(0, 0f, 1.5f);
         scale = 1.2f;

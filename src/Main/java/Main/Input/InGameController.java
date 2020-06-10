@@ -100,32 +100,32 @@ public class InGameController extends Controller {
             if ( maze.canMoveUp() ) {
                 maze.moveUp();
 
-                movementCounter = player.getSpeed();
-                speed = 1f / (float) player.getSpeed();
+                movementCounter = (int) player.getSpeed();
+                speed = 1f / player.getSpeed();
                 vertical = true;
             }
         } else if ( window.buttonClicked( GLFW_KEY_A ) ) {
             if ( maze.canMoveLeft() ) {
                 maze.moveLeft();
 
-                movementCounter = player.getSpeed();
-                speed = -1f / (float) player.getSpeed();
+                movementCounter = (int) player.getSpeed();
+                speed = -1f / player.getSpeed();
                 vertical = false;
             }
         } else if ( window.buttonClicked( GLFW_KEY_S ) ) {
             if ( maze.canMoveDown() ) {
                 maze.moveDown();
 
-                movementCounter = player.getSpeed();
-                speed = -1f / (float) player.getSpeed();
+                movementCounter = (int) player.getSpeed();
+                speed = -1f / player.getSpeed();
                 vertical = true;
             }
         } else if ( window.buttonClicked( GLFW_KEY_D ) ) {
             if ( maze.canMoveRight() ) {
                 maze.moveRight();
 
-                movementCounter = player.getSpeed();
-                speed = 1f / (float) player.getSpeed();
+                movementCounter = (int) player.getSpeed();
+                speed = 1f / player.getSpeed();
                 vertical = false;
             }
         }

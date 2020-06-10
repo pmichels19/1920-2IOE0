@@ -26,7 +26,7 @@ public class Main {
     // we start the game in the main menu
     private static GameState state = GameState.MAIN_MENU;
 
-    // we want to make sure all objects use the same maze, we accomplish this by making it static
+    // we want toC make sure all objects use the same maze, we accomplish this by making it static
     private static Maze maze;
     private static World world;
 
@@ -61,7 +61,7 @@ public class Main {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // start the maze found in specified file and create the player object
-        maze = new Maze("level_1");
+        maze = new Maze("custom");
 
         // set up the world, corresponding GUI, the main menu and pause screen
         world = new World(maze, SCREEN_WIDTH, SCREEN_HEIGHT);

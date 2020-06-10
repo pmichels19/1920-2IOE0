@@ -4,6 +4,8 @@ import Graphics.OpenGL.Light;
 import Graphics.Transforming.Camera;
 import Graphics.OpenGL.Shader;
 import Graphics.Transforming.Transform;
+import Levels.Characters.Enemy;
+import Levels.Characters.EyeBall;
 import Levels.Characters.Player;
 import Levels.Framework.Point;
 import Levels.Framework.joml.*;
@@ -12,7 +14,10 @@ import Levels.Framework.Maze;
 import Levels.Objects.Object3D;
 import Levels.Objects.MagicBall;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static java.lang.Math.*;
@@ -35,33 +40,33 @@ public class World {
     // the radius around the player that is actually rendered
     private final int RADIUS = 8;
 
-    Vector3f DARK_ATTENUATION = new Vector3f(.5f,.2f,1.5f);
-    Vector3f LIGHT_ATTENUATION = new Vector3f(.5f,.2f,.5f);
+    Vector3f DARK_ATTENUATION = new Vector3f(.5f, .2f, 1.5f);
+    Vector3f LIGHT_ATTENUATION = new Vector3f(.5f, .2f, .5f);
     // the light object
     private final Light[] lights = {
-            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), null, DARK_ATTENUATION),
-            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), null, DARK_ATTENUATION),
-            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), null, DARK_ATTENUATION),
-            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), null, DARK_ATTENUATION),
-            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
 
-            new Light(new Vector3f(2,4,1f), new Vector3f(1f,0.2f,0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(2,4,5f), new Vector3f(1f,0.2f,0.2f), null, LIGHT_ATTENUATION),
+            new Light(new Vector3f(2, 4, 1f), new Vector3f(1f, 0.2f, 0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(2, 4, 5f), new Vector3f(1f, 0.2f, 0.2f), null, LIGHT_ATTENUATION),
 
-            new Light(new Vector3f(6,4,1f), new Vector3f(1f,1f,0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(6,4,5f), new Vector3f(1f,1f,0.2f), null, LIGHT_ATTENUATION),
+            new Light(new Vector3f(6, 4, 1f), new Vector3f(1f, 1f, 0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(6, 4, 5f), new Vector3f(1f, 1f, 0.2f), null, LIGHT_ATTENUATION),
 
-            new Light(new Vector3f(10,4,1f), new Vector3f(0.2f,1f,0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(10,4,5f), new Vector3f(0.2f,1f,0.2f), null, LIGHT_ATTENUATION),
+            new Light(new Vector3f(10, 4, 1f), new Vector3f(0.2f, 1f, 0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(10, 4, 5f), new Vector3f(0.2f, 1f, 0.2f), null, LIGHT_ATTENUATION),
 
-            new Light(new Vector3f(2,16,1f), new Vector3f(1f,0.2f,1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(2,16,5f), new Vector3f(1f,0.2f,1f), null, LIGHT_ATTENUATION),
+            new Light(new Vector3f(2, 16, 1f), new Vector3f(1f, 0.2f, 1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(2, 16, 5f), new Vector3f(1f, 0.2f, 1f), null, LIGHT_ATTENUATION),
 
-            new Light(new Vector3f(6,16,1f), new Vector3f(0.2f,0.2f,1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(6,16,5f), new Vector3f(0.2f,0.2f,1f), null, LIGHT_ATTENUATION),
+            new Light(new Vector3f(6, 16, 1f), new Vector3f(0.2f, 0.2f, 1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(6, 16, 5f), new Vector3f(0.2f, 0.2f, 1f), null, LIGHT_ATTENUATION),
 
-            new Light(new Vector3f(10,16,1f), new Vector3f(0.2f,1f,1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(10,16,5f), new Vector3f(0.2f,1f,1f), null, LIGHT_ATTENUATION)
+            new Light(new Vector3f(10, 16, 1f), new Vector3f(0.2f, 1f, 1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
+            new Light(new Vector3f(10, 16, 5f), new Vector3f(0.2f, 1f, 1f), null, LIGHT_ATTENUATION)
     };
 
     // variables to keep track of the player location in the world
@@ -70,11 +75,14 @@ public class World {
 
     private Player player;
 
+    // List that holds the enemies
+    private ArrayList<Enemy> enemyList = new ArrayList<>();
+
     /**
      * initialises the global variables for the renderer
      *
-     * @param maze the maze that has to be rendered
-     * @param width the width of the window
+     * @param maze   the maze that has to be rendered
+     * @param width  the width of the window
      * @param height the height of the window
      */
     public World(Maze maze, int width, int height) {
@@ -84,13 +92,21 @@ public class World {
 
         // prepare the transformations of the world
         transform = new Transform();
-        transform.getRotation().rotateAxis( -(float) toRadians(35.0), 1, 0, 0 );
+        transform.getRotation().rotateAxis(-(float) toRadians(35.0), 1, 0, 0);
 
         // set the maze object
         this.maze = maze;
 
         // position the camera
         resetCameraPosition();
+
+        // Initialize enemies
+        int enemyCount = 10;
+        for (int i = 0; i < enemyCount; i++) {
+            EyeBall eyeball = new EyeBall(100, 100);
+            eyeball.initializePosition(maze.getGrid().length / enemyCount * i, maze.getGrid().length / enemyCount * i, maze.getGrid().length);
+            enemyList.add(eyeball);
+        }
     }
 
     /**
@@ -102,11 +118,11 @@ public class World {
         xPlayer = maze.getPlayerLocation().getY();
 
         // initialize the camera by centering it on the player
-        camera.setPosition( new Vector3f(
-                xPlayer *2 ,
+        camera.setPosition(new Vector3f(
+                xPlayer * 2,
                 (maze.getGrid().length - yPlayer) * 2 - 10,
                 16
-        ) );
+        ));
 
         this.player = Player.getInstance();
     }
@@ -143,37 +159,37 @@ public class World {
         int y_player = maze.getPlayerLocation().getY();
 
         // get the start and end coordinates of both x and y axis
-        int x_start = Math.max( x_player - RADIUS, 0 );
-        int y_start = Math.max( y_player - RADIUS, 0 );
-        int x_end = Math.min( x_player + RADIUS + 1, grid.length );
-        int y_end = Math.min( y_player + RADIUS + 1, grid[x_player].length );
+        int x_start = Math.max(x_player - RADIUS, 0);
+        int y_start = Math.max(y_player - RADIUS, 0);
+        int x_end = Math.min(x_player + RADIUS + 1, grid.length);
+        int y_end = Math.min(y_player + RADIUS + 1, grid[x_player].length);
 
-        for ( int i = x_start; i < x_end; i++ ) {
-            for ( int j = y_start; j < y_end; j++ ) {
+        for (int i = x_start; i < x_end; i++) {
+            for (int j = y_start; j < y_end; j++) {
                 // determine what tile needs to be drawn and fill that into the sets made above
-                if ( grid[i][j] == Maze.MARKER_WALL ) {
+                if (grid[i][j] == Maze.MARKER_WALL) {
                     // we check if the tile to left is also a wall
-                    if ( j > 0 && grid[i][j - 1] != Maze.MARKER_WALL ) {
+                    if (j > 0 && grid[i][j - 1] != Maze.MARKER_WALL) {
                         // if there is no wall to the left, we wish to draw the left side of this wall
-                        leftWalls.add( new Point(j, grid.length - i) );
+                        leftWalls.add(new Point(j, grid.length - i));
                     }
 
                     // we check if the tile to right is also a wall
-                    if ( j < grid[i].length - 1 && grid[i][j + 1] != Maze.MARKER_WALL ) {
+                    if (j < grid[i].length - 1 && grid[i][j + 1] != Maze.MARKER_WALL) {
                         // if there is no wall to the right, we wish to draw the right side of this wall
-                        rightWalls.add( new Point(j, grid.length - i) );
+                        rightWalls.add(new Point(j, grid.length - i));
                     }
 
                     // we check if the tile in front is also a wall
-                    if ( i < grid.length - 1 && grid[i + 1][j] != Maze.MARKER_WALL ) {
+                    if (i < grid.length - 1 && grid[i + 1][j] != Maze.MARKER_WALL) {
                         // if there is no wall in front, we wish to draw the face of this wall
-                        faceWalls.add( new Point(j, grid.length - i) );
+                        faceWalls.add(new Point(j, grid.length - i));
                     }
 
                     // we always want to render a ceiling:
-                    ceilings.add( new Point(j, grid.length - i) );
-                } else if ( grid[i][j] == Maze.MARKER_SPACE || grid[i][j] == Maze.MARKER_PLAYER ) {
-                    floors.add( new Point( j, grid.length - i ) );
+                    ceilings.add(new Point(j, grid.length - i));
+                } else if (grid[i][j] == Maze.MARKER_SPACE || grid[i][j] == Maze.MARKER_PLAYER) {
+                    floors.add(new Point(j, grid.length - i));
                 }
             }
         }
@@ -183,34 +199,41 @@ public class World {
      * renders the tiles as specified in the sets filled in in {@code fillRenderSets}
      */
     private void renderSets() {
-        for ( Point point : floors ) {
-            renderer.addNormalMap( Background.DIRT_NORMAL.getTexture() );
-            renderer.renderTile( Background.DIRT.getTexture(), point.getX(), point.getY(), TileRenderer.FLOOR );
+        for (Point point : floors) {
+            renderer.addNormalMap(Background.DIRT_NORMAL.getTexture());
+            renderer.renderTile(Background.DIRT.getTexture(), point.getX(), point.getY(), TileRenderer.FLOOR);
         }
 
-        for ( Point point : leftWalls ) {
-            renderer.addNormalMap( Wall.BRICKWALL_NORMAL.getTexture() );
-            renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.LEFTS );
+        for (Point point : leftWalls) {
+            renderer.addNormalMap(Wall.BRICKWALL_NORMAL.getTexture());
+            renderer.renderTile(Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.LEFTS);
         }
 
-        for ( Point point : rightWalls ) {
-            renderer.addNormalMap( Wall.BRICKWALL_NORMAL.getTexture() );
-            renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.RIGHT );
+        for (Point point : rightWalls) {
+            renderer.addNormalMap(Wall.BRICKWALL_NORMAL.getTexture());
+            renderer.renderTile(Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.RIGHT);
         }
 
-        for ( Point point : faceWalls ) {
-            renderer.addNormalMap( Wall.BRICKWALL_NORMAL.getTexture() );
-            renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES );
+        for (Point point : faceWalls) {
+            renderer.addNormalMap(Wall.BRICKWALL_NORMAL.getTexture());
+            renderer.renderTile(Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES);
         }
 
+        // Render enemies
+        for (Enemy enemy : enemyList) {
+            enemy.move(maze.getPlayerLocation(), maze.getGrid());
+            renderer.renderCharacter(enemy);
+        }
+
+        // Render player
         player.setGridPosition(xPlayer, yPlayer, maze.getGrid().length);
         renderer.renderCharacter(player);
 
         lights[0].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 1f));
-        lights[1].setPosition(new Vector3f(player.getPosition().x+1f, player.getPosition().y, 5f));
-        lights[2].setPosition(new Vector3f(player.getPosition().x-1f, player.getPosition().y, 5f));
-        lights[3].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y+1f, 5f));
-        lights[4].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y-1f, 5f));
+        lights[1].setPosition(new Vector3f(player.getPosition().x + 1f, player.getPosition().y, 5f));
+        lights[2].setPosition(new Vector3f(player.getPosition().x - 1f, player.getPosition().y, 5f));
+        lights[3].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y + 1f, 5f));
+        lights[4].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y - 1f, 5f));
 
         for (Light light : lights) {
             Object3D obj = light.getObject();
@@ -222,8 +245,8 @@ public class World {
             }
         }
 
-        for ( Point point : ceilings ) {
-            renderer.renderTile( Wall.CEILING.getTexture(), point.getX(), point.getY(), TileRenderer.CEILS );
+        for (Point point : ceilings) {
+            renderer.renderTile(Wall.CEILING.getTexture(), point.getX(), point.getY(), TileRenderer.CEILS);
         }
     }
 
@@ -241,13 +264,15 @@ public class World {
     /**
      * moves the player character as specified by the parameters
      *
-     * @param speed the distance covered in a single frame
+     * @param speed    the distance covered in a single frame
      * @param vertical whether movement is supposed to be vertical or not
      */
     public void movePlayer(float speed, boolean vertical) {
         // calculate the amount of movement in the x and y direction
         xPlayer += vertical ? 0f : speed;
         yPlayer += vertical ? -speed : 0f;
+        Vector3f playerPos = this.player.getPosition();
+        playerPos.z = 1.5f;
 
         // upon moving the player, we also have to move the camera
         adjustCamera(speed * 2f, vertical);
@@ -256,20 +281,20 @@ public class World {
     /**
      * moves the camera, as specified by the parameters
      *
-     * @param speed the distance covered by the movement in a single frame
+     * @param speed    the distance covered by the movement in a single frame
      * @param vertical whether movement is supposed to be vertical or not
      */
     private void adjustCamera(float speed, boolean vertical) {
         // calculate the new camera position
         Vector3f cameraPos = camera.getPosition();
-        camera.setPosition( new Vector3f(
-                cameraPos.x + ( vertical ? 0 : speed ),
-                cameraPos.y + ( vertical ? speed : 0 ),
+        camera.setPosition(new Vector3f(
+                cameraPos.x + (vertical ? 0 : speed),
+                cameraPos.y + (vertical ? speed : 0),
                 cameraPos.z
-        ) );
+        ));
 
         // adjust the camera for the shader, so it actually has an effect on the position of the render
-        SHADER.setCamera( camera );
+        SHADER.setCamera(camera);
     }
 }
 

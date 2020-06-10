@@ -2,6 +2,7 @@ package Levels.Characters;
 
 import Graphics.OBJModel;
 import Graphics.OpenGL.Shader;
+import Levels.Framework.Point;
 import Levels.Framework.joml.Matrix4f;
 import Levels.Framework.joml.Vector3f;
 
@@ -16,6 +17,9 @@ public abstract class Character {
     // Holds the current position
     private Vector3f position;
 
+    // Holds maze position
+    private Point mazePosition;
+
     // Holds the scale
     private float scale;
 
@@ -27,7 +31,7 @@ public abstract class Character {
     private float gamePositionY;
 
     // the amount of frames needed to move one tile
-    private int speed;
+    //private int speed;
 
     // the values for max health and mana
     int max_health;
@@ -36,6 +40,9 @@ public abstract class Character {
     // the values for current health and mana
     int cur_health;
     int cur_mana;
+
+    // Speed of the character
+    private float speed;
 
     //Time related objects to link animation to
     private double tVal = 0.0;
@@ -82,7 +89,6 @@ public abstract class Character {
 //        generateModel(x_pos, y_pos);
 
 
-
         model.render(shader);
     }
 
@@ -103,6 +109,10 @@ public abstract class Character {
 
     public OBJModel getModel() {
         return model;
+    }
+
+    public void setModel(OBJModel model) {
+        this.model = model;
     }
 
     public Vector3f getPosition() {
@@ -154,9 +164,9 @@ public abstract class Character {
         return gamePositionY;
     }
 
-    public int getSpeed() {
-        return speed;
-    }
+//    public int getSpeed() {
+//        return speed;
+//    }
 
     public void setSpeed(int speed) {
         this.speed = speed;
@@ -193,5 +203,33 @@ public abstract class Character {
         }
         setGamePositionX(gamePositionX);
         setGridPositionY(gamePositionY, gridLength);
+    }
+
+    public Point getMazePosition() {
+        return mazePosition;
+    }
+
+    public void setMazePosition(Point mazePosition) {
+        this.mazePosition = mazePosition;
+    }
+
+    public float getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
+
+    /**
+     * Initializes the starting position of the enemy
+     *
+     * @param x          x location
+     * @param y          y location
+     * @param gridLength length of the grid
+     */
+    public void initializePosition(int x, int y, int gridLength) {
+        setMazePosition(new Point(x, y));
+        setGridPosition((float) y, (float) x, gridLength);
     }
 }

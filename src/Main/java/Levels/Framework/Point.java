@@ -45,4 +45,8 @@ public class Point {
     public void setY(int y) {
         this.y = y;
     }
+
+    public int calculateManhattanDistance(Point point){
+        return Math.abs( this.getX() - point.getX()) + Math.abs(this.getY() - point.getY());
+    }
 }

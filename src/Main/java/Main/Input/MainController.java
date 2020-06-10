@@ -64,7 +64,11 @@ public class MainController {
             }
 
             assert controller != null;
-            controller.checkInputs();
+            try {
+                controller.checkInputs();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         } else {
             startUpCooldown--;
         }

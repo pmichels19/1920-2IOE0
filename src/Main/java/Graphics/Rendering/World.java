@@ -40,20 +40,20 @@ public class World {
     // the tile renderer to actaully draw the world and the player
     private TileRenderer renderer;
 
-    Vector3f DARK_ATTENUATION = new Vector3f(1,0.5f,0.2f);
+    Vector3f DARK_ATTENUATION = new Vector3f(1, 0.5f, 0.2f);
     // the light object
     private final Light[] lights = {
-            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
-            new Light(new Vector3f(0f,0f,0f), new Vector3f(1f,1f,1f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
 
-            new Light(new Vector3f(2,6,1f), new Vector3f(0.2f,1f,0.2f), Background.TORCH.getTexture(), DARK_ATTENUATION),
-            new Light(new Vector3f(2,6,6f), new Vector3f(0.2f,1f,0.2f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(2, 6, 1f), new Vector3f(0.2f, 1f, 0.2f), Background.TORCH.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(2, 6, 6f), new Vector3f(0.2f, 1f, 0.2f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
 
-            new Light(new Vector3f(6,8,1f), new Vector3f(1,0.2f,0.2f), Background.TORCH.getTexture(), DARK_ATTENUATION),
-            new Light(new Vector3f(6,8,6f), new Vector3f(1,0.2f,0.2f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(6, 8, 1f), new Vector3f(1, 0.2f, 0.2f), Background.TORCH.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(6, 8, 6f), new Vector3f(1, 0.2f, 0.2f), Background.NOTHING.getTexture(), DARK_ATTENUATION),
 
-            new Light(new Vector3f(10,4,1f), new Vector3f(0.2f,0.2f,1), Background.TORCH.getTexture(), DARK_ATTENUATION),
-            new Light(new Vector3f(10,4,6f), new Vector3f(0.2f,0.2f,1), Background.NOTHING.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(10, 4, 1f), new Vector3f(0.2f, 0.2f, 1), Background.TORCH.getTexture(), DARK_ATTENUATION),
+            new Light(new Vector3f(10, 4, 6f), new Vector3f(0.2f, 0.2f, 1), Background.NOTHING.getTexture(), DARK_ATTENUATION),
     };
 
     // variables to keep track of the player location in the world
@@ -68,8 +68,8 @@ public class World {
     /**
      * initialises the global variables for the renderer
      *
-     * @param maze the maze that has to be rendered
-     * @param width the width of the window
+     * @param maze   the maze that has to be rendered
+     * @param width  the width of the window
      * @param height the height of the window
      */
     public World(Maze maze, int width, int height) {
@@ -79,7 +79,7 @@ public class World {
 
         // prepare the transformations of the world
         transform = new Transform();
-        transform.getRotation().rotateAxis( -(float) toRadians(35.0), 1, 0, 0 );
+        transform.getRotation().rotateAxis(-(float) toRadians(35.0), 1, 0, 0);
 
         // set the maze object
         this.maze = maze;
@@ -88,10 +88,11 @@ public class World {
         resetCameraPosition();
 
         // Initialize enemies
-        EyeBall eyeball = new EyeBall(100, 100);
-        eyeball.initializePosition(1,4, maze.getGrid().length);
-        enemyList.add(eyeball);
-      
+        for (int i = 0; i < 6; i++) {
+            EyeBall eyeball = new EyeBall(100, 100);
+            eyeball.initializePosition(i, i, maze.getGrid().length);
+            enemyList.add(eyeball);
+        }
         // prepare the tile renderer for rendering
         renderer = TileRenderer.getInstance();
     }
@@ -105,11 +106,11 @@ public class World {
         xPlayer = maze.getPlayerLocation().getY();
 
         // initialize the camera by centering it on the player
-        camera.setPosition( new Vector3f(
-                xPlayer *2 ,
+        camera.setPosition(new Vector3f(
+                xPlayer * 2,
                 (maze.getGrid().length - yPlayer) * 2 - 10,
                 16
-        ) );
+        ));
 
 
         this.player = Player.getInstance();
@@ -136,58 +137,58 @@ public class World {
         Set<Point> ceilings = new HashSet<>();
 
         char[][] grid = maze.getGrid();
-        for ( int i = 0; i < grid.length; i++ ) {
-            for ( int j = 0; j < grid[i].length; j++ ) {
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[i].length; j++) {
                 // determine what tile needs to be drawn and fill that into the sets made above
-                if ( grid[i][j] == Maze.MARKER_WALL ) {
+                if (grid[i][j] == Maze.MARKER_WALL) {
                     // we check if the tile to left is also a wall
-                    if ( j > 0 && grid[i][j - 1] != Maze.MARKER_WALL ) {
+                    if (j > 0 && grid[i][j - 1] != Maze.MARKER_WALL) {
                         // if there is no wall to the left, we wish to draw the left side of this wall
-                        leftWalls.add( new Point(j, grid.length - i) );
+                        leftWalls.add(new Point(j, grid.length - i));
                     }
 
                     // we check if the tile to right is also a wall
-                    if ( j < grid.length - 1 && grid[i][j + 1] != Maze.MARKER_WALL ) {
+                    if (j < grid.length - 1 && grid[i][j + 1] != Maze.MARKER_WALL) {
                         // if there is no wall to the right, we wish to draw the right side of this wall
-                        rightWalls.add( new Point(j, grid.length - i) );
+                        rightWalls.add(new Point(j, grid.length - i));
                     }
 
                     // we check if the tile in front is also a wall
-                    if ( i < grid.length - 1 && grid[i + 1][j] != Maze.MARKER_WALL ) {
+                    if (i < grid.length - 1 && grid[i + 1][j] != Maze.MARKER_WALL) {
                         // if there is no wall in front, we wish to draw the face of this wall
-                        faceWalls.add( new Point(j, grid.length - i) );
+                        faceWalls.add(new Point(j, grid.length - i));
                     }
 
                     // we always want to render a ceiling:
-                    ceilings.add( new Point(j, grid.length - i) );
-                } else if ( grid[i][j] == Maze.MARKER_SPACE || grid[i][j] == Maze.MARKER_PLAYER ) {
-                    floors.add( new Point( j, grid.length - i ) );
+                    ceilings.add(new Point(j, grid.length - i));
+                } else if (grid[i][j] == Maze.MARKER_SPACE || grid[i][j] == Maze.MARKER_PLAYER) {
+                    floors.add(new Point(j, grid.length - i));
                 }
             }
         }
 
-        for ( Point point : floors ) {
-            renderer.addNormalMap( Background.DIRT_NORMAL.getTexture() );
-            renderer.renderTile( Background.DIRT.getTexture(), point.getX(), point.getY(), TileRenderer.FLOOR );
+        for (Point point : floors) {
+            renderer.addNormalMap(Background.DIRT_NORMAL.getTexture());
+            renderer.renderTile(Background.DIRT.getTexture(), point.getX(), point.getY(), TileRenderer.FLOOR);
         }
 
-        for ( Point point : leftWalls ) {
-            renderer.addNormalMap( Wall.BRICKWALL_NORMAL.getTexture() );
-            renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.LEFTS );
+        for (Point point : leftWalls) {
+            renderer.addNormalMap(Wall.BRICKWALL_NORMAL.getTexture());
+            renderer.renderTile(Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.LEFTS);
         }
 
-        for ( Point point : rightWalls ) {
-            renderer.addNormalMap( Wall.BRICKWALL_NORMAL.getTexture() );
-            renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.RIGHT );
+        for (Point point : rightWalls) {
+            renderer.addNormalMap(Wall.BRICKWALL_NORMAL.getTexture());
+            renderer.renderTile(Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.RIGHT);
         }
 
-        for ( Point point : faceWalls ) {
-            renderer.addNormalMap( Wall.BRICKWALL_NORMAL.getTexture() );
-            renderer.renderTile( Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES );
+        for (Point point : faceWalls) {
+            renderer.addNormalMap(Wall.BRICKWALL_NORMAL.getTexture());
+            renderer.renderTile(Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES);
         }
 
         // Render enemies
-        for (Enemy enemy : enemyList){
+        for (Enemy enemy : enemyList) {
             enemy.move(maze.getPlayerLocation(), maze.getGrid());
             renderer.renderCharacter(enemy);
         }
@@ -200,19 +201,19 @@ public class World {
         lights[1].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 1f));
 
         for (Light light : lights) {
-            renderer.renderTile( light.getTexture(), light.getPosition().x/2,  (light.getPosition().y)/2 + 0.65f, TileRenderer.FACES );
+            renderer.renderTile(light.getTexture(), light.getPosition().x / 2, (light.getPosition().y) / 2 + 0.65f, TileRenderer.FACES);
         }
 
 
-        for ( Point point : ceilings ) {
-            renderer.renderTile( Wall.CEILING.getTexture(), point.getX(), point.getY(), TileRenderer.CEILS );
+        for (Point point : ceilings) {
+            renderer.renderTile(Wall.CEILING.getTexture(), point.getX(), point.getY(), TileRenderer.CEILS);
         }
     }
 
     /**
      * moves the player character as specified by the parameters
      *
-     * @param speed the distance covered in a single frame
+     * @param speed    the distance covered in a single frame
      * @param vertical whether movement is supposed to be vertical or not
      */
     public void movePlayer(float speed, boolean vertical) {
@@ -229,20 +230,20 @@ public class World {
     /**
      * moves the camera, as specified by the parameters
      *
-     * @param speed the distance covered by the movement in a single frame
+     * @param speed    the distance covered by the movement in a single frame
      * @param vertical whether movement is supposed to be vertical or not
      */
     private void adjustCamera(float speed, boolean vertical) {
         // calculate the new camera position
         Vector3f cameraPos = camera.getPosition();
-        camera.setPosition( new Vector3f(
-                cameraPos.x + ( vertical ? 0 : speed ),
-                cameraPos.y + ( vertical ? speed : 0 ),
+        camera.setPosition(new Vector3f(
+                cameraPos.x + (vertical ? 0 : speed),
+                cameraPos.y + (vertical ? speed : 0),
                 cameraPos.z
-        ) );
+        ));
 
         // adjust the camera for the shader, so it actually has an effect on the position of the render
-        SHADER.setCamera( camera );
+        SHADER.setCamera(camera);
     }
 }
 

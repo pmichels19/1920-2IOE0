@@ -18,6 +18,9 @@ public abstract class Enemy extends Character {
     // The distance that an enemy should be from the player to move towards the player
     private int detectionDistance = 10;
 
+    // Random location grid size (should be an even number)
+    private final int randomPathDistance = 16;
+
 
     /**
      * Moves the enemy, either to a random location or the player (if it is close enough)
@@ -27,13 +30,18 @@ public abstract class Enemy extends Character {
      */
     public void move(Point playerLocation, char[][] grid) {
         if (!isMoving()) {
-            ArrayList<Point> pathToPlayer = getPathToPlayer(playerLocation, grid);
-            if (pathToPlayer.size() > detectionDistance) {
-                // if the
-                doRandomMove(grid);
+            if (getMazePosition().calculateManhattanDistance(playerLocation) <= detectionDistance) { // First check manhattan distance since it's faster
+                ArrayList<Point> pathToPlayer = getPathToPlayer(playerLocation, grid);
+                if (pathToPlayer.size() > detectionDistance) {
+                    // if the player is outside of the detection distance
+                    doRandomMove(grid);
+                } else {
+                    // If player is in detection range, move towards the player
+                    moveToPoint(pathToPlayer.get(pathToPlayer.size() - 1), grid.length);
+                }
             } else {
-                // If player is in detection range, move towards the player
-                moveToPoint(pathToPlayer.get(pathToPlayer.size() - 1), grid.length);
+                // if the player is outside of the detection distance
+                doRandomMove(grid);
             }
         } else {
             // Updates the movement step if the enemy is already moving
@@ -112,13 +120,13 @@ public abstract class Enemy extends Character {
         if (randomLocation == null) { // If no random location has been set
             setRandomLocation(grid);
         } else if ((getGamePositionY() == randomLocation.getX())
-                && (getGamePositionX() == randomLocation.getY())){ // If it has reached the set location
+                && (getGamePositionX() == randomLocation.getY())) { // If it has reached the set location
             randomLocation = null;
         } else { // if not reached the random location
             // Get next step towards new location
             AStarSolver ass = new AStarSolver();
             ArrayList<Point> nextPoint = ass.CalculateShortestPath(getMazePosition(), randomLocation, grid);
-            moveToPoint(nextPoint.get(nextPoint.size()-1), grid.length);
+            moveToPoint(nextPoint.get(nextPoint.size() - 1), grid.length);
         }
     }
 
@@ -140,13 +148,20 @@ public abstract class Enemy extends Character {
      * @param grid a grid representation of the maze
      */
     private void setRandomLocation(char[][] grid) {
-        int randomX = (int) (Math.random() * grid.length - 1);
-        int randomY = (int) (Math.random() * grid[0].length -1 );
-        while (grid[randomX][randomY] != Maze.MARKER_SPACE) {
-            randomX = (int) (Math.random() * grid.length -1 );
-            randomY = (int) (Math.random() * grid[0].length -1);
+        int randomX = (int) (Math.random() * randomPathDistance) - randomPathDistance / 2 + getMazePosition().getX(); // new location is within a 8x8 grid around the current location
+        int randomY = (int) (Math.random() * randomPathDistance) - randomPathDistance / 2 + getMazePosition().getY();
+//        while ((randomX < 0 || randomX >= grid.length)
+//                || randomY < 0 || randomY >= grid[0].length
+//                || grid[randomX][randomY] != Maze.MARKER_SPACE) {
+//            randomX = (int) (Math.random() * 16) - 8 + getMazePosition().getX(); // new location is within a 8x8 grid around the current location
+//            randomY = (int) (Math.random() * 16) - 8 + getMazePosition().getY();
+//        }
+        if (!(randomX < 0 || randomX >= grid.length
+                || randomY < 0 || randomY >= grid[0].length
+                || grid[randomX][randomY] != Maze.MARKER_SPACE)) { // check if the random location is a correct one
+            this.randomLocation = new Point(randomX, randomY);
         }
-        this.randomLocation = new Point(randomX, randomY);
+
     }
 
     /**

@@ -25,7 +25,7 @@ public class Main {
     // we start the game in the main menu
     private static GameState state = GameState.MAIN_MENU;
 
-    // we want to make sure all objects use the same maze, we accomplish this by making it static
+    // we want toC make sure all objects use the same maze, we accomplish this by making it static
     private static Maze maze;
     private static World world;
 

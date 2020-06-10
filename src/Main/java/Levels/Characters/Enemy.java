@@ -2,6 +2,7 @@ package Levels.Characters;
 
 import AI.AStar.AStarSolver;
 import Graphics.OBJModel;
+import Levels.Framework.Maze;
 import Levels.Framework.Point;
 
 import java.util.ArrayList;
@@ -108,8 +109,16 @@ public abstract class Enemy extends Character {
      * @param grid holds the current maze
      */
     private void doRandomMove(char[][] grid) {
-        if (randomLocation == null) {
+        if (randomLocation == null) { // If no random location has been set
             setRandomLocation(grid);
+        } else if ((getGamePositionY() == randomLocation.getX())
+                && (getGamePositionX() == randomLocation.getY())){ // If it has reached the set location
+            randomLocation = null;
+        } else { // if not reached the random location
+            // Get next step towards new location
+            AStarSolver ass = new AStarSolver();
+            ArrayList<Point> nextPoint = ass.CalculateShortestPath(getMazePosition(), randomLocation, grid);
+            moveToPoint(nextPoint.get(nextPoint.size()-1), grid.length);
         }
     }
 
@@ -117,7 +126,7 @@ public abstract class Enemy extends Character {
      * Returns the shortest path from the enemy to the player from back to front (first move is path[-1])
      *
      * @param playerLocation Location of the player
-     * @param grid holds the current maze
+     * @param grid           holds the current maze
      * @return Shortest path enemy to the player, from back to front (first move is path[-1]
      */
     public ArrayList<Point> getPathToPlayer(Point playerLocation, char[][] grid) {
@@ -125,9 +134,19 @@ public abstract class Enemy extends Character {
         return ass.CalculateShortestPath(this.getMazePosition(), playerLocation, grid);
     }
 
-    public void setRandomLocation(char[][] grid) {
-        Point randomLocation = new Point(0,0);
-        this.randomLocation = randomLocation;
+    /**
+     * Selects a random point on the grid for the enemy to start moving towards
+     *
+     * @param grid a grid representation of the maze
+     */
+    private void setRandomLocation(char[][] grid) {
+        int randomX = (int) (Math.random() * grid.length - 1);
+        int randomY = (int) (Math.random() * grid[0].length -1 );
+        while (grid[randomX][randomY] != Maze.MARKER_SPACE) {
+            randomX = (int) (Math.random() * grid.length -1 );
+            randomY = (int) (Math.random() * grid[0].length -1);
+        }
+        this.randomLocation = new Point(randomX, randomY);
     }
 
     /**
@@ -142,6 +161,11 @@ public abstract class Enemy extends Character {
         return detectionDistance;
     }
 
+    /**
+     * Sets the path distance in grid positions that an enemy detects the player and starts going towards the player
+     *
+     * @param detectionDistance the distance in grid positon to set as the detection distance
+     */
     public void setDetectionDistance(int detectionDistance) {
         this.detectionDistance = detectionDistance;
     }

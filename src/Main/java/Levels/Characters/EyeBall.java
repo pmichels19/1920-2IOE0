@@ -19,7 +19,7 @@ public class EyeBall extends Enemy {
 //    private static String normalMapFile = null;
 
     // Speed of the eyeball
-    private static float speed = 1f / 30f;
+    private static float speed = 1f / 20f;
 
     public EyeBall(int max_health, int max_mana) {
         super(max_health, max_mana, null);
@@ -46,7 +46,7 @@ public class EyeBall extends Enemy {
         setScale(0.4f);
         setPosition(new Vector3f(1f, 1f, 2f));
         setSpeed(speed);
-        setDetectionDistance(10);
+        setDetectionDistance(4);
         setModel(eyeModel);
     }
 

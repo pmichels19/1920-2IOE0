@@ -60,7 +60,7 @@ public class Main {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         // start the maze found in specified file and create the player object
-        maze = new Maze("level_1");
+        maze = new Maze("custom");
 
         // set up the world, corresponding GUI, the main menu and pause screen
         world = new World(maze, SCREEN_WIDTH, SCREEN_HEIGHT);

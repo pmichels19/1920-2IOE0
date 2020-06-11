@@ -29,13 +29,13 @@ public class Item {
     public static final int MANA = 2;
     private static final Item mana = new Item(
             "src/Main/java/Textures/Items/heart.png",
-            new Vector3f(0, 0, 1)               // BLUE
+            new Vector3f(0, 0, 0.75f)               // BLUE
     );
 
     public static final int BOOT = 3;
     private static final Item boot = new Item(
             "src/Main/java/Textures/Items/boot.png",
-            new Vector3f(0, 1, 0)               // GREEN
+            new Vector3f(0, 0.5f, 0)               // GREEN
     );
 
     public static final int COIN = 4;
@@ -47,13 +47,13 @@ public class Item {
     public static final int H_POTION = 5;
     private static final Item hPot = new Item(
             "src/Main/java/Textures/Items/health_potion.png",
-            new Vector3f(0.78f, 0.08f, 0.52f)   //PINK
+            new Vector3f(1, 0, 1)                //PINK
     );
 
     public static final int M_POTION = 6;
     private static final Item mPot = new Item(
             "src/Main/java/Textures/Items/mana_potion.png",
-            new Vector3f(0.5f, 0, 0.5f)         // PURPLE
+            new Vector3f(0, 1, 1)                // LIGHTBLUE
     );
 
     private final int id;

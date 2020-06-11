@@ -44,10 +44,11 @@ public class World {
     // the radius around the player that is actually rendered
     private final int RADIUS = 8;
 
-    Vector3f DARK_ATTENUATION = new Vector3f(.5f, .2f, 1.5f);
-    Vector3f LIGHT_ATTENUATION = new Vector3f(.5f, .2f, .5f);
+    private final Vector3f DARK_ATTENUATION = new Vector3f(.5f, .2f, 1.5f);
+    private final Vector3f LIGHT_ATTENUATION = new Vector3f(.5f, .2f, .5f);
+
     // the light object
-    private final Light[] lights = {
+    private final Light[] player_lights = {
             new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
             new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
             new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
@@ -63,6 +64,9 @@ public class World {
 
     // List that holds the enemies
     private ArrayList<Enemy> enemyList = new ArrayList<>();
+
+    // the map that holds light objects to be rendered at the position defined by the point
+    private final Map<Point, Set<Light>> lightMap = new HashMap<>();
 
     /**
      * initialises the global variables for the renderer
@@ -97,8 +101,6 @@ public class World {
         createLights();
     }
 
-    private final Map<Point, Set<Light>> lightMap = new HashMap<>();
-
     /**
      * method that fills the {@code lightMap}
      */
@@ -117,7 +119,7 @@ public class World {
                     // add the orb with the desired light color
                     toAdd.add(
                             new Light(
-                                    new Vector3f(x, grid.length - y, 1f),
+                                    new Vector3f(x * 2, (grid.length - y) * 2, 1f),
                                     Item.getColorById(Character.getNumericValue(grid[y][x])),
                                     MagicBall.getInstance(),
                                     LIGHT_ATTENUATION
@@ -125,7 +127,7 @@ public class World {
                     );
                     toAdd.add(
                             new Light(
-                                    new Vector3f(x, grid.length - y, 5f),
+                                    new Vector3f(x * 2, (grid.length - y) * 2, 5f),
                                     Item.getColorById(Character.getNumericValue(grid[y][x])),
                                     null,
                                     LIGHT_ATTENUATION
@@ -161,7 +163,7 @@ public class World {
     private final Set<Point> faceWalls = new HashSet<>();
     private final Set<Point> ceilings = new HashSet<>();
 
-    private final Set<Light> itemOrbs = new HashSet<>();
+    private final Set<Light> lights = new HashSet<>();
 
     /**
      * renders the maze
@@ -171,9 +173,9 @@ public class World {
         renderer.setShader(SHADER);
         renderer.setCamera(camera);
         renderer.setTransform(transform);
-        SHADER.setLights(lights);
 
         fillRenderSets();
+        setActiveLights();
         renderSets();
         clearRenderSets();
     }
@@ -223,10 +225,40 @@ public class World {
                 } else if ( Maze.ITEM_MARKERS.contains( grid[i][j] ) ) {
                     floors.add(position);
                     // if the maze entry contains an item, then there should be a set of light objects for it
-                    itemOrbs.addAll( lightMap.get(position) );
+                    if (lightMap.containsKey(position)) {
+                        lights.addAll(lightMap.get(position));
+                    }
                 }
             }
         }
+    }
+
+    /**
+     * method that passes the lights that are currently active in the world to the shader
+     */
+    private void setActiveLights() {
+        // after filling the sets, we want to check which lights are active and pass those to the shader
+        Light[] active_lights = new Light[ lights.size() + player_lights.length ];
+        int i = 0;
+        for (Light light : lights) {
+            active_lights[i] = light;
+            i++;
+        }
+
+        // correct the location of the player lights
+        player_lights[0].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 1f));
+        player_lights[1].setPosition(new Vector3f(player.getPosition().x + 1f, player.getPosition().y, 5f));
+        player_lights[2].setPosition(new Vector3f(player.getPosition().x - 1f, player.getPosition().y, 5f));
+        player_lights[3].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y + 1f, 5f));
+        player_lights[4].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y - 1f, 5f));
+
+        active_lights[i] = player_lights[0];
+        active_lights[i + 1] = player_lights[1];
+        active_lights[i + 2] = player_lights[2];
+        active_lights[i + 3] = player_lights[3];
+        active_lights[i + 4] = player_lights[4];
+
+        SHADER.setLights( active_lights );
     }
 
     /**
@@ -263,23 +295,7 @@ public class World {
         player.setGridPosition(xPlayer, yPlayer, maze.getGrid().length);
         renderer.renderCharacter(player);
 
-        lights[0].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 1f));
-        lights[1].setPosition(new Vector3f(player.getPosition().x + 1f, player.getPosition().y, 5f));
-        lights[2].setPosition(new Vector3f(player.getPosition().x - 1f, player.getPosition().y, 5f));
-        lights[3].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y + 1f, 5f));
-        lights[4].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y - 1f, 5f));
-
         for (Light light : lights) {
-            Object3D obj = light.getObject();
-            if (light.getObject() != null) {
-                Vector3f pos = new Vector3f(light.getPosition().x, light.getPosition().y, 0f);
-                obj.setPosition(pos);
-                obj.setColor(light.getColor());
-                renderer.renderObject(obj);
-            }
-        }
-
-        for (Light light : itemOrbs) {
             Object3D obj = light.getObject();
             if (light.getObject() != null) {
                 Vector3f pos = new Vector3f(light.getPosition().x, light.getPosition().y, 0f);
@@ -303,6 +319,7 @@ public class World {
         rightWalls.clear();
         faceWalls.clear();
         ceilings.clear();
+        lights.clear();
     }
 
     /**

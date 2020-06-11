@@ -2,9 +2,9 @@ package Main;
 
 import Graphics.OpenGL.Texture;
 import Levels.Assets.Items.Item;
+import Levels.Assets.Tiles.GUIElements;
 import Levels.Characters.Player;
 import Levels.Framework.Point;
-import Main.Main;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Scanner;
 
-import static Graphics.IO.ScreenShot.takeScreenShot;
 import static Levels.Assets.Items.Item.getItemById;
 
 /**
@@ -47,7 +46,7 @@ public class SaveManager {
                 texture = new Texture( SLOTS[slot].getPath() + "/lastSave.png" );
             } else {
                 // otherwise we just use the same white as used for the gui background
-                texture = new Texture( "src/Main/java/Textures/GUIElements/GUI_background.png" );
+                texture = GUIElements.BACKGROUND.getTexture();
             }
 
             // fill the save texture
@@ -63,6 +62,7 @@ public class SaveManager {
      * @param slot the slot to empty
      */
     public static void purgeSlot(int slot) {
+        checkExistingSaves();
         File[] save_data = SLOTS[slot].listFiles();
         for (File file : save_data) {
             if ( !file.delete() ) {
@@ -70,6 +70,9 @@ public class SaveManager {
                 throw new IllegalStateException("Could not purge save slot " + slot);
             }
         }
+
+        // also reset the save texture
+        SAVE_TEXTURES[slot] = null;
     }
 
     /**
@@ -78,6 +81,7 @@ public class SaveManager {
      * @param slot the slot to save to
      */
     public static void saveToSlot(int slot) {
+        checkExistingSaves();
         // start a stringbuilder to write the save file
         StringBuilder stringBuilder = new StringBuilder();
         Player player = Player.getInstance();
@@ -146,12 +150,35 @@ public class SaveManager {
     }
 
     /**
+     * this method checks if the saveslot folders exits, if they dont, they are made
+     */
+    private static void checkExistingSaves() {
+        // check if the Saves folder exists, if not: make one
+        File savesFolder = new File("Saves");
+        if ( !savesFolder.exists() ) {
+            if ( !savesFolder.mkdir() ) {
+                throw new IllegalStateException("Failed to create Saves directory");
+            }
+        }
+
+        // also check the save slot folders:
+        for ( File slot : SLOTS ) {
+            if ( !slot.exists() ) {
+                if ( !slot.mkdir() ) {
+                    throw new IllegalStateException("Failed to create save slot directory");
+                }
+            }
+        }
+    }
+
+    /**
      * loads the data from the requested slot into the player and maze object
      *
      * @param slot the slot to load data from
      * @return whether the load has been completed successfully
      */
     public static boolean loadFromSlot(int slot) {
+        checkExistingSaves();
         if (slot < 0 || slot >= SLOTS.length) {
             return false;
         }

@@ -23,7 +23,7 @@ public class InGameController extends Controller {
     boolean vertical;
 
     // variables used for the drawing canvas
-    private RunDrawingCanvas drawingCanvas = new RunDrawingCanvas();
+    private final RunDrawingCanvas drawingCanvas = new RunDrawingCanvas();
     private boolean stopped = false;
 
     private boolean released = true;
@@ -153,39 +153,5 @@ public class InGameController extends Controller {
                 ((SpellAgility) spell).checkDuration();
             }
         }
-    }
-
-    /**
-     * reduces the cooldown left on moving by one
-     */
-    void decrementMovementCounter() {
-        movementCounter--;
-    }
-
-    /**
-     * returns the cooldown left on moving
-     *
-     * @return {@code movementCounter}
-     */
-    int getMovementCounter() {
-        return movementCounter;
-    }
-
-    /**
-     * returns the speed with which the player is currently moving
-     *
-     * @return {@code speed}
-     */
-    float getSpeed() {
-        return speed;
-    }
-
-    /**
-     * returns whether the current movement is vertical or not
-     *
-     * @return {@code vertical}
-     */
-    boolean isVertical() {
-        return vertical;
     }
 }

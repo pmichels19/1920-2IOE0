@@ -41,7 +41,9 @@ public abstract class Enemy extends Character {
                 }
             } else {
                 // if the player is outside of the detection distance
-                doRandomMove(grid);
+                // TODO: HAVE RANDOM MOVEMENT OF ENEMIES WORK WITH THE LARGE MAZE
+                //doRandomMove(grid);
+
             }
         } else {
             // Updates the movement step if the enemy is already moving

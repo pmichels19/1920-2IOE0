@@ -1,31 +1,24 @@
 package Graphics.Rendering;
 
 import Graphics.OpenGL.Light;
-import Graphics.Transforming.Camera;
 import Graphics.OpenGL.Shader;
 import Graphics.Transforming.Camera;
 import Graphics.Transforming.Transform;
-import Levels.Characters.Enemy;
-import Levels.Characters.EyeBall;
 import Levels.Assets.Tiles.Background;
 import Levels.Assets.Tiles.Wall;
-import Levels.Assets.Tiles.*;
+import Levels.Characters.Enemy;
+import Levels.Characters.EyeBall;
 import Levels.Characters.Player;
 import Levels.Framework.Maze;
 import Levels.Framework.Point;
 import Levels.Framework.joml.Vector3f;
-import Levels.Objects.Object3D;
 import Levels.Objects.MagicBall;
-import Levels.Framework.Point;
-import Levels.Framework.joml.Vector3f;
+import Levels.Objects.Object3D;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import static java.lang.Math.*;
 import static java.lang.Math.toRadians;
 
 /**

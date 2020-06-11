@@ -4,12 +4,23 @@ import Levels.Characters.Player;
 
 public class SpellAgility extends Spell {
 
+    Player player = Player.getInstance();
+
+    private int prevMana;
+    private int manaCost = 10;
+
     private long duration;
 
     @Override
     public void castSpell(Object[] args) {
-        duration = System.currentTimeMillis();
-        Player.getInstance().setAgilityPower(1);
+        prevMana = player.getMana();
+        if (prevMana < manaCost) {
+            System.out.println("Not enough mana");
+        } else {
+            player.setMana(prevMana - manaCost);
+            duration = System.currentTimeMillis();
+            Player.getInstance().setAgilityPower(1);
+        }
     }
 
     @Override

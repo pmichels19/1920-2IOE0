@@ -1,6 +1,5 @@
 package Main.Input;
 
-import Levels.Assets.Items.Item;
 import AI.ImageRecognition.RunDrawingCanvas;
 import Main.GameState;
 import SpellCasting.Spell;
@@ -16,6 +15,7 @@ import static org.lwjgl.glfw.GLFW.*;
 public class InGameController extends Controller {
     // inventory cooldown allows for control when switching up/down in the inventory
     private int inventoryCooldown = 0;
+    private int castCooldown = 0;
 
     // the variables used for player movement
     int movementCounter = 0;
@@ -138,12 +138,34 @@ public class InGameController extends Controller {
 
         // spell casting
         if (window.buttonClicked(GLFW_KEY_1)) {
-            if (released) {
-                spell = Spell.determineSpell("agility");
-                spell.castSpell(new Object[]{maze});
-                released = false;
+            if (castCooldown == 0) {
+                if (released) {
+                    spell = Spell.determineSpell("agility");
+                    spell.castSpell(new Object[]{maze});
+                    released = false;
+                    castCooldown = 20;
+                }
             }
         } else {
+            if (castCooldown > 0) {
+                castCooldown--;
+            }
+            released = true;
+        }
+
+        if (window.buttonClicked(GLFW_KEY_2)) {
+            if (castCooldown == 0) {
+                if (released) {
+                    spell = Spell.determineSpell("tp_self");
+                    spell.castSpell(new Object[]{maze});
+                    released = false;
+                    castCooldown = 20;
+                }
+            }
+        } else {
+            if (castCooldown > 0) {
+                castCooldown--;
+            }
             released = true;
         }
 

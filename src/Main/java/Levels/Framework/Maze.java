@@ -1,6 +1,10 @@
 package Levels.Framework;
 
+import Levels.Assets.Items.Item;
+
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +22,22 @@ public class Maze {
     public final static char MARKER_WALL = 'x';
     public final static char MARKER_PLAYER = 'P';
     public final static char MARKER_SPACE = ' ';
+    // the markers for item orbs based on the item ids found in the Item class
+    public final static char MARKER_HEART = (char) Item.HEART + '0';
+    public final static char MARKER_MANA = (char) Item.MANA + '0';
+    public final static char MARKER_BOOT = (char) Item.BOOT + '0';
+    public final static char MARKER_COIN = (char) Item.COIN + '0';
+    public final static char MARKER_HPOT = (char) Item.H_POTION + '0';
+    public final static char MARKER_MPOT = (char) Item.M_POTION + '0';
+
+    public final static List<Character> ITEM_MARKERS = new ArrayList<>( Arrays.asList(
+            MARKER_HEART,
+            MARKER_MANA,
+            MARKER_BOOT,
+            MARKER_COIN,
+            MARKER_HPOT,
+            MARKER_MPOT
+    ) );
 
     /**
      * reads a new file into the maze object

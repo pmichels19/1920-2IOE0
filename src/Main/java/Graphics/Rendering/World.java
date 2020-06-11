@@ -5,6 +5,7 @@ import Graphics.Transforming.Camera;
 import Graphics.OpenGL.Shader;
 import Graphics.Transforming.Camera;
 import Graphics.Transforming.Transform;
+import Levels.Assets.Items.Item;
 import Levels.Characters.Enemy;
 import Levels.Characters.EyeBall;
 import Levels.Assets.Tiles.Background;
@@ -20,10 +21,7 @@ import Levels.Framework.Point;
 import Levels.Framework.joml.Vector3f;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.lang.Math.*;
 import static java.lang.Math.toRadians;
@@ -55,24 +53,6 @@ public class World {
             new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
             new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
             new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
-
-            new Light(new Vector3f(2, 4, 1f), new Vector3f(1f, 0.2f, 0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(2, 4, 5f), new Vector3f(1f, 0.2f, 0.2f), null, LIGHT_ATTENUATION),
-
-            new Light(new Vector3f(6, 4, 1f), new Vector3f(1f, 1f, 0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(6, 4, 5f), new Vector3f(1f, 1f, 0.2f), null, LIGHT_ATTENUATION),
-
-            new Light(new Vector3f(10, 4, 1f), new Vector3f(0.2f, 1f, 0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(10, 4, 5f), new Vector3f(0.2f, 1f, 0.2f), null, LIGHT_ATTENUATION),
-
-            new Light(new Vector3f(2, 16, 1f), new Vector3f(1f, 0.2f, 1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(2, 16, 5f), new Vector3f(1f, 0.2f, 1f), null, LIGHT_ATTENUATION),
-
-            new Light(new Vector3f(6, 16, 1f), new Vector3f(0.2f, 0.2f, 1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(6, 16, 5f), new Vector3f(0.2f, 0.2f, 1f), null, LIGHT_ATTENUATION),
-
-            new Light(new Vector3f(10, 16, 1f), new Vector3f(0.2f, 1f, 1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(10, 16, 5f), new Vector3f(0.2f, 1f, 1f), null, LIGHT_ATTENUATION)
     };
 
     // variables to keep track of the player location in the world
@@ -113,6 +93,47 @@ public class World {
             eyeball.initializePosition(maze.getGrid().length / enemyCount * i, maze.getGrid().length / enemyCount * i, maze.getGrid().length);
             enemyList.add(eyeball);
         }
+
+        createLights();
+    }
+
+    private final Map<Point, Set<Light>> lightMap = new HashMap<>();
+
+    /**
+     * method that fills the {@code lightMap}
+     */
+    private void createLights() {
+        // loop over the grid to identify where to place lightsources
+        char[][] grid = maze.getGrid();
+        for (int y = 0; y < grid.length; y++) {
+            for (int x = 0; x < grid[y].length; x++) {
+                if ( Maze.ITEM_MARKERS.contains( grid[y][x] ) ) {
+                    Point position = new Point(x, grid.length - y);
+                    // if no set of lights exists for the current position yet, make one
+                    if ( !lightMap.containsKey( position ) ) {
+                        lightMap.put( position, new HashSet<>() );
+                    }
+                    Set<Light> toAdd = lightMap.get(position);
+                    // add the orb with the desired light color
+                    toAdd.add(
+                            new Light(
+                                    new Vector3f(x, grid.length - y, 1f),
+                                    Item.getColorById(Character.getNumericValue(grid[y][x])),
+                                    MagicBall.getInstance(),
+                                    LIGHT_ATTENUATION
+                            )
+                    );
+                    toAdd.add(
+                            new Light(
+                                    new Vector3f(x, grid.length - y, 5f),
+                                    Item.getColorById(Character.getNumericValue(grid[y][x])),
+                                    null,
+                                    LIGHT_ATTENUATION
+                            )
+                    );
+                }
+            }
+        }
     }
 
     /**
@@ -139,6 +160,8 @@ public class World {
     private final Set<Point> rightWalls = new HashSet<>();
     private final Set<Point> faceWalls = new HashSet<>();
     private final Set<Point> ceilings = new HashSet<>();
+
+    private final Set<Light> itemOrbs = new HashSet<>();
 
     /**
      * renders the maze
@@ -172,30 +195,35 @@ public class World {
 
         for (int i = x_start; i < x_end; i++) {
             for (int j = y_start; j < y_end; j++) {
+                Point position = new Point( j, grid.length - i );
                 // determine what tile needs to be drawn and fill that into the sets made above
                 if (grid[i][j] == Maze.MARKER_WALL) {
                     // we check if the tile to left is also a wall
                     if (j > 0 && grid[i][j - 1] != Maze.MARKER_WALL) {
                         // if there is no wall to the left, we wish to draw the left side of this wall
-                        leftWalls.add(new Point(j, grid.length - i));
+                        leftWalls.add(position);
                     }
 
                     // we check if the tile to right is also a wall
                     if (j < grid[i].length - 1 && grid[i][j + 1] != Maze.MARKER_WALL) {
                         // if there is no wall to the right, we wish to draw the right side of this wall
-                        rightWalls.add(new Point(j, grid.length - i));
+                        rightWalls.add(position);
                     }
 
                     // we check if the tile in front is also a wall
                     if (i < grid.length - 1 && grid[i + 1][j] != Maze.MARKER_WALL) {
                         // if there is no wall in front, we wish to draw the face of this wall
-                        faceWalls.add(new Point(j, grid.length - i));
+                        faceWalls.add(position);
                     }
 
                     // we always want to render a ceiling:
-                    ceilings.add(new Point(j, grid.length - i));
+                    ceilings.add(position);
                 } else if (grid[i][j] == Maze.MARKER_SPACE || grid[i][j] == Maze.MARKER_PLAYER) {
-                    floors.add(new Point(j, grid.length - i));
+                    floors.add(position);
+                } else if ( Maze.ITEM_MARKERS.contains( grid[i][j] ) ) {
+                    floors.add(position);
+                    // if the maze entry contains an item, then there should be a set of light objects for it
+                    itemOrbs.addAll( lightMap.get(position) );
                 }
             }
         }
@@ -242,6 +270,16 @@ public class World {
         lights[4].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y - 1f, 5f));
 
         for (Light light : lights) {
+            Object3D obj = light.getObject();
+            if (light.getObject() != null) {
+                Vector3f pos = new Vector3f(light.getPosition().x, light.getPosition().y, 0f);
+                obj.setPosition(pos);
+                obj.setColor(light.getColor());
+                renderer.renderObject(obj);
+            }
+        }
+
+        for (Light light : itemOrbs) {
             Object3D obj = light.getObject();
             if (light.getObject() != null) {
                 Vector3f pos = new Vector3f(light.getPosition().x, light.getPosition().y, 0f);

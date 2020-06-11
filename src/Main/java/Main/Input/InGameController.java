@@ -1,6 +1,5 @@
 package Main.Input;
 
-import Levels.Assets.Items.Item;
 import AI.ImageRecognition.RunDrawingCanvas;
 import Main.GameState;
 import SpellCasting.Spell;

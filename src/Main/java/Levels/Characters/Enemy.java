@@ -41,8 +41,7 @@ public abstract class Enemy extends Character {
                 }
             } else {
                 // if the player is outside of the detection distance
-                // TODO: HAVE RANDOM MOVEMENT OF ENEMIES WORK WITH THE LARGE MAZE
-                //doRandomMove(grid);
+                doRandomMove(grid);
 
             }
         } else {
@@ -169,7 +168,7 @@ public abstract class Enemy extends Character {
     /**
      * @return Whether the enemy is still moving
      */
-    private boolean isMoving() {
+    public boolean isMoving() {
         return !((getGamePositionX() == (getMazePosition().getY()))
                 && (getGamePositionY() == getMazePosition().getX()));
     }

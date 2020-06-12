@@ -103,7 +103,9 @@ public class World {
         int enemyCount = 10;
         for (int i = 0; i < enemyCount; i++) {
             EyeBall eyeball = new EyeBall(100, 100);
-            eyeball.initializePosition(maze.getGrid().length / enemyCount * i, maze.getGrid().length / enemyCount * i, maze.getGrid().length);
+//            eyeball.initializePosition(maze.getGrid().length / enemyCount * i, maze.getGrid().length / enemyCount * i, maze.getGrid().length);
+            // TODO: Set spawn location for enemies in the maze
+            eyeball.initializePosition(1, 1, maze.getGrid().length);
             enemyList.add(eyeball);
         }
     }

@@ -100,7 +100,7 @@ public class World {
         resetCameraPosition();
 
         // Initialize enemies
-        int enemyCount = 10;
+        int enemyCount = 1;
         for (int i = 0; i < enemyCount; i++) {
             EyeBall eyeball = new EyeBall(100, 100);
 //            eyeball.initializePosition(maze.getGrid().length / enemyCount * i, maze.getGrid().length / enemyCount * i, maze.getGrid().length);
@@ -227,7 +227,7 @@ public class World {
         }
 
         // Render player
-        player.setGridPosition(xPlayer, yPlayer, maze.getGrid().length);
+        player.setGamePositionAndRotate(xPlayer, yPlayer, maze.getGrid().length);
         renderer.renderCharacter(player);
 
         lights[0].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 1f));

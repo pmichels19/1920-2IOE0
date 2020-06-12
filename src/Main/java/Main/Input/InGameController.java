@@ -1,11 +1,17 @@
 package Main.Input;
 
 import AI.ImageRecognition.RunDrawingCanvas;
+import Levels.Assets.Items.Item;
+import Levels.Framework.Maze;
 import Main.GameState;
 import SpellCasting.Spell;
 import SpellCasting.SpellAgility;
 
 import static Graphics.IO.ScreenShot.takeScreenShot;
+import static Levels.Characters.Character.DIRECTION_LEFT;
+import static Levels.Characters.Character.DIRECTION_RIGHT;
+import static Levels.Characters.Character.DIRECTION_DOWN;
+import static Levels.Characters.Character.DIRECTION_UP;
 import static Main.Main.setState;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -23,12 +29,6 @@ public class InGameController extends Controller {
 
     // variables used for the drawing canvas
     private final RunDrawingCanvas drawingCanvas = new RunDrawingCanvas();
-    private boolean stopped = false;
-
-    private boolean released = true;
-
-    private Spell spell;
-
     @Override
     void checkInputs() {
         // if the player died, we need to go into the DEAD state
@@ -82,10 +82,6 @@ public class InGameController extends Controller {
             player.setSelectedItem( player.getSelectedItem() - 1 );
         } else if ( window.buttonClicked(GLFW_KEY_DOWN) ) {
             player.setSelectedItem( player.getSelectedItem() + 1 );
-        }
-
-        if (window.buttonClicked( GLFW_KEY_ENTER )) {
-            player.useItem();
         }
 
         // set a cooldown of 5 frames, so the player has better control over what item he wants to select
@@ -143,22 +139,52 @@ public class InGameController extends Controller {
             }
         }
 
-        // spell casting
-        if (window.buttonClicked(GLFW_KEY_1)) {
-            if (released) {
-                spell = Spell.determineSpell("agility");
-                spell.castSpell(new Object[]{maze});
-                released = false;
-            }
-        } else {
-            released = true;
+        // enter can be used to pick up items
+        if (window.buttonClicked( GLFW_KEY_ENTER )) {
+            tryItemCollect();
         }
+    }
 
-        // handle spell countdown (can make array or something later for more spells)
-        if (spell != null) {
-            if (spell instanceof SpellAgility) {
-                ((SpellAgility) spell).checkDuration();
-            }
+    /**
+     * method that looks at the grid, the player position and the direction the player is facing
+     * to see if an item can be picked up
+     */
+    private void tryItemCollect() {
+        // get the grid
+        char[][] grid = maze.getGrid();
+        int direction = player.getDirection();
+        int x_player = maze.getPlayerLocation().getX();
+        int y_player = maze.getPlayerLocation().getY();
+        char facing;
+        switch (direction) {
+            case DIRECTION_LEFT:
+                facing = grid[x_player][y_player - 1];
+                if ( Maze.ITEM_MARKERS.contains( facing ) ) {
+                    player.addItem( Item.getItemById( Character.getNumericValue( facing ) ) );
+                    grid[x_player][y_player - 1] = Maze.MARKER_SPACE;
+                }
+                break;
+            case DIRECTION_RIGHT:
+                facing = grid[x_player][y_player + 1];
+                if ( Maze.ITEM_MARKERS.contains( facing ) ) {
+                    player.addItem( Item.getItemById( Character.getNumericValue( facing ) ) );
+                    grid[x_player][y_player + 1] = Maze.MARKER_SPACE;
+                }
+                break;
+            case DIRECTION_UP:
+                facing = grid[x_player - 1][y_player];
+                if ( Maze.ITEM_MARKERS.contains( facing ) ) {
+                    player.addItem( Item.getItemById( Character.getNumericValue( facing ) ) );
+                    grid[x_player - 1][y_player] = Maze.MARKER_SPACE;
+                }
+                break;
+            case DIRECTION_DOWN:
+                facing = grid[x_player + 1][y_player];
+                if ( Maze.ITEM_MARKERS.contains( facing ) ) {
+                    player.addItem( Item.getItemById( Character.getNumericValue( facing ) ) );
+                    grid[x_player + 1][y_player] = Maze.MARKER_SPACE;
+                }
+                break;
         }
     }
 }

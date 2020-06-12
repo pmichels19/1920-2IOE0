@@ -3,27 +3,21 @@ package Graphics.Rendering;
 import Graphics.OpenGL.Light;
 import Graphics.Transforming.Camera;
 import Graphics.OpenGL.Shader;
-import Graphics.Transforming.Camera;
 import Graphics.Transforming.Transform;
 import Levels.Assets.Items.Item;
 import Levels.Characters.Enemy;
 import Levels.Characters.EyeBall;
 import Levels.Assets.Tiles.Background;
 import Levels.Assets.Tiles.Wall;
-import Levels.Assets.Tiles.*;
 import Levels.Characters.Player;
 import Levels.Framework.Maze;
 import Levels.Framework.Point;
 import Levels.Framework.joml.Vector3f;
 import Levels.Objects.Object3D;
 import Levels.Objects.MagicBall;
-import Levels.Framework.Point;
-import Levels.Framework.joml.Vector3f;
 
-import java.io.IOException;
 import java.util.*;
 
-import static java.lang.Math.*;
 import static java.lang.Math.toRadians;
 
 /**
@@ -41,19 +35,17 @@ public class World {
     private final Transform transform;
     // the tile renderer to actaully draw the world and the player
     private final TileRenderer renderer = TileRenderer.getInstance();
-    // the radius around the player that is actually rendered
-    private final int RADIUS = 8;
 
     private final Vector3f DARK_ATTENUATION = new Vector3f(.5f, .2f, 1.5f);
     private final Vector3f LIGHT_ATTENUATION = new Vector3f(.5f, .2f, .5f);
 
     // the light object
     private final Light[] player_lights = {
-            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
-            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
-            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
-            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
-            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
     };
 
     // variables to keep track of the player location in the world
@@ -63,7 +55,7 @@ public class World {
     private Player player;
 
     // List that holds the enemies
-    private ArrayList<Enemy> enemyList = new ArrayList<>();
+    private final ArrayList<Enemy> enemyList = new ArrayList<>();
 
     // the map that holds light objects to be rendered at the position defined by the point
     private final Map<Point, Set<Light>> lightMap = new HashMap<>();
@@ -189,6 +181,8 @@ public class World {
         int x_player = maze.getPlayerLocation().getX();
         int y_player = maze.getPlayerLocation().getY();
 
+        // the radius around the player that is actually rendered
+        int RADIUS = 8;
         // get the start and end coordinates of both x and y axis
         int x_start = Math.max(x_player - RADIUS, 0);
         int y_start = Math.max(y_player - RADIUS, 0);
@@ -246,11 +240,13 @@ public class World {
         }
 
         // correct the location of the player lights
-        player_lights[0].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 1f));
-        player_lights[1].setPosition(new Vector3f(player.getPosition().x + 1f, player.getPosition().y, 5f));
-        player_lights[2].setPosition(new Vector3f(player.getPosition().x - 1f, player.getPosition().y, 5f));
-        player_lights[3].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y + 1f, 5f));
-        player_lights[4].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y - 1f, 5f));
+        float x_player = player.getPosition().x;
+        float y_player = player.getPosition().y;
+        player_lights[0].setPosition(new Vector3f(x_player, y_player, 1f));
+        player_lights[1].setPosition(new Vector3f(x_player + 1f, y_player, 5f));
+        player_lights[2].setPosition(new Vector3f(x_player - 1f, y_player, 5f));
+        player_lights[3].setPosition(new Vector3f(x_player, y_player + 1f, 5f));
+        player_lights[4].setPosition(new Vector3f(x_player, y_player - 1f, 5f));
 
         active_lights[i] = player_lights[0];
         active_lights[i + 1] = player_lights[1];

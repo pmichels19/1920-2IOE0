@@ -63,8 +63,10 @@ public class Item {
         // set the id and increment the base id
         id =  base_id;
         base_id++;
+
         // set the texture for this item
         this.texture = new Texture(filePath);
+
         // put the item in the items array
         items.add(this);
         colors.add(color);

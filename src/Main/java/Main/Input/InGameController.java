@@ -108,6 +108,8 @@ public class InGameController extends Controller {
                 movementCounter = (int) player.getSpeed();
                 speed = 1f / player.getSpeed();
                 vertical = true;
+            } else {
+                player.turnUp();
             }
         } else if ( window.buttonClicked( GLFW_KEY_A ) ) {
             if ( maze.canMoveLeft() ) {
@@ -116,6 +118,8 @@ public class InGameController extends Controller {
                 movementCounter = (int) player.getSpeed();
                 speed = -1f / player.getSpeed();
                 vertical = false;
+            } else {
+                player.turnLeft();
             }
         } else if ( window.buttonClicked( GLFW_KEY_S ) ) {
             if ( maze.canMoveDown() ) {
@@ -124,6 +128,8 @@ public class InGameController extends Controller {
                 movementCounter = (int) player.getSpeed();
                 speed = -1f / player.getSpeed();
                 vertical = true;
+            } else {
+                player.turnDown();
             }
         } else if ( window.buttonClicked( GLFW_KEY_D ) ) {
             if ( maze.canMoveRight() ) {
@@ -132,6 +138,8 @@ public class InGameController extends Controller {
                 movementCounter = (int) player.getSpeed();
                 speed = 1f / player.getSpeed();
                 vertical = false;
+            } else {
+                player.turnRight();
             }
         }
 

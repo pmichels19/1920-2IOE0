@@ -184,31 +184,56 @@ public abstract class Character {
         this.position.y = (gridLength - 0.5f - gamePositionY) * 2f;
     }
 
+    /**
+     * turns the character so it faces to the right
+     */
+    public void turnRight() {
+        this.rotationAngle = (float) ((-90f * Math.PI) / 180.0f);
+        this.rotation = new Vector3f(0f, 0f, 1f);
+        // right
+        this.direction = 2;
+    }
+
+    /**
+     * turns the character so it faces to the left
+     */
+    public void turnLeft() {
+        this.rotationAngle = (float) ((90f * Math.PI) / 180.0f);
+        this.rotation = new Vector3f(0f, 0f, 1f);
+        // left
+        this.direction = 0;
+    }
+
+    /**
+     * turns the character so it faces downwards
+     */
+    public void turnDown() {
+        this.rotationAngle = (float) ((-180f * Math.PI) / 180.0f);
+        this.rotation = new Vector3f(0f, 0f, 1f);
+        // down
+        this.direction = 3;
+    }
+
+    /**
+     * turns the character so it faces upwards
+     */
+    public void turnUp() {
+        this.rotationAngle = (float) ((0f * Math.PI) / 180.0f);
+        this.rotation = new Vector3f(0f, 0f, 1f);
+        // up
+        this.direction = 1;
+    }
+
     public void setGridPosition(float gamePositionX, float gamePositionY, float gridLength) {
         if (gamePositionX > this.gamePositionX) {
-            this.rotationAngle = (float) ((-90f * Math.PI) / 180.0f);
-            this.rotation = new Vector3f(0f, 0f, 1f);
-            // right
-            this.direction = 2;
+            turnRight();
         } else if (gamePositionX < this.gamePositionX) {
-            this.rotationAngle = (float) ((90f * Math.PI) / 180.0f);
-
-            this.rotation = new Vector3f(0f, 0f, 1f);
-            // left
-            this.direction = 0;
+            turnLeft();
         }
         if (gamePositionY > this.gamePositionY) {
-            this.rotationAngle = (float) ((-180f * Math.PI) / 180.0f);
-
-            this.rotation = new Vector3f(0f, 0f, 1f);
-            // down
-            this.direction = 3;
+            turnDown();
         } else if (gamePositionY < this.gamePositionY) {
-            this.rotationAngle = (float) ((0f * Math.PI) / 180.0f);
-
-            this.rotation = new Vector3f(0f, 0f, 1f);
-            // up
-            this.direction = 1;
+            turnUp();
         }
         setGamePositionX(gamePositionX);
         setGridPositionY(gamePositionY, gridLength);

@@ -49,6 +49,8 @@ public class Main {
 
         // terminate GLFW
         glfwTerminate();
+        // hard exit for now
+        System.exit(1);
     }
 
     public void run() throws IOException {

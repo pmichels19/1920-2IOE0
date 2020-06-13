@@ -3,6 +3,7 @@ package Main.Input;
 import AI.ImageRecognition.RunDrawingCanvas;
 import Levels.Assets.Items.Item;
 import Levels.Framework.Maze;
+import Levels.Framework.Point;
 import Main.GameState;
 import SpellCasting.Spell;
 import SpellCasting.SpellAgility;
@@ -179,28 +180,40 @@ public class InGameController extends Controller {
             case DIRECTION_LEFT:
                 facing = grid[x_player][y_player - 1];
                 if ( Maze.ITEM_MARKERS.contains( facing ) ) {
-                    player.addItem( Item.getItemById( Character.getNumericValue( facing ) ) );
+                    player.addItem(
+                            Item.getItemById( Character.getNumericValue( facing ) ),
+                            new Point( x_player, y_player - 1 )
+                    );
                     grid[x_player][y_player - 1] = Maze.MARKER_SPACE;
                 }
                 break;
             case DIRECTION_RIGHT:
                 facing = grid[x_player][y_player + 1];
                 if ( Maze.ITEM_MARKERS.contains( facing ) ) {
-                    player.addItem( Item.getItemById( Character.getNumericValue( facing ) ) );
+                    player.addItem(
+                            Item.getItemById( Character.getNumericValue( facing ) ),
+                            new Point( x_player, y_player + 1 )
+                    );
                     grid[x_player][y_player + 1] = Maze.MARKER_SPACE;
                 }
                 break;
             case DIRECTION_UP:
                 facing = grid[x_player - 1][y_player];
                 if ( Maze.ITEM_MARKERS.contains( facing ) ) {
-                    player.addItem( Item.getItemById( Character.getNumericValue( facing ) ) );
+                    player.addItem(
+                            Item.getItemById( Character.getNumericValue( facing ) ),
+                            new Point( x_player - 1, y_player )
+                    );
                     grid[x_player - 1][y_player] = Maze.MARKER_SPACE;
                 }
                 break;
             case DIRECTION_DOWN:
                 facing = grid[x_player + 1][y_player];
                 if ( Maze.ITEM_MARKERS.contains( facing ) ) {
-                    player.addItem( Item.getItemById( Character.getNumericValue( facing ) ) );
+                    player.addItem(
+                            Item.getItemById( Character.getNumericValue( facing ) ),
+                            new Point( x_player + 1, y_player )
+                    );
                     grid[x_player + 1][y_player] = Maze.MARKER_SPACE;
                 }
                 break;

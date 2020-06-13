@@ -4,8 +4,11 @@ import Graphics.OBJLoader;
 import Graphics.OBJModel;
 import Graphics.OpenGL.Texture;
 import Levels.Assets.Items.Item;
+import Levels.Framework.Point;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Player extends Character {
     // Name of the obj file in the res folder corresponding to the player model
@@ -20,8 +23,9 @@ public class Player extends Character {
 
     private static Player player;
 
-    // a list of items the player has collected so far
+    // an array of items the player has collected so far
     private Item[] inventory;
+    List<Point> collected_items;
     private int selectedItem = 0;
 
     // agility spell
@@ -32,7 +36,7 @@ public class Player extends Character {
 
         // start with an empty inventory of max size 5
         inventory = new Item[5];
-
+        collected_items = new ArrayList<>();
     }
 
     public static Player getInstance() {
@@ -120,9 +124,11 @@ public class Player extends Character {
      * Sets the item in the inventory at {@code selectedItem} to the provided item
      *
      * @param item the new item to add to the inventory
+     * @param point the point that the item was located at in the maze
      */
-    public void addItem(Item item) {
+    public void addItem(Item item, Point point) {
         inventory[selectedItem] = item;
+        collected_items.add(point);
     }
 
     /**
@@ -174,5 +180,13 @@ public class Player extends Character {
 
     public double getAgilityPower() {
         return agilityPower;
+    }
+
+    public void setCollected(List<Point> collected_items) {
+        this.collected_items = collected_items;
+    }
+
+    public List<Point> getCollected() {
+        return collected_items;
     }
 }

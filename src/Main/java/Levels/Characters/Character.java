@@ -153,10 +153,16 @@ public abstract class Character {
 
     public void setHealth(int health) {
         cur_health = health;
+        if (cur_health > max_health) {
+            cur_health = max_health;
+        }
     }
 
     public void setMana(int mana) {
         cur_mana = mana;
+        if (cur_mana > max_mana) {
+            cur_mana = max_mana;
+        }
     }
 
     public float getGamePositionX() {

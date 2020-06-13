@@ -80,12 +80,31 @@ public class InGameController extends Controller {
         // we can go up and down in our inventory
         if ( window.buttonClicked(GLFW_KEY_UP) ) {
             player.setSelectedItem( player.getSelectedItem() - 1 );
+            inventoryCooldown = 5;
         } else if ( window.buttonClicked(GLFW_KEY_DOWN) ) {
             player.setSelectedItem( player.getSelectedItem() + 1 );
+            inventoryCooldown = 5;
         }
 
-        // set a cooldown of 5 frames, so the player has better control over what item he wants to select
-        inventoryCooldown = 5;
+        if ( window.buttonClicked(GLFW_KEY_1) ) {
+            player.useItem(0);
+        }
+
+        if ( window.buttonClicked(GLFW_KEY_2) ) {
+            player.useItem(1);
+        }
+
+        if ( window.buttonClicked(GLFW_KEY_3) ) {
+            player.useItem(2);
+        }
+
+        if ( window.buttonClicked(GLFW_KEY_4) ) {
+            player.useItem(3);
+        }
+
+        if ( window.buttonClicked(GLFW_KEY_5) ) {
+            player.useItem(4);
+        }
     }
 
     /**

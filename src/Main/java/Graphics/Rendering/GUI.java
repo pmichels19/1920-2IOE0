@@ -25,12 +25,14 @@ public class GUI extends FlatRender {
         // we want to draw the resourcebars in the top left of the screen
         transform.setPosition( new Vector3f(-1, 1, 0) );
 
-        // calculate the percentage of health and mana left
-        float healthPercent = ( (float) player.getHealth() ) / ( (float) player.getMaxHealth() );
-        float manaPercent = ( (float) player.getMana() ) / ( (float) player.getMaxMana() );
+        // calculate the length of the resource bars
+        float maxHealthPercent = ( (float) player.getMaxHealth() ) / 100f;
+        float maxManaPercent = ( (float) player.getMaxMana() ) / 100f;
+        float healthPercent = ( (float) player.getHealth() ) / 100f;
+        float manaPercent = ( (float) player.getMana() ) / 100f;
 
-        // first we render the missing health bar
-        transform.setScale( new Vector3f( 0.19f, 0.04f, 1 ) );
+        // first we render the max health bar
+        transform.setScale( new Vector3f( 0.19f * maxHealthPercent, 0.04f, 1 ) );
         renderer.setTransform(transform);
         renderer.renderTile( GUIElements.MISSING_HEALTH.getTexture(), 0.5f, -1.75f, TileRenderer.FLOOR );
 
@@ -39,8 +41,8 @@ public class GUI extends FlatRender {
         renderer.setTransform(transform);
         renderer.renderTile( GUIElements.HEALTH.getTexture(), 0.5f, -1.75f, TileRenderer.FLOOR );
 
-        // then the missing mana bar
-        transform.setScale( new Vector3f( 0.19f, 0.04f, 1 ) );
+        // then the max mana bar
+        transform.setScale( new Vector3f( 0.19f * maxManaPercent, 0.04f, 1 ) );
         renderer.setTransform(transform);
         renderer.renderTile( GUIElements.MISSING_MANA.getTexture(), 0.5f, -0.5f, TileRenderer.FLOOR );
 

@@ -28,7 +28,7 @@ public class Item {
 
     public static final int MANA = 2;
     private static final Item mana = new Item(
-            "src/Main/java/Textures/Items/heart.png",
+            "src/Main/java/Textures/Items/mana.png",
             new Vector3f(0, 0, 0.75f)               // BLUE
     );
 

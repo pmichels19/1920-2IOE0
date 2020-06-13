@@ -127,41 +127,45 @@ public class Player extends Character {
 
     /**
      * uses the selected item, if possible: the boot, coin and empty item have no use
+     *
+     * @param slot the slot to use the item from
      */
-    public void useItem() {
+    public void useItem(int slot) {
         // we check what kind of item the player has selected
-        switch (inventory[selectedItem].getId()) {
+        switch (inventory[slot].getId()) {
             case Item.H_POTION:
                 // if a health potion is used, add 25 health to the current health
                 setHealth(getHealth() + 25);
-                tossItem();
+                tossItem(slot);
                 break;
             case Item.M_POTION:
                 // if a mana potion is used, add 25 mana to the current mana
                 setMana(getMana() + 25);
-                tossItem();
+                tossItem(slot);
                 break;
             case Item.HEART:
                 // if a heart is used, increase the max health and current health by 25
                 setMaxHealth(getMaxHealth() + 25);
                 setHealth(getHealth() + 25);
-                tossItem();
+                tossItem(slot);
                 break;
             case Item.MANA:
                 // if a heart is used, increase the max mana and current mana by 25
                 setMaxMana(getMaxMana() + 25);
                 setMana(getMana() + 25);
-                tossItem();
+                tossItem(slot);
                 break;
         }
     }
 
     /**
-     * removes the selected item from the player inventory and places the empty item back
+     * removes the specified item from the player inventory and places the empty item back
+     *
+     * @param slot the slot to remove the item from
      */
-    public void tossItem() {
+    public void tossItem(int slot) {
         // replace the consumed item with the empty item
-        inventory[selectedItem] = Item.getItemById(Item.EMPTY);
+        inventory[slot] = Item.getItemById(Item.EMPTY);
     }
 
     public void setAgilityPower(double agilityPower) {

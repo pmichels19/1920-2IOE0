@@ -2,15 +2,13 @@ package Graphics.Rendering;
 
 import Graphics.OpenGL.Light;
 import Graphics.OpenGL.Shader;
-import Graphics.Transforming.Transform;
 import Graphics.Transforming.Camera;
+import Graphics.Transforming.Transform;
 import Levels.Assets.Items.Item;
 import Levels.Assets.Tiles.Background;
 import Levels.Assets.Tiles.Wall;
 import Levels.Characters.Enemy;
 import Levels.Characters.EyeBall;
-import Levels.Assets.Tiles.Background;
-import Levels.Assets.Tiles.Wall;
 import Levels.Characters.Player;
 import Levels.Framework.Maze;
 import Levels.Framework.Point;
@@ -19,9 +17,6 @@ import Levels.Objects.MagicBall;
 import Levels.Objects.Object3D;
 
 import java.util.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
 
 import static java.lang.Math.toRadians;
 
@@ -218,14 +213,14 @@ public class World {
 
                     // we always want to render a ceiling:
                     ceilings.add(position);
-                } else if (grid[i][j] != Maze.MARKER_WALL) {
-                    floors.add(position);
                 } else if ( Maze.ITEM_MARKERS.contains( grid[i][j] ) ) {
                     floors.add(position);
                     // if the maze entry contains an item, then there should be a set of light objects for it
                     if (lightMap.containsKey(position)) {
                         lights.addAll(lightMap.get(position));
                     }
+                } else if (grid[i][j] != Maze.MARKER_WALL) {
+                    floors.add(position);
                 }
             }
         }

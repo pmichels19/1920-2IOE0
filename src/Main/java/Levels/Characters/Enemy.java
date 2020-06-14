@@ -50,7 +50,6 @@ public abstract class Enemy extends Character {
             } else {
                 // if the player is outside of the detection distance
                 doRandomMove(grid);
-
             }
         } else {
             // Updates the movement step if the enemy is already moving

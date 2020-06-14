@@ -100,10 +100,9 @@ public class World {
         resetCameraPosition();
 
         // Initialize enemies
-        int enemyCount = 10;
-        for (int i = 0; i < enemyCount; i++) {
+        for (Point i : maze.enemyLocation) {
             EyeBall eyeball = new EyeBall(100, 100);
-            eyeball.initializePosition(maze.getGrid().length / enemyCount * i, maze.getGrid().length / enemyCount * i, maze.getGrid().length);
+            eyeball.initializePosition(i.getX(), i.getY(), maze.getGrid().length);
             enemyList.add(eyeball);
         }
     }
@@ -187,7 +186,7 @@ public class World {
 
                     // we always want to render a ceiling:
                     ceilings.add(new Point(j, grid.length - i));
-                } else if (grid[i][j] == Maze.MARKER_SPACE || grid[i][j] == Maze.MARKER_PLAYER) {
+                } else if (grid[i][j] != Maze.MARKER_WALL) {
                     floors.add(new Point(j, grid.length - i));
                 }
             }

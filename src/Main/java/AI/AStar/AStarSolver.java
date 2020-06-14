@@ -8,6 +8,8 @@ import java.util.ArrayList;
  * Class that handles all A* calculations
  */
 public class AStarSolver {
+    private static AStarSolver instance;
+
     private char[][] grid;
     private ArrayList<AStarPoint> open;
     private ArrayList<AStarPoint> closed;
@@ -16,6 +18,17 @@ public class AStarSolver {
     private final Boolean allowDiagonal = false;
     private final int diagonalMoveCost = 14 * 99999999; //TODO: When diagonal movement is implemented change back to 14
     private final int normalMoveCost = 10;
+
+    private AStarSolver() {
+    }
+
+    public static AStarSolver getInstance() {
+        if (instance == null) {
+            instance = new AStarSolver();
+        }
+        return instance;
+    }
+
 
     /**
      * Calculates the shortest path from the given start to the destination based on the given grid

@@ -1,6 +1,7 @@
 package Levels.Framework;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,6 +19,9 @@ public class Maze {
     public final static char MARKER_WALL = 'x';
     public final static char MARKER_PLAYER = 'P';
     public final static char MARKER_SPACE = ' ';
+    public final static char MARKER_ENEMY = 'e';
+
+    public static List<Point> enemyLocation = new ArrayList<>();
 
     /**
      * reads a new file into the maze object
@@ -45,6 +49,10 @@ public class Maze {
                 if (grid[i][j] == MARKER_PLAYER) {
                     x_player = i;
                     y_player = j;
+                    break;
+                }
+                if (grid[i][j] == MARKER_ENEMY) {
+                    enemyLocation.add(new Point(i, j));
                     break;
                 }
             }

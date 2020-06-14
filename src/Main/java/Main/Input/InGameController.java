@@ -137,7 +137,7 @@ public class InGameController extends Controller {
         }
 
         // spell casting
-        if (window.buttonClicked(GLFW_KEY_1)) {
+        else if (window.buttonClicked(GLFW_KEY_O)) {
             if (castCooldown == 0) {
                 if (released) {
                     spell = Spell.determineSpell("agility");
@@ -145,15 +145,13 @@ public class InGameController extends Controller {
                     released = false;
                     castCooldown = 20;
                 }
+            } else {
+                if (castCooldown > 0) {
+                    castCooldown--;
+                }
+                released = true;
             }
-        } else {
-            if (castCooldown > 0) {
-                castCooldown--;
-            }
-            released = true;
-        }
-
-        if (window.buttonClicked(GLFW_KEY_2)) {
+        } else if (window.buttonClicked(GLFW_KEY_P)) {
             if (castCooldown == 0) {
                 if (released) {
                     spell = Spell.determineSpell("tp_self");

@@ -25,15 +25,18 @@ public class MainMenuController extends Controller {
                     // 0 is mapped to continuing from the latest game
                     case 0:
                         if ( loadLatest() ) {
+                            Main.getMainMenu().resetSelected();
                             setState( GameState.IN_GAME );
                         }
                         break;
                     // 1 is mapped to starting a new game
                     case 1:
+                        Main.getMainMenu().resetSelected();
                         setState( GameState.STARTING_GAME );
                         break;
                     // 2 is mapped to loading a saved game
                     case 2:
+                        Main.getMainMenu().resetSelected();
                         setState( GameState.LOADING_SAVE );
                         break;
                     // 3 is mapped to exiting the game

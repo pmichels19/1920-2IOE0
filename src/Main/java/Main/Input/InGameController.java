@@ -22,6 +22,7 @@ import static org.lwjgl.glfw.GLFW.*;
 public class InGameController extends Controller {
     // inventory cooldown allows for control when switching up/down in the inventory
     private int inventoryCooldown = 0;
+    private int castCooldown = 0;
 
     // the variables used for player movement
     int movementCounter = 0;
@@ -30,6 +31,12 @@ public class InGameController extends Controller {
 
     // variables used for the drawing canvas
     private final RunDrawingCanvas drawingCanvas = new RunDrawingCanvas();
+    private boolean stopped = false;
+
+    private boolean released = true;
+
+    private Spell spell;
+
     @Override
     void checkInputs() {
         // if the player died, we need to go into the DEAD state
@@ -117,8 +124,8 @@ public class InGameController extends Controller {
          If movement in the desired direction is allowed, we adjust the speed, counter and vertical variables
          accordingly and move the player in the maze
          */
-        if ( window.buttonClicked( GLFW_KEY_W ) ) {
-            if ( maze.canMoveUp() ) {
+        if (window.buttonClicked(GLFW_KEY_W)) {
+            if (maze.canMoveUp()) {
                 maze.moveUp();
 
                 movementCounter = (int) player.getSpeed();
@@ -127,8 +134,8 @@ public class InGameController extends Controller {
             } else {
                 player.turnUp();
             }
-        } else if ( window.buttonClicked( GLFW_KEY_A ) ) {
-            if ( maze.canMoveLeft() ) {
+        } else if (window.buttonClicked(GLFW_KEY_A)) {
+            if (maze.canMoveLeft()) {
                 maze.moveLeft();
 
                 movementCounter = (int) player.getSpeed();
@@ -137,8 +144,8 @@ public class InGameController extends Controller {
             } else {
                 player.turnLeft();
             }
-        } else if ( window.buttonClicked( GLFW_KEY_S ) ) {
-            if ( maze.canMoveDown() ) {
+        } else if (window.buttonClicked(GLFW_KEY_S)) {
+            if (maze.canMoveDown()) {
                 maze.moveDown();
 
                 movementCounter = (int) player.getSpeed();
@@ -147,8 +154,8 @@ public class InGameController extends Controller {
             } else {
                 player.turnDown();
             }
-        } else if ( window.buttonClicked( GLFW_KEY_D ) ) {
-            if ( maze.canMoveRight() ) {
+        } else if (window.buttonClicked(GLFW_KEY_D)) {
+            if (maze.canMoveRight()) {
                 maze.moveRight();
 
                 movementCounter = (int) player.getSpeed();
@@ -157,13 +164,46 @@ public class InGameController extends Controller {
             } else {
                 player.turnRight();
             }
+        } // spell casting
+        else if (window.buttonClicked(GLFW_KEY_O)) {
+            if (castCooldown == 0) {
+                if (released) {
+                    spell = Spell.determineSpell("agility");
+                    spell.castSpell(new Object[]{maze});
+                    released = false;
+                    castCooldown = 20;
+                }
+            } else {
+                if (castCooldown > 0) {
+                    castCooldown--;
+                }
+                released = true;
+            }
+        } else if (window.buttonClicked(GLFW_KEY_P)) {
+            if (castCooldown == 0) {
+                if (released) {
+                    spell = Spell.determineSpell("tp_self");
+                    spell.castSpell(new Object[]{maze});
+                    released = false;
+                    castCooldown = 20;
+                }
+            }
+        } else {
+            if (castCooldown > 0) {
+                castCooldown--;
+            }
+            released = true;
         }
 
+
         // enter can be used to pick up items
-        if (window.buttonClicked( GLFW_KEY_ENTER )) {
+        if (window.buttonClicked(GLFW_KEY_ENTER)) {
             tryItemCollect();
         }
     }
+
+
+
 
     /**
      * method that looks at the grid, the player position and the direction the player is facing

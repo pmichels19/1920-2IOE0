@@ -1,10 +1,12 @@
 package Graphics.Rendering;
 
 import Graphics.OpenGL.Light;
-import Graphics.Transforming.Camera;
 import Graphics.OpenGL.Shader;
 import Graphics.Transforming.Transform;
+import Graphics.Transforming.Camera;
 import Levels.Assets.Items.Item;
+import Levels.Assets.Tiles.Background;
+import Levels.Assets.Tiles.Wall;
 import Levels.Characters.Enemy;
 import Levels.Characters.EyeBall;
 import Levels.Assets.Tiles.Background;
@@ -13,10 +15,13 @@ import Levels.Characters.Player;
 import Levels.Framework.Maze;
 import Levels.Framework.Point;
 import Levels.Framework.joml.Vector3f;
-import Levels.Objects.Object3D;
 import Levels.Objects.MagicBall;
+import Levels.Objects.Object3D;
 
 import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import static java.lang.Math.toRadians;
 
@@ -83,10 +88,9 @@ public class World {
         resetCameraPosition();
 
         // Initialize enemies
-        int enemyCount = 10;
-        for (int i = 0; i < enemyCount; i++) {
+        for (Point i : maze.enemyLocation) {
             EyeBall eyeball = new EyeBall(100, 100);
-            eyeball.initializePosition(maze.getGrid().length / enemyCount * i, maze.getGrid().length / enemyCount * i, maze.getGrid().length);
+            eyeball.initializePosition(i.getX(), i.getY(), maze.getGrid().length);
             enemyList.add(eyeball);
         }
 
@@ -214,7 +218,7 @@ public class World {
 
                     // we always want to render a ceiling:
                     ceilings.add(position);
-                } else if (grid[i][j] == Maze.MARKER_SPACE || grid[i][j] == Maze.MARKER_PLAYER) {
+                } else if (grid[i][j] != Maze.MARKER_WALL) {
                     floors.add(position);
                 } else if ( Maze.ITEM_MARKERS.contains( grid[i][j] ) ) {
                     floors.add(position);

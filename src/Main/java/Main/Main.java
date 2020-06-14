@@ -4,7 +4,6 @@ import AI.ImageRecognition.RunDrawingCanvas;
 import Graphics.IO.Timer;
 import Graphics.IO.Window;
 import Graphics.Rendering.*;
-import Levels.Characters.Player;
 import Levels.Framework.Maze;
 import Main.Input.MainController;
 import org.lwjgl.opengl.GL;
@@ -75,9 +74,6 @@ public class Main {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        // drawing canvas
-        RunDrawingCanvas drawingCanvas = new RunDrawingCanvas();
-
         maze = new Maze("custom");
         world = new World(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
         gui = new GUI();
@@ -88,6 +84,8 @@ public class Main {
         newGameMenu = new NewGameMenu();
         deathScreen = new DeathScreen();
         victoryScreen = new VictoryScreen();
+        // drawing canvas
+        RunDrawingCanvas drawingCanvas = new RunDrawingCanvas();
 
         // and initialize the controller for input checking
         MainController mainController = new MainController(maze, world, window);

@@ -2,10 +2,11 @@ package Levels.Characters;
 
 import AI.AStar.AStarSolver;
 import Graphics.OBJModel;
-import Levels.Framework.Maze;
 import Levels.Framework.Point;
 
 import java.util.ArrayList;
+
+import static Levels.Framework.Maze.*;
 
 public abstract class Enemy extends Character {
     public Enemy(int max_health, int max_mana, OBJModel model) {
@@ -21,7 +22,6 @@ public abstract class Enemy extends Character {
     // Random location grid size (should be an even number)
     private final int randomPathDistance = 16;
 
-
     /**
      * Moves the enemy, either to a random location or the player (if it is close enough)
      *
@@ -36,12 +36,21 @@ public abstract class Enemy extends Character {
                     // if the player is outside of the detection distance
                     doRandomMove(grid);
                 } else {
-                    // If player is in detection range, move towards the player
-                    moveToPoint(pathToPlayer.get(pathToPlayer.size() - 1), grid.length);
+                    // If player is in detection range, move towards the player and update the grid
+                    Point currentPoint = getMazePosition();
+                    Point newPoint = pathToPlayer.get(pathToPlayer.size() - 1);
+                    // Check if the position you're moving to is the position of the player
+                    if (grid[newPoint.getX()][newPoint.getY()] != MARKER_PLAYER) {
+                        // If it is not the player's position, move there.
+                        grid[currentPoint.getX()][currentPoint.getY()] = MARKER_SPACE;
+                        moveToPoint(newPoint, grid.length);
+                        grid[newPoint.getX()][newPoint.getY()] = MARKER_ENEMY;
+                    }
                 }
             } else {
                 // if the player is outside of the detection distance
                 doRandomMove(grid);
+
             }
         } else {
             // Updates the movement step if the enemy is already moving
@@ -124,7 +133,7 @@ public abstract class Enemy extends Character {
             randomLocation = null;
         } else { // if not reached the random location
             // Get next step towards new location
-            AStarSolver ass = new AStarSolver();
+            AStarSolver ass = AStarSolver.getInstance();
             ArrayList<Point> nextPoint = ass.CalculateShortestPath(getMazePosition(), randomLocation, grid);
             moveToPoint(nextPoint.get(nextPoint.size() - 1), grid.length);
         }
@@ -138,7 +147,7 @@ public abstract class Enemy extends Character {
      * @return Shortest path enemy to the player, from back to front (first move is path[-1]
      */
     public ArrayList<Point> getPathToPlayer(Point playerLocation, char[][] grid) {
-        AStarSolver ass = new AStarSolver();
+        AStarSolver ass = AStarSolver.getInstance();
         return ass.CalculateShortestPath(this.getMazePosition(), playerLocation, grid);
     }
 
@@ -158,7 +167,7 @@ public abstract class Enemy extends Character {
 //        }
         if (!(randomX < 0 || randomX >= grid.length
                 || randomY < 0 || randomY >= grid[0].length
-                || grid[randomX][randomY] != Maze.MARKER_SPACE)) { // check if the random location is a correct one
+                || grid[randomX][randomY] != MARKER_SPACE)) { // check if the random location is a correct one
             this.randomLocation = new Point(randomX, randomY);
         }
 

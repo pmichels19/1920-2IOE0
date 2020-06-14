@@ -9,6 +9,9 @@ public class GUI extends FlatRender {
 
     // the player to draw the GUI for
     private final Player player = Player.getInstance();
+    public GUI() {
+        super(new String[]{});
+    }
 
     @Override
     public void render() {

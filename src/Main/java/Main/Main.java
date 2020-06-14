@@ -34,6 +34,14 @@ public class Main {
     // we want toC make sure all objects use the same maze, we accomplish this by making it static
     private static Maze maze;
     private static World world;
+    private static GUI gui;
+    private static PauseScreen pauseScreen;
+    private static MainMenu mainMenu;
+    private static LoadMenu loadMenu;
+    private static SaveMenu saveMenu;
+    private static NewGameMenu newGameMenu;
+    private static DeathScreen deathScreen;
+    private static VictoryScreen victoryScreen;
 
     // cap at 60 fps for now
     private static final double FRAME_CAP = 1.0 / 60.0;
@@ -67,23 +75,19 @@ public class Main {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        // start the maze found in specified file and create the player object
-        maze = new Maze("custom");
-
-        // set up the world, corresponding GUI, the main menu and pause screen
-        world = new World(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
-        GUI gui = new GUI();
-
-        PauseScreen pauseScreen = new PauseScreen();
-        MainMenu mainMenu = new MainMenu();
-        LoadMenu loadMenu = new LoadMenu();
-        SaveMenu saveMenu = new SaveMenu();
-        NewGameMenu newGameMenu = new NewGameMenu();
-        DeathScreen deathScreen = new DeathScreen();
-        VictoryScreen victoryScreen = new VictoryScreen();
-
         // drawing canvas
         RunDrawingCanvas drawingCanvas = new RunDrawingCanvas();
+
+        maze = new Maze("custom");
+        world = new World(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
+        gui = new GUI();
+        pauseScreen = new PauseScreen();
+        mainMenu = new MainMenu();
+        loadMenu = new LoadMenu();
+        saveMenu = new SaveMenu();
+        newGameMenu = new NewGameMenu();
+        deathScreen = new DeathScreen();
+        victoryScreen = new VictoryScreen();
 
         // and initialize the controller for input checking
         MainController mainController = new MainController(maze, world, window);
@@ -199,4 +203,36 @@ public class Main {
     }
 
     public static World getWorld() { return Main.world; }
+
+    public static GUI getGui() {
+        return gui;
+    }
+
+    public static PauseScreen getPauseScreen() {
+        return pauseScreen;
+    }
+
+    public static MainMenu getMainMenu() {
+        return mainMenu;
+    }
+
+    public static LoadMenu getLoadMenu() {
+        return loadMenu;
+    }
+
+    public static SaveMenu getSaveMenu() {
+        return saveMenu;
+    }
+
+    public static NewGameMenu getNewGameMenu() {
+        return newGameMenu;
+    }
+
+    public static DeathScreen getDeathScreen() {
+        return deathScreen;
+    }
+
+    public static VictoryScreen getVictoryScreen() {
+        return victoryScreen;
+    }
 }

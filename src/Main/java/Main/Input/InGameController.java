@@ -9,10 +9,7 @@ import SpellCasting.Spell;
 import SpellCasting.SpellAgility;
 
 import static Graphics.IO.ScreenShot.takeScreenShot;
-import static Levels.Characters.Character.DIRECTION_LEFT;
-import static Levels.Characters.Character.DIRECTION_RIGHT;
-import static Levels.Characters.Character.DIRECTION_DOWN;
-import static Levels.Characters.Character.DIRECTION_UP;
+import static Levels.Characters.Character.*;
 import static Main.Main.setState;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -193,6 +190,13 @@ public class InGameController extends Controller {
                 castCooldown--;
             }
             released = true;
+        }
+
+        // handle spell countdown (can make array or something later for more spells)
+        if (spell != null) {
+            if (spell instanceof SpellAgility) {
+                ((SpellAgility) spell).checkDuration();
+            }
         }
 
 

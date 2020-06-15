@@ -79,11 +79,9 @@ public class Maze {
                 if (grid[i][j] == MARKER_PLAYER) {
                     x_player = i;
                     y_player = j;
-                    break;
                 }
                 if (grid[i][j] == MARKER_ENEMY) {
                     enemyLocation.add(new Point(i, j));
-                    break;
                 }
             }
         }

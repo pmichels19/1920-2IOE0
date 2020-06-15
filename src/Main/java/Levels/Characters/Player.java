@@ -4,6 +4,7 @@ import Graphics.OBJLoader;
 import Graphics.OBJModel;
 import Graphics.OpenGL.Texture;
 import Levels.Assets.Items.Item;
+import Levels.Framework.joml.Vector3f;
 
 import java.io.IOException;
 
@@ -19,6 +20,11 @@ public class Player extends Character {
     private static String normalMapFile = null;
 
     private static Player player;
+
+    Vector3f DARK_ATTENUATION = new Vector3f(.5f, .2f, 1.5f);
+    Vector3f STANDARD_ATTENUATION = new Vector3f(.5f, .2f, .5f);
+    Vector3f LIGHT_ATTENUATION = new Vector3f(.5f, .2f, .2f);
+    Vector3f currentAttenuation = STANDARD_ATTENUATION;
 
     // a list of items the player has collected so far
     private Item[] inventory;
@@ -90,6 +96,14 @@ public class Player extends Character {
 
     public void setMaxMana(int max_mana) {
         this.max_mana = max_mana;
+    }
+
+    public Vector3f getCurrentAttenuation() {
+        return currentAttenuation;
+    }
+
+    public void setCurrentAttenuation(Vector3f currentAttenuation) {
+        this.currentAttenuation = currentAttenuation;
     }
 
     /**

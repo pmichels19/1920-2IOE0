@@ -41,13 +41,14 @@ public class World {
 
     Vector3f DARK_ATTENUATION = new Vector3f(.5f, .2f, 1.5f);
     Vector3f LIGHT_ATTENUATION = new Vector3f(.5f, .2f, .5f);
+
     // the light object
     private final Light[] lights = {
-            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
-            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
-            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
-            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
-            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, LIGHT_ATTENUATION),
+            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, LIGHT_ATTENUATION),
+            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, LIGHT_ATTENUATION),
+            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, LIGHT_ATTENUATION),
+            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, LIGHT_ATTENUATION),
 
             new Light(new Vector3f(2, 4, 1f), new Vector3f(1f, 0.2f, 0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
             new Light(new Vector3f(2, 4, 5f), new Vector3f(1f, 0.2f, 0.2f), null, LIGHT_ATTENUATION),
@@ -228,10 +229,15 @@ public class World {
         renderer.renderCharacter(player);
 
         lights[0].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 1f));
+        lights[0].setAttenuation(player.getCurrentAttenuation());
         lights[1].setPosition(new Vector3f(player.getPosition().x + 1f, player.getPosition().y, 5f));
+        lights[1].setAttenuation(player.getCurrentAttenuation());
         lights[2].setPosition(new Vector3f(player.getPosition().x - 1f, player.getPosition().y, 5f));
+        lights[2].setAttenuation(player.getCurrentAttenuation());
         lights[3].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y + 1f, 5f));
+        lights[3].setAttenuation(player.getCurrentAttenuation());
         lights[4].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y - 1f, 5f));
+        lights[4].setAttenuation(player.getCurrentAttenuation());
 
         for (Light light : lights) {
             Object3D obj = light.getObject();

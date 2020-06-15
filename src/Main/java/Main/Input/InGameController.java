@@ -4,6 +4,7 @@ import AI.ImageRecognition.RunDrawingCanvas;
 import Main.GameState;
 import SpellCasting.Spell;
 import SpellCasting.SpellAgility;
+import SpellCasting.SpellIlluminate;
 
 import static Graphics.IO.ScreenShot.takeScreenShot;
 import static Main.Main.setState;
@@ -140,7 +141,7 @@ public class InGameController extends Controller {
         else if (window.buttonClicked(GLFW_KEY_O)) {
             if (castCooldown == 0) {
                 if (released) {
-                    spell = Spell.determineSpell("agility");
+                    spell = Spell.determineSpell("illuminate");
                     spell.castSpell(new Object[]{maze});
                     released = false;
                     castCooldown = 20;
@@ -154,7 +155,7 @@ public class InGameController extends Controller {
         } else if (window.buttonClicked(GLFW_KEY_P)) {
             if (castCooldown == 0) {
                 if (released) {
-                    spell = Spell.determineSpell("tp_self");
+                    spell = Spell.determineSpell("guide");
                     spell.castSpell(new Object[]{maze});
                     released = false;
                     castCooldown = 20;

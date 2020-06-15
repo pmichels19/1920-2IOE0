@@ -65,6 +65,14 @@ public class SaveManager {
      * @param slot the slot to empty
      */
     public static void purgeSlot(int slot) {
+        // before starting a new game, reset the player and the maze
+        Player.resetPlayer();
+        try {
+            Main.getMaze().rebuildGrid();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         checkExistingSaves();
         File[] save_data = SLOTS[slot].listFiles();
         for (File file : save_data) {
@@ -258,6 +266,14 @@ public class SaveManager {
     }
 
     private static boolean loadData(File player_data) {
+        // before loading in a new save, reset the player and the maze
+        Player.resetPlayer();
+        try {
+            Main.getMaze().rebuildGrid();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         String line;
         String[] splitLine;
         Scanner scanner = null;

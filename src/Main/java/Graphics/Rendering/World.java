@@ -52,8 +52,6 @@ public class World {
     private float xPlayer;
     private float yPlayer;
 
-    private Player player;
-
     // List that holds the enemies
     private final ArrayList<Enemy> enemyList = new ArrayList<>();
 
@@ -143,8 +141,6 @@ public class World {
                 (maze.getGrid().length - yPlayer) * 2 - 10,
                 16
         ));
-
-        this.player = Player.getInstance();
     }
 
     // sets used for gathering points to determine drawing locations of tiles
@@ -156,10 +152,15 @@ public class World {
 
     private final Set<Light> lights = new HashSet<>();
 
+    private Player player;
+
     /**
      * renders the maze
      */
     public void render() {
+        // first, retrieve the player instance
+        player = Player.getInstance();
+
         // set the camera and shader for the renderer
         renderer.setShader(SHADER);
         renderer.setCamera(camera);

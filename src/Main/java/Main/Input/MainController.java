@@ -45,6 +45,8 @@ public class MainController {
      */
     public void checkInputs() {
         if ( startUpCooldown == 0 ) {
+            // first, set the player
+            Controller.setPlayer();
             // depending on the current game state, we wish to check different inputs
             GameState state = Main.Main.getState();
             Controller controller = null;

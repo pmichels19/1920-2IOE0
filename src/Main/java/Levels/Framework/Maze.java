@@ -16,12 +16,13 @@ import java.util.stream.Collectors;
 public class Maze {
     private char[][] grid;
 
-    public final Point playerLocation;
+    public Point playerLocation;
     private final File file;
 
-    public final static char MARKER_WALL = 'x';
     public final static char MARKER_PLAYER = 'P';
     public final static char MARKER_SPACE = ' ';
+    public final static char MARKER_ENEMY = 'e';
+    public final static char MARKER_WALL = 'x';
     // the markers for item orbs based on the item ids found in the Item class
     public final static char MARKER_HEART = (char) Item.HEART + '0';
     public final static char MARKER_MANA = (char) Item.MANA + '0';
@@ -38,7 +39,6 @@ public class Maze {
             MARKER_HPOT,
             MARKER_MPOT
     ) );
-    public final static char MARKER_ENEMY = 'e';
 
     public static List<Point> enemyLocation = new ArrayList<>();
 
@@ -46,11 +46,22 @@ public class Maze {
      * reads a new file into the maze object
      *
      * @param filename the path to the maze file
-     * @throws FileNotFoundException if the filepath does not lead to an existing file
      */
-    public Maze(String filename) throws IOException {
+    public Maze(String filename) {
         file = new File("src/Main/java/Levels/Framework/" + filename + ".mze");
+        try {
+            rebuildGrid();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+    /**
+     * builds the grid as it is specified in {@code file}
+     *
+     * @throws FileNotFoundException if the file can not be found
+     */
+    public void rebuildGrid() throws FileNotFoundException {
         // read the file into a List line by line
         BufferedReader reader = new BufferedReader( new FileReader( file ) );
         List<String> lines = reader.lines().collect( Collectors.toList() );

@@ -26,7 +26,7 @@ public class Player extends Character {
     // an array of items the player has collected so far
     private Item[] inventory;
     List<Point> collected_items;
-    private int selectedItem = 0;
+    private int selectedItem;
 
     // agility spell
     private double agilityPower = 0;
@@ -37,6 +37,7 @@ public class Player extends Character {
         // start with an empty inventory of max size 5
         inventory = new Item[5];
         collected_items = new ArrayList<>();
+        selectedItem = 0;
     }
 
     public static Player getInstance() {
@@ -62,6 +63,13 @@ public class Player extends Character {
             }
         }
         return player;
+    }
+
+    /**
+     * resets the player to a null object
+     */
+    public static void resetPlayer() {
+        player = null;
     }
 
     public Item[] getInventory() {
@@ -137,6 +145,10 @@ public class Player extends Character {
      * @param slot the slot to use the item from
      */
     public void useItem(int slot) {
+        // if there is no item in the desired slot yet, return and do nothing
+        if (inventory[slot] == null) {
+            return;
+        }
         // we check what kind of item the player has selected
         switch (inventory[slot].getId()) {
             case Item.H_POTION:

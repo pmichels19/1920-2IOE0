@@ -44,15 +44,15 @@ public class InGameController extends Controller {
                 pauseCooldown = 10;
 
                 // take a screenshot and place it into the saves folder
-                takeScreenShot( "Saves/lastSave.png" );
-                setState( GameState.PAUSED );
+                takeScreenShot("Saves/lastSave.png");
+                setState(GameState.PAUSED);
             }
         } else {
             pauseCooldown--;
         }
 
         // we only check for inventory inputs if allowed and not paused
-        if ( inventoryCooldown == 0 ) {
+        if (inventoryCooldown == 0) {
             checkInventory();
         } else {
             // if switching is still on cooldown, decrement the cooldown by one
@@ -60,11 +60,11 @@ public class InGameController extends Controller {
         }
 
         // we only check for movement inputs if movement is allowed
-        if ( movementCounter == 0 ) {
+        if (movementCounter == 0) {
             checkMovement();
         } else if (movementCounter > 0) {
             // move the player with the specified speed and direction
-            world.movePlayer( speed, vertical );
+            world.movePlayer(speed, vertical);
             // decrement the amount of movement frames left
             movementCounter--;
         }
@@ -79,13 +79,13 @@ public class InGameController extends Controller {
      */
     private void checkInventory() {
         // we can go up and down in our inventory
-        if ( window.buttonClicked(GLFW_KEY_UP) ) {
-            player.setSelectedItem( player.getSelectedItem() - 1 );
-        } else if ( window.buttonClicked(GLFW_KEY_DOWN) ) {
-            player.setSelectedItem( player.getSelectedItem() + 1 );
+        if (window.buttonClicked(GLFW_KEY_UP)) {
+            player.setSelectedItem(player.getSelectedItem() - 1);
+        } else if (window.buttonClicked(GLFW_KEY_DOWN)) {
+            player.setSelectedItem(player.getSelectedItem() + 1);
         }
 
-        if (window.buttonClicked( GLFW_KEY_ENTER )) {
+        if (window.buttonClicked(GLFW_KEY_ENTER)) {
             player.useItem();
         }
 
@@ -102,32 +102,32 @@ public class InGameController extends Controller {
          If movement in the desired direction is allowed, we adjust the speed, counter and vertical variables
          accordingly and move the player in the maze
          */
-        if ( window.buttonClicked( GLFW_KEY_W ) ) {
-            if ( maze.canMoveUp() ) {
+        if (window.buttonClicked(GLFW_KEY_W)) {
+            if (maze.canMoveUp()) {
                 maze.moveUp();
 
                 movementCounter = (int) player.getSpeed();
                 speed = 1f / player.getSpeed();
                 vertical = true;
             }
-        } else if ( window.buttonClicked( GLFW_KEY_A ) ) {
-            if ( maze.canMoveLeft() ) {
+        } else if (window.buttonClicked(GLFW_KEY_A)) {
+            if (maze.canMoveLeft()) {
                 maze.moveLeft();
 
                 movementCounter = (int) player.getSpeed();
                 speed = -1f / player.getSpeed();
                 vertical = false;
             }
-        } else if ( window.buttonClicked( GLFW_KEY_S ) ) {
-            if ( maze.canMoveDown() ) {
+        } else if (window.buttonClicked(GLFW_KEY_S)) {
+            if (maze.canMoveDown()) {
                 maze.moveDown();
 
                 movementCounter = (int) player.getSpeed();
                 speed = -1f / player.getSpeed();
                 vertical = true;
             }
-        } else if ( window.buttonClicked( GLFW_KEY_D ) ) {
-            if ( maze.canMoveRight() ) {
+        } else if (window.buttonClicked(GLFW_KEY_D)) {
+            if (maze.canMoveRight()) {
                 maze.moveRight();
 
                 movementCounter = (int) player.getSpeed();

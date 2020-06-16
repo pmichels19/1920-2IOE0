@@ -21,7 +21,7 @@ public class SpellGuide extends Spell {
     private int manaCost = 10;
 
     public SpellGuide() {
-        super(0);
+        super(10);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class SpellGuide extends Spell {
                 public void run() {
                     player.setGuide(false);
                 }
-            }, 5 * 1000);
+            }, 10 * 1000);
         }
     }
 

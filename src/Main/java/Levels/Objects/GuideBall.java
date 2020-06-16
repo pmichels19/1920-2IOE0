@@ -25,6 +25,8 @@ public class GuideBall extends Object3D {
 
     private Point mazePosition;
 
+    public boolean isNew = true;
+
     // Path to the normal mapping of the model
 //    private static String normalMapFile = "res/Models/eyeball_normal.jpg";
     private static String normalMapFile = null;
@@ -53,7 +55,7 @@ public class GuideBall extends Object3D {
             e.printStackTrace();
         }
 
-        setScale(1f);
+        setScale(.5f);
         super.setModel(model);
     }
 
@@ -64,8 +66,6 @@ public class GuideBall extends Object3D {
      * @param grid          Grid that holds the maze
      */
     public void move(Point endPoint, char[][] grid) {
-        System.out.println("curPos: " + mazePosition.getX() + ", " + mazePosition.getY());
-        System.out.println("endPos: " + endPoint.getX() + ", " + endPoint.getY());
         if (!isMoving()) {
             AStarSolver ass = AStarSolver.getInstance();
             ArrayList<Point> pathToEnd = ass.CalculateShortestPath(mazePosition, endPoint, grid);

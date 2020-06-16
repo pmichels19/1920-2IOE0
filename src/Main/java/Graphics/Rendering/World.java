@@ -40,6 +40,7 @@ public class World {
     // the radius around the player that is actually rendered
     private final int RADIUS = 8;
 
+    Vector3f NO_LIGHT = new Vector3f(.5f, .2f, 100f);
     Vector3f DARK_ATTENUATION = new Vector3f(.5f, .2f, 1.5f);
     Vector3f LIGHT_ATTENUATION = new Vector3f(.5f, .2f, .5f);
 
@@ -51,23 +52,7 @@ public class World {
             new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, LIGHT_ATTENUATION),
             new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, LIGHT_ATTENUATION),
 
-            new Light(new Vector3f(2, 4, 1f), new Vector3f(1f, 0.2f, 0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(2, 4, 5f), new Vector3f(1f, 0.2f, 0.2f), null, LIGHT_ATTENUATION),
-
-            new Light(new Vector3f(6, 4, 1f), new Vector3f(1f, 1f, 0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(6, 4, 5f), new Vector3f(1f, 1f, 0.2f), null, LIGHT_ATTENUATION),
-
-            new Light(new Vector3f(10, 4, 1f), new Vector3f(0.2f, 1f, 0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(10, 4, 5f), new Vector3f(0.2f, 1f, 0.2f), null, LIGHT_ATTENUATION),
-
-            new Light(new Vector3f(2, 16, 1f), new Vector3f(1f, 0.2f, 1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(2, 16, 5f), new Vector3f(1f, 0.2f, 1f), null, LIGHT_ATTENUATION),
-
-            new Light(new Vector3f(6, 16, 1f), new Vector3f(0.2f, 0.2f, 1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(6, 16, 5f), new Vector3f(0.2f, 0.2f, 1f), null, LIGHT_ATTENUATION),
-
-            new Light(new Vector3f(10, 16, 1f), new Vector3f(0.2f, 1f, 1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(10, 16, 5f), new Vector3f(0.2f, 1f, 1f), null, LIGHT_ATTENUATION)
+            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, NO_LIGHT),
     };
 
     // variables to keep track of the player location in the world
@@ -232,17 +217,26 @@ public class World {
         renderer.renderCharacter(player);
 
         if(player.hasGuide()) {
-            if (guide == null) {
+            if (guide == null || guide.isNew) {
                 System.out.println("INIT/.....");
                 guide = new GuideBall();
                 guide.setPosition(new Vector3f(maze.playerLocation.getX(), maze.playerLocation.getY(), 3f));
                 guide.setColor(new Vector3f(.7f, .7f, .7f));
                 guide.initializePosition(maze.playerLocation.getX(), maze.playerLocation.getY(), maze.getGrid().length);
+                lights[5].setAttenuation(LIGHT_ATTENUATION);
+                guide.isNew = false;
             }
+
+            lights[5].setPosition(new Vector3f(guide.getPosition().x, guide.getPosition().y, 1f));
             guide.move(maze.endPoint, maze.getGrid());
             renderer.renderObject(guide);
         } else {
-            guide = null;
+            if (guide != null) {
+                guide.isNew = true;
+                guide.setColor(new Vector3f(.1f, .1f, .1f));
+                lights[5].setAttenuation(DARK_ATTENUATION);
+                renderer.renderObject(guide);
+            }
         }
 
         lights[0].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 1f));

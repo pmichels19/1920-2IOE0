@@ -42,6 +42,12 @@ public class InGameController extends Controller {
             return;
         }
 
+        // check if the player has reached the exit to the maze
+        if (maze.playerLocation.getX() == maze.endLocation.getX() && maze.playerLocation.getY() == maze.endLocation.getY()) {
+            setState(GameState.VICTORY);
+            return;
+        }
+
         // check if the player wants to pause/unpause the game
         if (pauseCooldown == 0) {
             if (window.buttonClicked(GLFW_KEY_ESCAPE)) {

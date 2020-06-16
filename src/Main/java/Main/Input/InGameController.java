@@ -3,8 +3,9 @@ package Main.Input;
 import AI.ImageRecognition.RunDrawingCanvas;
 import Main.GameState;
 import SpellCasting.Spell;
-import SpellCasting.SpellAgility;
-import SpellCasting.SpellIlluminate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static Graphics.IO.ScreenShot.takeScreenShot;
 import static Main.Main.setState;
@@ -31,6 +32,8 @@ public class InGameController extends Controller {
 
     private Spell spell;
 
+    private List<Spell> activeSpells = new ArrayList<>();
+
     @Override
     void checkInputs() {
         // if the player died, we need to go into the DEAD state
@@ -38,6 +41,9 @@ public class InGameController extends Controller {
             setState(GameState.DEAD);
             return;
         }
+
+        // handle spell countdown
+        activeSpells.removeIf(Spell::checkDuration);
 
         // check if the player wants to pause/unpause the game
         if (pauseCooldown == 0) {
@@ -86,9 +92,9 @@ public class InGameController extends Controller {
             player.setSelectedItem( player.getSelectedItem() + 1 );
         }
 
-        if (window.buttonClicked( GLFW_KEY_ENTER )) {
-            player.useItem();
-        }
+//        if (window.buttonClicked( GLFW_KEY_ENTER )) {
+//            player.useItem();
+//        }
 
         // set a cooldown of 5 frames, so the player has better control over what item he wants to select
         inventoryCooldown = 5;
@@ -155,7 +161,8 @@ public class InGameController extends Controller {
         } else if (window.buttonClicked(GLFW_KEY_P)) {
             if (castCooldown == 0) {
                 if (released) {
-                    spell = Spell.determineSpell("guide");
+                    Spell spell = Spell.determineSpell("agility");
+                    activeSpells.add(spell);
                     spell.castSpell(new Object[]{maze});
                     released = false;
                     castCooldown = 20;
@@ -166,13 +173,6 @@ public class InGameController extends Controller {
                 castCooldown--;
             }
             released = true;
-        }
-
-        // handle spell countdown (can make array or something later for more spells)
-        if (spell != null) {
-            if (spell instanceof SpellAgility) {
-                ((SpellAgility) spell).checkDuration();
-            }
         }
     }
 }

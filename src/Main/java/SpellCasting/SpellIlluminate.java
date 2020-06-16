@@ -1,6 +1,5 @@
 package SpellCasting;
 
-import Graphics.Rendering.World;
 import Levels.Characters.Player;
 import Levels.Framework.joml.Vector3f;
 
@@ -8,9 +7,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class SpellIlluminate extends Spell {
-
-    Timer timer = new Timer();
-    Player player = Player.getInstance();
     float LIGHT_ATTENUATION = .1f;
     float STANDARD_ATTENUATION = .5f;
 
@@ -20,8 +16,13 @@ public class SpellIlluminate extends Spell {
     float seconds = 10f;
     int steps = 50;
 
+    public SpellIlluminate() {
+        super(0);
+    }
+
     @Override
     public void castSpell(Object[] args) {
+        Player player = Player.getInstance();
         prevMana = player.getMana();
         if (prevMana < manaCost) {
             System.out.println("Not enough mana!");
@@ -37,6 +38,7 @@ public class SpellIlluminate extends Spell {
     }
 
     private void illuminate(float brightness, float duration, int n) {
+        Timer timer = new Timer();
         float t = duration;
         if (n >= steps/2) {
              t *= 2;
@@ -46,7 +48,7 @@ public class SpellIlluminate extends Spell {
 
         if (n >= 0) {
             float attenuation = STANDARD_ATTENUATION - (STANDARD_ATTENUATION-LIGHT_ATTENUATION) * brightness;
-            player.setCurrentAttenuation(new Vector3f(.5f, .2f, attenuation));
+            Player.getInstance().setCurrentAttenuation(new Vector3f(.5f, .2f, attenuation));
 
             timer.schedule(new TimerTask() {
                 @Override

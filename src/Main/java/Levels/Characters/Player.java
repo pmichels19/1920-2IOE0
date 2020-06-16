@@ -26,6 +26,8 @@ public class Player extends Character {
     Vector3f LIGHT_ATTENUATION = new Vector3f(.5f, .2f, .2f);
     Vector3f currentAttenuation = STANDARD_ATTENUATION;
 
+    private boolean hasGuide = false;
+
     // a list of items the player has collected so far
     private Item[] inventory;
     private int selectedItem = 0;
@@ -176,6 +178,14 @@ public class Player extends Character {
     public void tossItem() {
         // replace the consumed item with the empty item
         inventory[selectedItem] = Item.getItemById(Item.EMPTY);
+    }
+
+    public boolean hasGuide() {
+        return hasGuide;
+    }
+
+    public void setGuide(boolean guide) {
+        this.hasGuide = guide;
     }
 
     public void setAgilityPower(double agilityPower) {

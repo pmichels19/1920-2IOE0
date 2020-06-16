@@ -12,6 +12,7 @@ import Levels.Characters.Player;
 import Levels.Framework.Maze;
 import Levels.Framework.Point;
 import Levels.Framework.joml.Vector3f;
+import Levels.Objects.GuideBall;
 import Levels.Objects.MagicBall;
 import Levels.Objects.Object3D;
 
@@ -74,6 +75,8 @@ public class World {
     private float yPlayer;
 
     private Player player;
+
+    private GuideBall guide;
 
     // List that holds the enemies
     private ArrayList<Enemy> enemyList = new ArrayList<>();
@@ -227,6 +230,20 @@ public class World {
         // Render player
         player.setGridPosition(xPlayer, yPlayer, maze.getGrid().length);
         renderer.renderCharacter(player);
+
+        if(player.hasGuide()) {
+            if (guide == null) {
+                System.out.println("INIT/.....");
+                guide = new GuideBall();
+                guide.setPosition(new Vector3f(maze.playerLocation.getX(), maze.playerLocation.getY(), 3f));
+                guide.setColor(new Vector3f(.7f, .7f, .7f));
+                guide.initializePosition(maze.playerLocation.getX(), maze.playerLocation.getY(), maze.getGrid().length);
+            }
+            guide.move(maze.endPoint, maze.getGrid());
+            renderer.renderObject(guide);
+        } else {
+            guide = null;
+        }
 
         lights[0].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 1f));
         lights[0].setAttenuation(player.getCurrentAttenuation());

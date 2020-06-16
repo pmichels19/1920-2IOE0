@@ -20,8 +20,10 @@ public class Maze {
     public final static char MARKER_PLAYER = 'P';
     public final static char MARKER_SPACE = ' ';
     public final static char MARKER_ENEMY = 'e';
+    public final static char MARKER_FINAL = 'f';
 
     public static List<Point> enemyLocation = new ArrayList<>();
+    public Point endPoint;
 
     /**
      * reads a new file into the maze object
@@ -53,6 +55,10 @@ public class Maze {
                 }
                 if (grid[i][j] == MARKER_ENEMY) {
                     enemyLocation.add(new Point(i, j));
+                    break;
+                }
+                if (grid[i][j] == MARKER_FINAL) {
+                    endPoint = new Point(i, j);
                     break;
                 }
             }

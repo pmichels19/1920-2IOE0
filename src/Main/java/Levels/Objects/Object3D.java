@@ -63,9 +63,9 @@ public abstract class Object3D {
     }
 
     public void render(Shader shader) {
-        float startingPoint = .2f;
+        float startingPoint = position.z;
         float floatingSpeed = 150f;
-        position.z = (float) (startingPoint + Math.pow(Math.cos(Math.toRadians(tVal * floatingSpeed)),2)/4);
+        //position.z = (float) (startingPoint + Math.pow(Math.cos(Math.toRadians(tVal * floatingSpeed)),2)/4);
 
 
         shader.setUniform("transform", 1);
@@ -153,5 +153,9 @@ public abstract class Object3D {
         }
         setGamePositionX(gamePositionX);
         setGridPositionY(gamePositionY, gridLength);
+    }
+
+    public void setModel(OBJModel model) {
+        this.model = model;
     }
 }

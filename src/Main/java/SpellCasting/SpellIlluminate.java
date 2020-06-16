@@ -14,12 +14,21 @@ public class SpellIlluminate extends Spell {
     float LIGHT_ATTENUATION = .1f;
     float STANDARD_ATTENUATION = .5f;
 
+    private int prevMana;
+    private int manaCost = 10;
+
     float seconds = 10f;
     int steps = 50;
 
     @Override
     public void castSpell(Object[] args) {
-        illuminate(1, seconds/steps, steps);
+        prevMana = player.getMana();
+        if (prevMana < manaCost) {
+            System.out.println("Not enough mana!");
+        } else {
+            player.setMana(prevMana - manaCost);
+            illuminate(1, seconds/steps, steps);
+        }
     }
 
     @Override

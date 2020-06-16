@@ -5,15 +5,18 @@ import Levels.Framework.joml.Vector3f;
 
 public class SpellGuide extends Spell {
 
-    Player player = Player.getInstance();
-
     private int prevMana;
     private int manaCost = 10;
 
     Vector3f loc;
 
+    public SpellGuide() {
+        super(5);
+    }
+
     @Override
     public void castSpell(Object[] args) {
+        Player player = Player.getInstance();
         prevMana = player.getMana();
         if (prevMana < manaCost) {
             System.out.println("Not enough mana!");

@@ -1,9 +1,16 @@
 package SpellCasting;
 
+import Graphics.IO.Timer;
+import Levels.Characters.Player;
+
 public abstract class Spell {
 
-    public Spell() {
+    int duration;
+    double castMoment;
 
+
+    public Spell(int duration) {
+        this.duration = duration;
     }
 
     // game logic for all spells
@@ -61,5 +68,13 @@ public abstract class Spell {
                 break;
         }
         return ret;
+    }
+
+    public boolean checkDuration() {
+        if (Timer.getTime() - castMoment > duration) {
+            Player.getInstance().setAgilityPower(0);
+            return true;
+        }
+        return false;
     }
 }

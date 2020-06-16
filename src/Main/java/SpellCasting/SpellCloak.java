@@ -4,14 +4,17 @@ import Levels.Characters.Player;
 
 public class SpellCloak extends Spell {
 
-    Player player = Player.getInstance();
-
     private int prevMana;
     private int manaCost = 10;
+
+    public SpellCloak() {
+        super(10);
+    }
 
 
     @Override
     public void castSpell(Object[] args) {
+        Player player = Player.getInstance();
         prevMana = player.getMana();
         if (prevMana < manaCost) {
             System.out.println("Not enough mana!");

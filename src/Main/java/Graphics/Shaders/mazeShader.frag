@@ -18,6 +18,7 @@ uniform vec3 lightAttenuation[10];
 in vec3 surfaceNormal;
 in vec2 textureCoords;
 in vec3 toLightVector[10];
+in vec3 toCameraVector;
 
 void main() {
 
@@ -35,19 +36,30 @@ void main() {
         unitNormal = normalize(surfaceNormal);
     }
 
-    // Compute the diffuse for every light source
+    // Compute the diffuse and specular for every light source
     vec3 totalDiffuse = vec3(0.0);
+    vec3 totalSpecular = vec3(0.0);
+
     for (int i = 0; i < 10; i++) {
         vec3 unitLightVector = normalize(toLightVector[i]);
+        vec3 unitVectorToCamera = normalize(toCameraVector);
+        vec3 lightDirection = -unitLightVector;
+
         float distance = length(toLightVector[i]);
         float attFactor = lightAttenuation[i].x + lightAttenuation[i].y*distance + lightAttenuation[i].z*distance*distance;
+
         float nDotl = dot(unitNormal, unitLightVector);
         float brightness = max(nDotl, 0.0);
+
+        vec3 reflectedLightDirection = reflect(lightDirection, unitNormal);
+        float specular = pow(max(dot(reflectedLightDirection, unitVectorToCamera), 0.0), 16);
+
         totalDiffuse += (brightness * lightColor[i])/attFactor;
+        totalSpecular += (0.05 * specular * lightColor[i])/attFactor;
     }
 
     // Compute the final fragment color
-    gl_FragColor = vec4(totalDiffuse * texture.rgb, texture.a);
+    gl_FragColor = vec4(totalDiffuse * texture.rgb, texture.a) + vec4(totalSpecular, 0.0);
 
 
 }

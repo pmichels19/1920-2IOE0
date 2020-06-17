@@ -20,6 +20,9 @@ public enum GUIElements {
     ),
     BACKGROUND (
             "GUI_background.png"
+    ),
+    CANVAS (
+            "canvas_bg.png"
     );
 
     private final Texture texture;

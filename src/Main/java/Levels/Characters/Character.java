@@ -1,5 +1,6 @@
 package Levels.Characters;
 
+import Graphics.AnimatedModel.AnimatedModel;
 import Graphics.OBJModel;
 import Graphics.OpenGL.Shader;
 import Levels.Framework.joml.Matrix4f;
@@ -11,7 +12,10 @@ import java.awt.event.ActionListener;
 
 public abstract class Character {
     // Holds the model
-    private OBJModel model;
+    private OBJModel modelOld;
+
+    //Holds the rigged model
+    private AnimatedModel model;
 
     // Holds the current position
     private Vector3f position;
@@ -38,7 +42,7 @@ public abstract class Character {
     private double tVal = 0.0;
     Timer timer;
 
-    public Character(int max_health, int max_mana, OBJModel model) {
+    public Character(int max_health, int max_mana, AnimatedModel model) {
         this.model = model;
         position = new Vector3f(0, 0f, 1.5f);
         scale = 1.2f;
@@ -94,7 +98,11 @@ public abstract class Character {
         shader.setUniform("transform", 0);
     }
 
-    public OBJModel getModel() {
+    public OBJModel getModelOld() {
+        return modelOld;
+    }
+
+    public AnimatedModel getModel() {
         return model;
     }
 

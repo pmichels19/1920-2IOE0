@@ -1,12 +1,20 @@
 package Graphics.AnimatedModel;
 
+import Graphics.Loaders.Texture;
+import Graphics.OpenGL.Shader;
 import Levels.Framework.joml.Matrix4f;
 
 //import animation.Animation;
 //import animation.Animator;
 import Graphics.OpenGL.Vao;
-import Graphics.OpenGL.Texture;
-//import textures.Texture;
+import Levels.Framework.joml.Vector3f;
+import org.lwjgl.opengl.GL11;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 /**
  *
@@ -14,17 +22,16 @@ import Graphics.OpenGL.Texture;
  * contains the model's VAO which contains the mesh data, the texture, and the
  * root joint of the joint hierarchy, or "skeleton". It also holds an int which
  * represents the number of joints that the model's skeleton contains, and has
- * its own {@link Animator} instance which can be used to apply animations to
+ * its own instance which can be used to apply animations to
  * this entity.
  *
- * @author Karl
  *
  */
 public class AnimatedModel {
 
     // skin
     private final Vao model;
-    private final Texture texture;
+    private Texture texture;
 
     // skeleton
     private final Joint rootJoint;
@@ -54,9 +61,9 @@ public class AnimatedModel {
      *            this entity.
      *
      */
-    public AnimatedModel(Vao model, Texture texture, Joint rootJoint, int jointCount) {
+    public AnimatedModel(Vao model, Joint rootJoint, int jointCount) {
         this.model = model;
-        this.texture = texture;
+        //this.texture = texture;
         this.rootJoint = rootJoint;
         this.jointCount = jointCount;
        // this.animator = new Animator(this);
@@ -107,12 +114,76 @@ public class AnimatedModel {
      //   animator.doAnimation(animation);
     } */
 
+    public boolean isTextured() {
+        return this.texture != null;
+    }
+
+    public void setTexture(Texture texture) {
+        this.texture = texture;
+    }
+
+
     /**
      * Updates the animator for this entity, basically updating the animated
      * pose of the entity. Must be called every frame.
      */
     public void update() {
        // animator.update();
+    }
+
+    /**
+     * Renders the mesh with a specific shader
+     * @param shader shader to bind uniforms to
+     */
+    public void renderOld(Shader shader) {
+
+        /*
+        if (hasNormalMap()) {
+            shader.setUniform("normalMap", 1);
+            shader.setUniform("normalMapping", 1);
+            normalMap.bind(1);
+        } */
+
+        glEnable(GL_DEPTH_TEST);
+        // Bind to the VAO
+
+        //glBindVertexArray(vaoId);
+        glEnableVertexAttribArray(0);
+        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
+
+        glPushMatrix();
+
+        // Draw the indices
+        //glDrawElements(GL_TRIANGLES, vertexCount, GL_UNSIGNED_INT, 0);
+//        glDrawArrays(GL_TRIANGLES, vertexCount, 0);
+
+        // Restore state
+        glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
+
+        glBindVertexArray(0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        glDisable(GL_DEPTH_TEST);
+    }
+
+
+    /**
+     * Renders an animated entity. The main thing to note here is that all the
+     * joint transforms are loaded up to the shader to a uniform array. Also 5
+     * attributes of the VAO are enabled before rendering, to include joint
+     * indices and weights.
+     *
+     */
+    public void render( Shader shader) {
+        //prepare(camera, lightDir);
+        //entity.getTexture().bindToUnit(0);
+        this.getModel().bind(0, 1, 2, 3, 4);
+        //shader.jointTransforms.loadMatrixArray(this.getJointTransforms());
+        GL11.glDrawElements(GL11.GL_TRIANGLES, this.getModel().getIndexCount(), GL11.GL_UNSIGNED_INT, 0);
+        this.getModel().unbind(0, 1, 2, 3, 4);
     }
 
     /**

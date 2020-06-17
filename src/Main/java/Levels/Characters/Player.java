@@ -1,5 +1,10 @@
 package Levels.Characters;
 
+import Graphics.AnimatedModel.AnimatedModel;
+import Graphics.ColladaParser.ColladaLoader.ColladaLoader;
+import Graphics.ColladaParser.DataStructures.AnimatedModelData;
+import Graphics.ColladaParser.Utils.XMLFile;
+import Graphics.Loaders.AnimatedModelLoader;
 import Graphics.OBJLoader;
 import Graphics.OBJModel;
 import Graphics.OpenGL.Model;
@@ -14,10 +19,10 @@ import java.util.List;
 
 public class Player extends Character {
     // Name of the obj file in the res folder corresponding to the player model
-    private static String objModelFile = "character";
+    private static String objModelFile = "characterDefault"; //"character";
 
     // Path to the texture of the model
-    private static String textureFile = "res/Models/eyeball.jpg";
+    private static String textureFile = "res/Models/diffuse.png";
 
     // Path to the normal mapping of the model
 //    private static String normalMapFile = "res/Models/eyeball_normal.jpg";
@@ -36,8 +41,8 @@ public class Player extends Character {
     private int current_health;
     private int current_mana;
 
-    private Player(int hp, int mp, OBJModel model) {
-        super(hp,mp,model);
+    private Player(int hp, int mp, AnimatedModel model) {
+        super(hp, mp, model);
 
         // start with an empty inventory of max size 5
         inventory = new Item[] {
@@ -57,21 +62,12 @@ public class Player extends Character {
         if (player == null) {
             try {
                 // Create the model
-                OBJModel model =  OBJLoader.loadObjModel(objModelFile);
-
-                if (textureFile != null) {
-                    // Set the texture
-                    model.setTexture(new Texture(textureFile));
-                }
-
-                // Add a normal map if there is one
-                if (normalMapFile != null) {
-                model.setNormalMap(new Texture(normalMapFile));
-                }
+                AnimatedModel model =  AnimatedModelLoader.loadEntity(
+                        new XMLFile("res/Models/" + objModelFile + ".dae"), new XMLFile(textureFile));
 
                 // Instantiate the player
-                player = new Player(100, 100,model);
-            } catch (IOException e) {
+                player = new Player(100, 100, model);
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }

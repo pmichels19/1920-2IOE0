@@ -206,67 +206,116 @@ public class InGameController extends Controller {
         }
 
 
-        // enter can be used to pick up items
+        // enter can be used to pick up items, or to open doors
         if (window.buttonClicked(GLFW_KEY_ENTER)) {
             tryItemCollect();
+            tryDoorInteraction();
         }
     }
-
-
 
 
     /**
      * method that looks at the grid, the player position and the direction the player is facing
      * to see if an item can be picked up
+     *
+     * @throws IllegalStateException if the direction the player is facing does not correspond with any direction
      */
-    private void tryItemCollect() {
+    private void tryItemCollect() throws IllegalStateException {
+        // get the grid and the facing tile
+        char[][] grid = maze.getGrid();
+        char facing = getFacingTile();
+        // get the player direction and place
+        int direction = player.getDirection();
+        int x_player = maze.getPlayerLocation().getX();
+        int y_player = maze.getPlayerLocation().getY();
+        // get the numerical value of the potential item
+        int facingValue = Character.getNumericValue( facing );
+
+        // if the facing character is actually an item, we can pick it up
+        if ( Maze.ITEM_MARKERS.contains( facing ) ) {
+            switch (direction) {
+                case DIRECTION_LEFT:
+                    player.addItem(Item.getItemById(facingValue), new Point(x_player, y_player - 1));
+                    grid[x_player][y_player - 1] = Maze.MARKER_SPACE;
+                    break;
+                case DIRECTION_RIGHT:
+                    player.addItem(Item.getItemById(facingValue), new Point(x_player, y_player + 1));
+                    grid[x_player][y_player + 1] = Maze.MARKER_SPACE;
+                    break;
+                case DIRECTION_UP:
+                    player.addItem(Item.getItemById(facingValue), new Point(x_player - 1, y_player));
+                    grid[x_player - 1][y_player] = Maze.MARKER_SPACE;
+                    break;
+                case DIRECTION_DOWN:
+                    player.addItem(Item.getItemById(facingValue), new Point(x_player + 1, y_player));
+                    grid[x_player + 1][y_player] = Maze.MARKER_SPACE;
+                    break;
+            }
+        }
+    }
+
+    private void tryDoorInteraction() {
+        // get the grid and the facing tile
+        char[][] grid = maze.getGrid();
+        char facing = getFacingTile();
+        // get the player direction and place
+        int direction = player.getDirection();
+        int x_player = maze.getPlayerLocation().getX();
+        int y_player = maze.getPlayerLocation().getY();
+
+        // if a door is already open, we want to close it
+        if ( facing == Maze.MARKER_OPEN_DOOR ) {
+            switch (direction) {
+                case DIRECTION_LEFT:
+                    break;
+                case DIRECTION_RIGHT:
+                    break;
+                case DIRECTION_UP:
+                    break;
+                case DIRECTION_DOWN:
+                    break;
+            }
+        }
+        // but if the door is still closed, we need a key to open it
+        else if ( facing == Maze.MARKER_CLOSED_DOOR && player.hasKey() ) {
+            switch (direction) {
+                case DIRECTION_LEFT:
+                    break;
+                case DIRECTION_RIGHT:
+                    break;
+                case DIRECTION_UP:
+                    break;
+                case DIRECTION_DOWN:
+                    break;
+            }
+        }
+    }
+
+    /**
+     * returns the grid tile the player is currently facing as a character
+     *
+     * @return the tile the player is facing
+     */
+    private char getFacingTile() {
         // get the grid
         char[][] grid = maze.getGrid();
         int direction = player.getDirection();
         int x_player = maze.getPlayerLocation().getX();
         int y_player = maze.getPlayerLocation().getY();
+
         char facing;
-        switch (direction) {
-            case DIRECTION_LEFT:
-                facing = grid[x_player][y_player - 1];
-                if ( Maze.ITEM_MARKERS.contains( facing ) ) {
-                    player.addItem(
-                            Item.getItemById( Character.getNumericValue( facing ) ),
-                            new Point( x_player, y_player - 1 )
-                    );
-                    grid[x_player][y_player - 1] = Maze.MARKER_SPACE;
-                }
-                break;
-            case DIRECTION_RIGHT:
-                facing = grid[x_player][y_player + 1];
-                if ( Maze.ITEM_MARKERS.contains( facing ) ) {
-                    player.addItem(
-                            Item.getItemById( Character.getNumericValue( facing ) ),
-                            new Point( x_player, y_player + 1 )
-                    );
-                    grid[x_player][y_player + 1] = Maze.MARKER_SPACE;
-                }
-                break;
-            case DIRECTION_UP:
-                facing = grid[x_player - 1][y_player];
-                if ( Maze.ITEM_MARKERS.contains( facing ) ) {
-                    player.addItem(
-                            Item.getItemById( Character.getNumericValue( facing ) ),
-                            new Point( x_player - 1, y_player )
-                    );
-                    grid[x_player - 1][y_player] = Maze.MARKER_SPACE;
-                }
-                break;
-            case DIRECTION_DOWN:
-                facing = grid[x_player + 1][y_player];
-                if ( Maze.ITEM_MARKERS.contains( facing ) ) {
-                    player.addItem(
-                            Item.getItemById( Character.getNumericValue( facing ) ),
-                            new Point( x_player + 1, y_player )
-                    );
-                    grid[x_player + 1][y_player] = Maze.MARKER_SPACE;
-                }
-                break;
+        if (direction == DIRECTION_LEFT) {
+            facing = grid[x_player][y_player - 1];
+        } else if (direction == DIRECTION_RIGHT) {
+            facing = grid[x_player][y_player + 1];
+        } else if (direction == DIRECTION_UP) {
+            facing = grid[x_player - 1][y_player];
+        } else if (direction == DIRECTION_DOWN) {
+            facing = grid[x_player + 1][y_player];
+        } else {
+            throw new IllegalStateException("the player is facing a non-existent direction somehow");
         }
+
+        return facing;
     }
 }

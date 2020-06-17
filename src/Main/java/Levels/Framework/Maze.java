@@ -1,11 +1,10 @@
 package Levels.Framework;
 
 import Levels.Assets.Items.Item;
+import Levels.Objects.Door;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -20,6 +19,8 @@ public class Maze {
     public Point endLocation;
     private final File file;
 
+    public final static char MARKER_CLOSED_DOOR = 'D';
+    public final static char MARKER_OPEN_DOOR = 'd';
     public final static char MARKER_PLAYER = 'P';
     public final static char MARKER_SPACE = ' ';
     public final static char MARKER_ENEMY = 'e';
@@ -43,6 +44,7 @@ public class Maze {
     ) );
 
     public static List<Point> enemyLocation = new ArrayList<>();
+    public static Map<Point, Door> doorMap = new HashMap<>();
 
     /**
      * reads a new file into the maze object

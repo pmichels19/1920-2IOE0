@@ -80,6 +80,21 @@ public class Player extends Character {
         this.inventory = inventory;
     }
 
+    /**
+     * method that checks if the player is in possession of a key
+     *
+     * @return whether {@code inventory} contains a key item
+     */
+    public boolean hasKey() {
+        for (Item item : inventory) {
+            if (item.getId() == Item.KEY) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public void setSelectedItem(int selectedItem) {
         this.selectedItem = (selectedItem + inventory.length) % inventory.length;
     }
@@ -143,13 +158,18 @@ public class Player extends Character {
     }
 
     /**
-     * Sets the item in the inventory at {@code selectedItem} to the provided item
+     * Sets the item in the inventory at {@code selectedItem / findFirstOpenSlot()} to the provided item
      *
      * @param item the new item to add to the inventory
      * @param point the point that the item was located at in the maze
      */
     public void addItem(Item item, Point point) {
-        inventory[selectedItem] = item;
+        int openSlot = findFirstOpenSlot();
+        if ( openSlot == -1 ) {
+            inventory[selectedItem] = item;
+        } else {
+            inventory[openSlot] = item;
+        }
         collected_items.add(point);
     }
 

@@ -288,7 +288,7 @@ public class World {
         }
 
         // Render player
-        player.setGridPosition(xPlayer, yPlayer, maze.getGrid().length);
+        player.setGamePositionAndRotate(xPlayer, yPlayer, maze.getGrid().length);
         renderer.renderCharacter(player);
 
         for (Light light : lights) {

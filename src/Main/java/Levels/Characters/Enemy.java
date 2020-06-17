@@ -80,7 +80,7 @@ public abstract class Enemy extends Character {
             doRandomMove(grid);
         } else {
             // If player is in detection range, move towards the player
-            moveToPoint(pathToPlayer.get(pathToPlayer.size() - 1), grid.length);
+            moveToPoint(pathToPlayer.get(pathToPlayer.size() - 1), grid.length, grid);
         }
     }
 

@@ -1,6 +1,10 @@
 package Levels.Framework;
 
+import Levels.Assets.Items.Item;
+
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,22 +16,54 @@ import java.util.stream.Collectors;
 public class Maze {
     private char[][] grid;
 
-    public final Point playerLocation;
+    public Point playerLocation;
+    public Point endLocation;
     private final File file;
 
-    public final static char MARKER_WALL = 'x';
     public final static char MARKER_PLAYER = 'P';
     public final static char MARKER_SPACE = ' ';
+    public final static char MARKER_ENEMY = 'e';
+    public final static char MARKER_WALL = 'x';
+    public final static char MARKER_END = 'f';
+    // the markers for item orbs based on the item ids found in the Item class
+    public final static char MARKER_HEART = (char) Item.HEART + '0';
+    public final static char MARKER_MANA = (char) Item.MANA + '0';
+    public final static char MARKER_BOOT = (char) Item.BOOT + '0';
+    public final static char MARKER_COIN = (char) Item.COIN + '0';
+    public final static char MARKER_HPOT = (char) Item.H_POTION + '0';
+    public final static char MARKER_MPOT = (char) Item.M_POTION + '0';
+
+    public final static List<Character> ITEM_MARKERS = new ArrayList<>( Arrays.asList(
+            MARKER_HEART,
+            MARKER_MANA,
+            MARKER_BOOT,
+            MARKER_COIN,
+            MARKER_HPOT,
+            MARKER_MPOT
+    ) );
+
+    public static List<Point> enemyLocation = new ArrayList<>();
 
     /**
      * reads a new file into the maze object
      *
      * @param filename the path to the maze file
-     * @throws FileNotFoundException if the filepath does not lead to an existing file
      */
-    public Maze(String filename) throws IOException {
+    public Maze(String filename) {
         file = new File("src/Main/java/Levels/Framework/" + filename + ".mze");
+        try {
+            rebuildGrid();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+    /**
+     * builds the grid as it is specified in {@code file}
+     *
+     * @throws FileNotFoundException if the file can not be found
+     */
+    public void rebuildGrid() throws FileNotFoundException {
         // read the file into a List line by line
         BufferedReader reader = new BufferedReader( new FileReader( file ) );
         List<String> lines = reader.lines().collect( Collectors.toList() );
@@ -40,17 +76,26 @@ public class Maze {
 
         int x_player = -1;
         int y_player = -1;
+        int x_end = -1;
+        int y_end = -1;
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 if (grid[i][j] == MARKER_PLAYER) {
                     x_player = i;
                     y_player = j;
-                    break;
+                }
+                if (grid[i][j] == MARKER_ENEMY) {
+                    enemyLocation.add(new Point(i, j));
+                }
+                if (grid[i][j] == MARKER_END) {
+                    x_end = i;
+                    y_end = j;
                 }
             }
         }
 
         playerLocation = new Point(x_player, y_player);
+        endLocation = new Point(x_end, y_end);
     }
 
     /**
@@ -132,7 +177,7 @@ public class Maze {
         int x = playerLocation.getX();
         int y = playerLocation.getY();
 
-        return grid[x - 1][y] == MARKER_SPACE;
+        return grid[x - 1][y] == MARKER_SPACE || grid[x - 1][y] == MARKER_END;
     }
 
     /**
@@ -161,7 +206,7 @@ public class Maze {
         int x = playerLocation.getX();
         int y = playerLocation.getY();
 
-        return grid[x + 1][y] == MARKER_SPACE;
+        return grid[x + 1][y] == MARKER_SPACE || grid[x + 1][y] == MARKER_END;
     }
 
     /**
@@ -190,7 +235,7 @@ public class Maze {
         int x = playerLocation.getX();
         int y = playerLocation.getY();
 
-        return grid[x][y - 1] == MARKER_SPACE;
+        return grid[x][y - 1] == MARKER_SPACE || grid[x][y - 1] == MARKER_END;
     }
 
     /**
@@ -219,6 +264,6 @@ public class Maze {
         int x = playerLocation.getX();
         int y = playerLocation.getY();
 
-        return grid[x][y + 1] == MARKER_SPACE;
+        return grid[x][y + 1] == MARKER_SPACE || grid[x][y + 1] == MARKER_END;
     }
 }

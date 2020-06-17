@@ -94,7 +94,7 @@ public class AStarClickTest {
                 if ((window.buttonClicked(GLFW_KEY_K)) && movementCounter == 0) {
                     Point location = maze.getPlayerLocation();
                     Point destination = new Point(1, 1);
-                    AStarSolver ass = new AStarSolver();
+                    AStarSolver ass = AStarSolver.getInstance();
                     ArrayList<Point> path = ass.CalculateShortestPath(location, destination, maze.getGrid());
                     if (path != null && path.size() > 0) {
                         Point next = path.remove(path.size() - 1);

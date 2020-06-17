@@ -17,19 +17,18 @@ public class SpellTPSelf extends Spell {
 
     Random rand = new Random();
 
-    Player player = Player.getInstance();
     Maze maze = Main.getMaze();
     World world = Main.getWorld();
 
     public void castSpell(Object[] args) {
-        int prevMana = player.getMana();
+        int prevMana = Player.getInstance().getMana();
 
         if (prevMana < manaCost) {
             // Not enough mana to cast spell
             System.out.println("No Mana!");
         } else {
             // Use mana to cast spell
-            player.setMana(prevMana - manaCost);
+            Player.getInstance().setMana(prevMana - manaCost);
 
             char[][] grid = maze.getGrid();
 
@@ -42,7 +41,7 @@ public class SpellTPSelf extends Spell {
             }
             // teleport the player to the position
             maze.setPlayerLocation(newX, newY);
-            player.setPosition(new Vector3f(newX, newY, 1.5f));
+            Player.getInstance().setPosition(new Vector3f(newX, newY, 1.5f));
             //player.setGridPosition(newX, newY, grid.length);
             world.resetCameraPosition();
 

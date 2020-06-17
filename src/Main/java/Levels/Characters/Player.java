@@ -4,8 +4,11 @@ import Graphics.OBJLoader;
 import Graphics.OBJModel;
 import Graphics.OpenGL.Texture;
 import Levels.Assets.Items.Item;
+import Levels.Framework.Point;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Player extends Character {
     // Name of the obj file in the res folder corresponding to the player model
@@ -20,9 +23,10 @@ public class Player extends Character {
 
     private static Player player;
 
-    // a list of items the player has collected so far
+    // an array of items the player has collected so far
     private Item[] inventory;
-    private int selectedItem = 0;
+    List<Point> collected_items;
+    private int selectedItem;
 
     // agility spell
     private double agilityPower = 0;
@@ -32,7 +36,8 @@ public class Player extends Character {
 
         // start with an empty inventory of max size 5
         inventory = new Item[5];
-
+        collected_items = new ArrayList<>();
+        selectedItem = 0;
     }
 
     public static Player getInstance() {
@@ -58,6 +63,13 @@ public class Player extends Character {
             }
         }
         return player;
+    }
+
+    /**
+     * resets the player to a null object
+     */
+    public static void resetPlayer() {
+        player = null;
     }
 
     public Item[] getInventory() {
@@ -120,48 +132,58 @@ public class Player extends Character {
      * Sets the item in the inventory at {@code selectedItem} to the provided item
      *
      * @param item the new item to add to the inventory
+     * @param point the point that the item was located at in the maze
      */
-    public void addItem(Item item) {
+    public void addItem(Item item, Point point) {
         inventory[selectedItem] = item;
+        collected_items.add(point);
     }
 
     /**
      * uses the selected item, if possible: the boot, coin and empty item have no use
+     *
+     * @param slot the slot to use the item from
      */
-    public void useItem() {
+    public void useItem(int slot) {
+        // if there is no item in the desired slot yet, return and do nothing
+        if (inventory[slot] == null) {
+            return;
+        }
         // we check what kind of item the player has selected
-        switch (inventory[selectedItem].getId()) {
+        switch (inventory[slot].getId()) {
             case Item.H_POTION:
                 // if a health potion is used, add 25 health to the current health
                 setHealth(getHealth() + 25);
-                tossItem();
+                tossItem(slot);
                 break;
             case Item.M_POTION:
                 // if a mana potion is used, add 25 mana to the current mana
                 setMana(getMana() + 25);
-                tossItem();
+                tossItem(slot);
                 break;
             case Item.HEART:
                 // if a heart is used, increase the max health and current health by 25
                 setMaxHealth(getMaxHealth() + 25);
                 setHealth(getHealth() + 25);
-                tossItem();
+                tossItem(slot);
                 break;
             case Item.MANA:
                 // if a heart is used, increase the max mana and current mana by 25
                 setMaxMana(getMaxMana() + 25);
                 setMana(getMana() + 25);
-                tossItem();
+                tossItem(slot);
                 break;
         }
     }
 
     /**
-     * removes the selected item from the player inventory and places the empty item back
+     * removes the specified item from the player inventory and places the empty item back
+     *
+     * @param slot the slot to remove the item from
      */
-    public void tossItem() {
+    public void tossItem(int slot) {
         // replace the consumed item with the empty item
-        inventory[selectedItem] = Item.getItemById(Item.EMPTY);
+        inventory[slot] = Item.getItemById(Item.EMPTY);
     }
 
     public void setAgilityPower(double agilityPower) {
@@ -170,5 +192,13 @@ public class Player extends Character {
 
     public double getAgilityPower() {
         return agilityPower;
+    }
+
+    public void setCollected(List<Point> collected_items) {
+        this.collected_items = collected_items;
+    }
+
+    public List<Point> getCollected() {
+        return collected_items;
     }
 }

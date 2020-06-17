@@ -4,7 +4,7 @@ x    x    xx    x          x    x
 x         xx         xx         x
 xxxx   xxxxxxxx   xxxxxxxx   xxxx
 x         xx         xx         x
-x    x          x  P       x    x
+x    x          x          x    x
 x    x    xx    x    xx    x    x
 xxxxxxx xxxxxxxxxxxxxxxx xxxxxxxx
 x    x          x    xx    x    x
@@ -18,16 +18,16 @@ x    x    xx    x          x    x
 x         xx         xx         x
 x    x          x    xx    x    x
 x    x    xx    x          x    x
-x         xx         xx         x
-x    x          x    xx    x    x
+x P       xx         xx         x
+x e  x          x    xx    x    x
 x    x    xx    x          x    x
 x         xx         xx         x
 x    x          x    xx    x    x
 x    x    xx    x          x    x
-x         xx         xx         x
+x3 4      xx         xx         x
 x    x    xx    x          x    x
-x         xx         xx         x
+x2 6      xx         xx         x
 x    x          x    xx    x    x
-x    x    xx    x          x    x
+x1 5 x    xx    x          x    x
 x         xx         xx         x
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

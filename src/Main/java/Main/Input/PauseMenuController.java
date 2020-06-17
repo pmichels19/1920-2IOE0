@@ -2,6 +2,7 @@ package Main.Input;
 
 import Graphics.Rendering.PauseScreen;
 import Main.GameState;
+import Main.Main;
 
 import java.io.File;
 
@@ -37,7 +38,7 @@ public class PauseMenuController extends Controller {
 
         // if the player selected an option, we need to execute the selected option
         if ( window.buttonClicked(GLFW_KEY_ENTER) ) {
-            switch ( PauseScreen.getSelectedOption() ) {
+            switch ( Main.getPauseScreen().getSelected() ) {
                 // 0 is mapped to going back in game
                 case 0:
                     // when going back in game, get rid of the lastSave.png made when entering the pause menu
@@ -71,10 +72,10 @@ public class PauseMenuController extends Controller {
         // we can go up and down in the pause menu on cooldown
         if (pauseMenuCooldown == 0) {
             if ( window.buttonClicked(GLFW_KEY_UP) ) {
-                PauseScreen.changeSelected(true);
+                Main.getPauseScreen().changeSelected(true);
                 pauseMenuCooldown = 5;
             } else if ( window.buttonClicked(GLFW_KEY_DOWN) ) {
-                PauseScreen.changeSelected(false);
+                Main.getPauseScreen().changeSelected(false);
                 pauseMenuCooldown = 5;
             }
         } else {

@@ -35,7 +35,7 @@ public class DeathScreenController extends Controller {
             }
         }
 
-        // if the player wanted to swith up/down in the menu we need to check as well
+        // if the player wanted to switch up/down in the menu we need to check as well
         if ( switchCooldown == 0 ) {
             if ( window.buttonClicked(GLFW_KEY_UP) ) {
                 Main.getDeathScreen().changeSelected( true );

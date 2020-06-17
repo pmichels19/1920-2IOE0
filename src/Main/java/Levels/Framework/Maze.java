@@ -17,12 +17,14 @@ public class Maze {
     private char[][] grid;
 
     public Point playerLocation;
+    public Point endLocation;
     private final File file;
 
     public final static char MARKER_PLAYER = 'P';
     public final static char MARKER_SPACE = ' ';
     public final static char MARKER_ENEMY = 'e';
     public final static char MARKER_WALL = 'x';
+    public final static char MARKER_END = 'f';
     // the markers for item orbs based on the item ids found in the Item class
     public final static char MARKER_HEART = (char) Item.HEART + '0';
     public final static char MARKER_MANA = (char) Item.MANA + '0';
@@ -74,21 +76,26 @@ public class Maze {
 
         int x_player = -1;
         int y_player = -1;
+        int x_end = -1;
+        int y_end = -1;
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 if (grid[i][j] == MARKER_PLAYER) {
                     x_player = i;
                     y_player = j;
-                    break;
                 }
                 if (grid[i][j] == MARKER_ENEMY) {
                     enemyLocation.add(new Point(i, j));
-                    break;
+                }
+                if (grid[i][j] == MARKER_END) {
+                    x_end = i;
+                    y_end = j;
                 }
             }
         }
 
         playerLocation = new Point(x_player, y_player);
+        endLocation = new Point(x_end, y_end);
     }
 
     /**
@@ -170,7 +177,7 @@ public class Maze {
         int x = playerLocation.getX();
         int y = playerLocation.getY();
 
-        return grid[x - 1][y] == MARKER_SPACE;
+        return grid[x - 1][y] == MARKER_SPACE || grid[x - 1][y] == MARKER_END;
     }
 
     /**
@@ -199,7 +206,7 @@ public class Maze {
         int x = playerLocation.getX();
         int y = playerLocation.getY();
 
-        return grid[x + 1][y] == MARKER_SPACE;
+        return grid[x + 1][y] == MARKER_SPACE || grid[x + 1][y] == MARKER_END;
     }
 
     /**
@@ -228,7 +235,7 @@ public class Maze {
         int x = playerLocation.getX();
         int y = playerLocation.getY();
 
-        return grid[x][y - 1] == MARKER_SPACE;
+        return grid[x][y - 1] == MARKER_SPACE || grid[x][y - 1] == MARKER_END;
     }
 
     /**
@@ -257,6 +264,6 @@ public class Maze {
         int x = playerLocation.getX();
         int y = playerLocation.getY();
 
-        return grid[x][y + 1] == MARKER_SPACE;
+        return grid[x][y + 1] == MARKER_SPACE || grid[x][y + 1] == MARKER_END;
     }
 }

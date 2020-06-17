@@ -23,6 +23,10 @@ uniform vec3 lightAttenuation[17];
 uniform int playerCharacter;
 uniform int invisibility;
 
+uniform int enemyCharacter;
+uniform int highAmbience;
+
+
 // From vertex shader
 in vec3 surfaceNormal;
 in vec4 vertexPos;
@@ -73,6 +77,10 @@ void main() {
         alpha = 0.3;
     } else {
         alpha = 1;
+    }
+
+    if(enemyCharacter == 1 && highAmbience == 1) {
+        totalDiffuse = vec3(1);
     }
 
     if (changingColor == 1) {

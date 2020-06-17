@@ -75,22 +75,4 @@ public class MainController {
             startUpCooldown--;
         }
     }
-
-//    /**
-//     * returns the speed with which the player is currently moving
-//     *
-//     * @return {@code speed}
-//     */
-//    public float getSpeed() {
-//        return gameController.getSpeed();
-//    }
-//
-//    /**
-//     * returns whether the current movement is vertical or not
-//     *
-//     * @return {@code vertical}
-//     */
-//    public boolean isVertical() {
-//        return gameController.isVertical();
-//    }
 }

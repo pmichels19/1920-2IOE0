@@ -19,6 +19,7 @@ public class Maze {
     public Point endLocation;
     private final File file;
 
+    public final static char MARKER_PLAYER_ON_DOOR = 'O';
     public final static char MARKER_CLOSED_DOOR = 'D';
     public final static char MARKER_OPEN_DOOR = 'd';
     public final static char MARKER_PLAYER = 'P';

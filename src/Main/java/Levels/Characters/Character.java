@@ -39,6 +39,9 @@ public abstract class Character {
     int cur_health;
     int cur_mana;
 
+    // the amount of damage dealt by normal attack
+    int damage = 10;
+
     // Speed of the character
     private float speed;
 
@@ -187,7 +190,7 @@ public abstract class Character {
         this.position.x = gamePositionX * 2f;
     }
 
-    public void setGridPositionY(float gamePositionY, float gridLength) {
+    public void setGamePositionY(float gamePositionY, float gridLength) {
         this.gamePositionY = gamePositionY;
         this.position.y = (gridLength - 0.5f - gamePositionY) * 2f;
     }
@@ -228,7 +231,7 @@ public abstract class Character {
         this.direction = DIRECTION_UP;
     }
 
-    public void setGridPosition(float gamePositionX, float gamePositionY, float gridLength) {
+    public void setGamePositionAndRotate(float gamePositionX, float gamePositionY, float gridLength) {
         if (gamePositionX > this.gamePositionX) {
             turnRight();
         } else if (gamePositionX < this.gamePositionX) {
@@ -240,7 +243,7 @@ public abstract class Character {
             turnUp();
         }
         setGamePositionX(gamePositionX);
-        setGridPositionY(gamePositionY, gridLength);
+        setGamePositionY(gamePositionY, gridLength);
     }
 
     public Point getMazePosition() {
@@ -268,6 +271,14 @@ public abstract class Character {
      */
     public void initializePosition(int x, int y, int gridLength) {
         setMazePosition(new Point(x, y));
-        setGridPosition((float) y, (float) x, gridLength);
+        setGamePositionAndRotate((float) y, (float) x, gridLength);
+    }
+
+    /**
+     * Damages a character by given amount
+     * @param damage amount of damage to be dealt to this player
+     */
+    public void damage(int damage){
+        setHealth(cur_health - damage);
     }
 }

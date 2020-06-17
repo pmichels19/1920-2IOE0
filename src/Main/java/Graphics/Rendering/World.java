@@ -18,6 +18,7 @@ import Levels.Objects.Object3D;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static java.lang.Math.toRadians;
@@ -311,6 +312,10 @@ public class World {
 
         // adjust the camera for the shader, so it actually has an effect on the position of the render
         SHADER.setCamera(camera);
+    }
+
+    public List<Enemy> getEnemyList() {
+        return this.enemyList;
     }
 }
 

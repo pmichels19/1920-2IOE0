@@ -46,7 +46,7 @@ public class World {
     Vector3f LIGHT_ATTENUATION = new Vector3f(.5f, .2f, .5f);
 
     // the light object
-    private final Light[] lights = {
+    private Light[] lights = {
             new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, LIGHT_ATTENUATION),
             new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, LIGHT_ATTENUATION),
             new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, LIGHT_ATTENUATION),
@@ -316,6 +316,14 @@ public class World {
 
     public List<Enemy> getEnemyList() {
         return this.enemyList;
+    }
+
+    public Light[] getLights() {
+        return this.lights;
+    }
+
+    public void setLights(Light[] lights) {
+        this.lights = lights;
     }
 }
 

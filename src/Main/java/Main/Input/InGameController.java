@@ -147,7 +147,7 @@ public class InGameController extends Controller {
         else if (window.buttonClicked(GLFW_KEY_O)) {
             if (castCooldown == 0) {
                 if (released) {
-                    spell = Spell.determineSpell("illuminate");
+                    spell = Spell.determineSpell("guide");
                     spell.castSpell(new Object[]{maze});
                     released = false;
                     castCooldown = 20;
@@ -161,7 +161,7 @@ public class InGameController extends Controller {
         } else if (window.buttonClicked(GLFW_KEY_P)) {
             if (castCooldown == 0) {
                 if (released) {
-                    Spell spell = Spell.determineSpell("cloak");
+                    Spell spell = Spell.determineSpell("beast");
                     activeSpells.add(spell);
                     spell.castSpell(new Object[]{maze});
                     released = false;

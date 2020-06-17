@@ -130,6 +130,7 @@ public class World {
         renderer.setCamera(camera);
         renderer.setTransform(transform);
         SHADER.setLights(lights);
+        SHADER.setUniform("invisibility", player.getInvisibility());
 
         fillRenderSets();
         renderSets();

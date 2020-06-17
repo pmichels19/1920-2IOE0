@@ -20,6 +20,8 @@ uniform vec3 lightPosition[17];
 uniform vec3 lightColor[17];
 uniform vec3 lightAttenuation[17];
 
+uniform int playerCharacter;
+uniform int invisibility;
 
 // From vertex shader
 in vec3 surfaceNormal;
@@ -66,15 +68,22 @@ void main() {
         totalSpecular += (0.05 * specular * lightColor[i])/attFactor;
     }
 
+    float alpha;
+    if(playerCharacter == 1 && invisibility == 1) {
+        alpha = 0.3;
+    } else {
+        alpha = 1;
+    }
+
     if (changingColor == 1) {
         vec3 p = vertexPos.xyz;
         float lxy = max(sin(length(p.xy) * 25.0 + time * 15.0) + 2, 0.3);
         float lz = max(pow(sin(length(p.z) * 50.0 + time * 30.0),2) + 2, 0.3);
         float l = min(lz,lxy);
 
-        gl_FragColor = vec4(totalDiffuse * l * objectColor.rgb, texture.a) + vec4(totalSpecular, 0.0);
+        gl_FragColor = vec4(totalDiffuse * l * objectColor.rgb, texture.a * alpha) + vec4(totalSpecular, 0.0);
     } else {
-        gl_FragColor = vec4(totalDiffuse * texture.rgb, texture.a) + vec4(totalSpecular, 0.0);
+        gl_FragColor = vec4(totalDiffuse * texture.rgb, texture.a * alpha) + vec4(totalSpecular, 0.0);
     }
 
 

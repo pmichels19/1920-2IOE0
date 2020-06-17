@@ -2,8 +2,10 @@ package Levels.Characters;
 
 import Graphics.OBJLoader;
 import Graphics.OBJModel;
+import Graphics.OpenGL.Shader;
 import Graphics.OpenGL.Texture;
 import Levels.Assets.Items.Item;
+import Levels.Framework.joml.Matrix4f;
 import Levels.Framework.joml.Vector3f;
 
 import java.io.IOException;
@@ -27,6 +29,7 @@ public class Player extends Character {
     Vector3f currentAttenuation = STANDARD_ATTENUATION;
 
     private boolean hasGuide = false;
+    private int invisiblility = 0;
 
     // a list of items the player has collected so far
     private Item[] inventory;
@@ -66,6 +69,13 @@ public class Player extends Character {
             }
         }
         return player;
+    }
+
+    @Override
+    public void render(Shader shader) {
+        shader.setUniform("playerCharacter", 1);
+        super.render(shader);
+        shader.setUniform("playerCharacter", 0);
     }
 
     public Item[] getInventory() {
@@ -195,4 +205,14 @@ public class Player extends Character {
     public double getAgilityPower() {
         return agilityPower;
     }
+
+    public void setInvisibility(int invisiblility) {
+        this.invisiblility = invisiblility;
+    }
+
+    public int getInvisibility() {
+        return this.invisiblility;
+    }
+
+
 }

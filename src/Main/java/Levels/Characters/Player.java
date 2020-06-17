@@ -129,6 +129,20 @@ public class Player extends Character {
     }
 
     /**
+     * returns the index of the first open slot in the inventory, if no empty slot is found, it returns -1
+     *
+     * @return the first open index in {@code inventory}, -1 if no open slots exist
+     */
+    public int findFirstOpenSlot() {
+        for (int i = 0; i < inventory.length; i++) {
+            if (inventory[i] == null || inventory[i].getId() == Item.EMPTY) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
      * Sets the item in the inventory at {@code selectedItem} to the provided item
      *
      * @param item the new item to add to the inventory
@@ -140,7 +154,7 @@ public class Player extends Character {
     }
 
     /**
-     * uses the selected item, if possible: the boot, coin and empty item have no use
+     * uses the selected item, if possible: the boot, key and empty item have no use
      *
      * @param slot the slot to use the item from
      */

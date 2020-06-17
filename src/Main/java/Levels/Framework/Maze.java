@@ -29,7 +29,7 @@ public class Maze {
     public final static char MARKER_HEART = (char) Item.HEART + '0';
     public final static char MARKER_MANA = (char) Item.MANA + '0';
     public final static char MARKER_BOOT = (char) Item.BOOT + '0';
-    public final static char MARKER_COIN = (char) Item.COIN + '0';
+    public final static char MARKER_KEY = (char) Item.KEY + '0';
     public final static char MARKER_HPOT = (char) Item.H_POTION + '0';
     public final static char MARKER_MPOT = (char) Item.M_POTION + '0';
 
@@ -37,7 +37,7 @@ public class Maze {
             MARKER_HEART,
             MARKER_MANA,
             MARKER_BOOT,
-            MARKER_COIN,
+            MARKER_KEY,
             MARKER_HPOT,
             MARKER_MPOT
     ) );

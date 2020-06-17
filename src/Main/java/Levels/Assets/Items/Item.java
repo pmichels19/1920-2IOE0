@@ -38,9 +38,9 @@ public class Item {
             new Vector3f(0, 0.5f, 0)               // GREEN
     );
 
-    public static final int COIN = 4;
-    private static final Item coin = new Item(
-            "src/Main/java/Textures/Items/coin.png",
+    public static final int KEY = 4;
+    private static final Item key = new Item(
+            "src/Main/java/Textures/Items/key.png",
             new Vector3f(1, 1, 0)               // YELLOW
     );
 

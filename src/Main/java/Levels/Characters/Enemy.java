@@ -66,16 +66,6 @@ public abstract class Enemy extends Character {
                         startAttack(playerLocation, grid.length);
                     }
                 } else {
-                    // If player is in detection range, move towards the player and update the grid
-                    Point currentPoint = getMazePosition();
-                    Point newPoint = pathToPlayer.get(pathToPlayer.size() - 1);
-                    // Check if the position you're moving to is the position of the player
-                    if (grid[newPoint.getX()][newPoint.getY()] != MARKER_PLAYER) {
-                        // If it is not the player's position, move there.
-                        grid[currentPoint.getX()][currentPoint.getY()] = MARKER_SPACE;
-                        moveToPoint(newPoint, grid.length);
-                        grid[newPoint.getX()][newPoint.getY()] = MARKER_ENEMY;
-                    }
                     setNewLocation(playerLocation, grid);
                 }
             } else {

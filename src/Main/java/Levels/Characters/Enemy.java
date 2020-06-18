@@ -94,7 +94,14 @@ public abstract class Enemy extends Character {
             doRandomMove(grid);
         } else {
             // If player is in detection range, move towards the player
-            moveToPoint(pathToPlayer.get(pathToPlayer.size() - 1), grid.length);
+            Point curPoint = getMazePosition();
+            Point newPoint = pathToPlayer.get(pathToPlayer.size() - 1);
+
+            if (grid[newPoint.getX()][newPoint.getY()] != MARKER_PLAYER) {
+                grid[curPoint.getX()][curPoint.getY()] = MARKER_SPACE;
+                moveToPoint(newPoint, grid.length);
+                grid[newPoint.getX()][newPoint.getY()] = MARKER_ENEMY;
+            }
         }
     }
 

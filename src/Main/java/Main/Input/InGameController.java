@@ -259,7 +259,7 @@ public class InGameController extends Controller {
 
     private void tryDoorInteraction() {
         // get the grid and the facing tile
-        int gridLen = maze.getGrid().length;
+        int grid_length = maze.getGrid().length;
         char facing = getFacingTile();
         // get the player direction and place
         int direction = player.getDirection();
@@ -268,30 +268,29 @@ public class InGameController extends Controller {
 
         // if a door is already open, we want to close it
         Door door = null;
+        Point point = null;
         if ( facing == Maze.MARKER_DOOR ) {
             switch (direction) {
                 case DIRECTION_LEFT:
-                    door = world.getDoor(new Point( x_player - 1, gridLen - y_player) );
-                    player.useKey();
+                    point = new Point( x_player - 1, grid_length - y_player);
                     break;
                 case DIRECTION_RIGHT:
-                    door = world.getDoor(new Point( x_player + 1, gridLen - y_player) );
-                    player.useKey();
+                    point = new Point( x_player + 1, grid_length - y_player);
                     break;
                 case DIRECTION_UP:
-                    door = world.getDoor(new Point( x_player, gridLen - (y_player - 1)) );
-                    player.useKey();
+                    point = new Point( x_player, grid_length - (y_player - 1));
                     break;
                 case DIRECTION_DOWN:
-                    door = world.getDoor(new Point( x_player, gridLen - (y_player + 1)));
-                    player.useKey();
+                    point = new Point( x_player, grid_length - (y_player + 1));
                     break;
             }
         }
 
-        if (door == null) {
+        door = world.getDoor( point );
+        if (door == null || point == null) {
             return;
         }
+        player.useKey( point );
         door.toggle();
     }
 

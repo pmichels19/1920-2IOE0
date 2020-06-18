@@ -26,6 +26,7 @@ public class Player extends Character {
     // an array of items the player has collected so far
     private Item[] inventory;
     List<Point> collected_items;
+    List<Point> opened_doors;
     private int selectedItem;
 
     // agility spell
@@ -37,6 +38,7 @@ public class Player extends Character {
         // start with an empty inventory of max size 5
         inventory = new Item[5];
         collected_items = new ArrayList<>();
+        opened_doors = new ArrayList<>();
         selectedItem = 0;
     }
 
@@ -95,13 +97,22 @@ public class Player extends Character {
         return false;
     }
 
-    public void useKey() {
+    public void useKey(Point point) {
+        opened_doors.add(point);
         for (int i = 0; i < inventory.length; i++) {
             if (inventory[i] != null && inventory[i].getId() == Item.KEY) {
                 player.tossItem(i);
                 return;
             }
         }
+    }
+
+    public List<Point> getOpenedDoors() {
+        return opened_doors;
+    }
+
+    public void setOpenedDoors(List<Point> opened_doors) {
+        this.opened_doors = opened_doors;
     }
 
     public void setSelectedItem(int selectedItem) {

@@ -16,10 +16,7 @@ import Levels.Objects.GuideBall;
 import Levels.Objects.MagicBall;
 import Levels.Objects.Object3D;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.lang.Math.toRadians;
 
@@ -63,6 +60,7 @@ public class World {
     private Player player;
 
     private GuideBall guide;
+    private boolean reset = true;
 
     // List that holds the enemies
     private ArrayList<Enemy> enemyList = new ArrayList<>();
@@ -218,6 +216,8 @@ public class World {
         player.setGridPosition(xPlayer, yPlayer, maze.getGrid().length);
         renderer.renderCharacter(player);
 
+        Timer timer = new Timer();
+
         if(player.hasGuide()) {
             if (guide == null || guide.isNew) {
                 System.out.println("INIT/.....");
@@ -232,12 +232,23 @@ public class World {
             lights[5].setPosition(new Vector3f(guide.getPosition().x, guide.getPosition().y, 1f));
             guide.move(maze.endPoint, maze.getGrid());
             renderer.renderObject(guide);
+            reset = true;
         } else {
             if (guide != null) {
                 guide.isNew = true;
                 guide.setColor(new Vector3f(.1f, .1f, .1f));
                 lights[5].setAttenuation(DARK_ATTENUATION);
                 renderer.renderObject(guide);
+
+                if (reset) {
+                    reset = false;
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            guide = null;
+                        }
+                    }, 2 * 1000);
+                }
             }
         }
 

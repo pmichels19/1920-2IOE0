@@ -249,6 +249,7 @@ public class World {
                         @Override
                         public void run() {
                             guide = null;
+                            lights[5].setAttenuation(NO_LIGHT);
                         }
                     }, 2 * 1000);
                 }

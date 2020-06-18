@@ -333,4 +333,5 @@ public abstract class Enemy extends Character {
     private boolean canAttack() {
         return System.currentTimeMillis() > lastAttackTime + attackDelay;
     }
+
 }

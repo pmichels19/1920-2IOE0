@@ -44,6 +44,7 @@ public class Player extends Character {
         // start with an empty inventory of max size 5
         inventory = new Item[5];
 
+        setAnimationType("float");
     }
 
     public static Player getInstance() {

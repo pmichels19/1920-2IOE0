@@ -43,6 +43,8 @@ public class EyeBall extends Enemy {
             e.printStackTrace();
         }
 
+        setAnimationType("bounce");
+
         setScale(0.4f);
         setPosition(new Vector3f(1f, 1f, 2f));
         setSpeed(speed);

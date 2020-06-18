@@ -31,6 +31,8 @@ public abstract class Character {
     private float gamePositionX;
     private float gamePositionY;
 
+    private String animationType;
+
     // the amount of frames needed to move one tile
     //private int speed;
 
@@ -96,14 +98,37 @@ public abstract class Character {
         model.render(shader);
     }
 
+    public String getAnimationType() {
+        return animationType;
+    }
+
+    public void setAnimationType(String animationType) {
+        this.animationType = animationType;
+    }
+
+    private float getHeight() {
+        switch(getAnimationType()) {
+            case "bounce": return getBounce();
+            case "float": return getFloat();
+            default: return position.z;
+        }
+    }
+
+    private float getFloat() {
+        return (float) (1.5f + Math.pow(Math.cos(Math.toRadians(tVal * 150f)),2)/2);
+    }
+
+    private float getBounce() {
+        return (float) (1.5f + Math.abs(2f * Math.sin(Math.toRadians(tVal * 250f))));
+    }
+
+
     public void render(Shader shader) {
         shader.setUniform("transform", 1);
         Matrix4f modelTransform = new Matrix4f();
 
         //floating animation linked to Z-axis
-        float startingPoint = 1.5f;
-        float floatingSpeed = 150f;
-        position.z = (float) (startingPoint + Math.pow(Math.cos(Math.toRadians(tVal * floatingSpeed)),2)/2);
+        position.z = getHeight();
 
         modelTransform.translate(position).rotate(rotationAngle, rotation).scale(scale);
         shader.setUniform("modelTransform", modelTransform);

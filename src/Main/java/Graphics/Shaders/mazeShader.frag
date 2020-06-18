@@ -13,6 +13,7 @@ uniform float time;
 uniform int normalMapping;
 // Whether changing color is enabled
 uniform int changingColor;
+uniform int colorWarp;
 uniform vec3 objectColor;
 
 // Light attributes

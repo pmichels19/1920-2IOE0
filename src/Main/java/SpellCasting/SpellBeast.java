@@ -7,10 +7,7 @@ import Levels.Characters.Player;
 import Levels.Framework.joml.Vector3f;
 import Main.Main;
 
-import java.util.Arrays;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.Vector;
+import java.util.*;
 
 public class SpellBeast extends Spell {
 
@@ -29,7 +26,7 @@ public class SpellBeast extends Spell {
 
     @Override
     public void castSpell(Object[] args) {
-        int duration = 2;
+        int duration = 5;
         prevMana = player.getMana();
         if (prevMana < manaCost) {
             System.out.println("Not enough mana!");
@@ -53,6 +50,35 @@ public class SpellBeast extends Spell {
                 world.setLights(lights);
             }
         }, (duration * 1000));
+
+        List<Enemy> enemies = world.getEnemyList();
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                world.setLights(lights);
+            }
+        }, (duration * 1000));
+
+        for (int i = 0; i < duration; i++) {
+            float healthDecrease = .5f/duration;
+            for (Enemy enemy : enemies) {
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        int curHealth = enemy.getHealth();
+                        enemy.setHealth((int) (curHealth - curHealth*healthDecrease));
+                    }
+                }, (i * 1000));
+            }
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    int curHealth = player.getHealth();
+                    player.setHealth((int) (curHealth - curHealth*healthDecrease));
+                }
+            }, (i * 1000));
+        }
 
 
 

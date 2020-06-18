@@ -13,6 +13,7 @@ import Levels.Characters.Player;
 import Levels.Framework.Maze;
 import Levels.Framework.Point;
 import Levels.Framework.joml.Vector3f;
+import Levels.Objects.Door;
 import Levels.Objects.MagicBall;
 import Levels.Objects.Object3D;
 
@@ -57,6 +58,7 @@ public class World {
 
     // the map that holds light objects to be rendered at the position defined by the point
     private final Map<Point, Set<Light>> lightMap = new HashMap<>();
+    private final Map<Point, Door> doorMap = new HashMap<>();
 
     /**
      * initialises the global variables for the renderer
@@ -88,6 +90,7 @@ public class World {
         }
 
         createLights();
+        createDoors();
     }
 
     /**
@@ -128,6 +131,24 @@ public class World {
     }
 
     /**
+     * method that fills the {@code doorMap}
+     */
+    private void createDoors() {
+        // loop over the grid to identify where to place lightsources
+        char[][] grid = maze.getGrid();
+        for (int y = 0; y < grid.length; y++) {
+            for (int x = 0; x < grid[y].length; x++) {
+                if ( grid[y][x] == Maze.MARKER_DOOR ) {
+                    doorMap.put(
+                            new Point(x, grid.length - y),
+                            new Door(grid[y - 1][x] == Maze.MARKER_WALL, x, grid.length - y)
+                    );
+                }
+            }
+        }
+    }
+
+    /**
      * method that centers the camera on the player
      */
     public void resetCameraPosition() {
@@ -151,6 +172,7 @@ public class World {
     private final Set<Point> ceilings = new HashSet<>();
 
     private final Set<Light> lights = new HashSet<>();
+    private final Set<Door> doors = new HashSet<>();
 
     private Player player;
 
@@ -169,6 +191,7 @@ public class World {
         fillRenderSets();
         setActiveLights();
         renderSets();
+        checkDoors();
         clearRenderSets();
     }
 
@@ -219,6 +242,11 @@ public class World {
                     // if the maze entry contains an item, then there should be a set of light objects for it
                     if (lightMap.containsKey(position)) {
                         lights.addAll(lightMap.get(position));
+                    }
+                } else if (grid[i][j] == Maze.MARKER_DOOR) {
+                    floors.add(position);
+                    if ( doorMap.containsKey(position) ) {
+                        doors.add( doorMap.get(position) );
                     }
                 } else if (grid[i][j] != Maze.MARKER_WALL) {
                     floors.add(position);
@@ -276,9 +304,23 @@ public class World {
             renderer.renderTile(Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.RIGHT);
         }
 
+        for (Door door : doors) {
+            if (!door.isVertical()) {
+                float x_door = door.getX() - (1f - (((float) door.getOffset()) / ((float) Door.getToggleFrames())));
+                renderer.renderTile(Wall.FENCE.getTexture(), x_door, door.getY() + 0.5f, TileRenderer.FACES);
+            }
+        }
+
         for (Point point : faceWalls) {
             renderer.addNormalMap(Wall.BRICKWALL_NORMAL.getTexture());
             renderer.renderTile(Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES);
+        }
+
+        for (Door door : doors) {
+            if (door.isVertical()) {
+                float y_door = door.getY() - (1f - (((float) door.getOffset()) / ((float) Door.getToggleFrames())));
+                renderer.renderTile(Wall.FENCE.getTexture(), door.getX() + 0.5f, y_door, TileRenderer.LEFTS);
+            }
         }
 
         // Render enemies
@@ -307,6 +349,21 @@ public class World {
     }
 
     /**
+     * this method checks the doors in the doors set to see if any doors have been opened
+     */
+    private void checkDoors() {
+        for (Door door : doors) {
+            if ( door.isOpen() ) {
+                // if the door has been opened, remove it from the doorMap and put a space in the grid on the door entry
+                doorMap.remove( new Point( door.getX(), door.getY() ) );
+                char[][] grid = maze.getGrid();
+                // remove the door from the grid, so the player can walk through
+                grid[grid.length - door.getY()][door.getX()] = Maze.MARKER_SPACE;
+            }
+        }
+    }
+
+    /**
      * clears all the sets with points specifying render positions
      */
     private void clearRenderSets() {
@@ -316,6 +373,7 @@ public class World {
         faceWalls.clear();
         ceilings.clear();
         lights.clear();
+        doors.clear();
     }
 
     /**
@@ -333,6 +391,16 @@ public class World {
 
         // upon moving the player, we also have to move the camera
         adjustCamera(speed * 2f, vertical);
+    }
+
+    /**
+     * returns the door found at point {@code point} in the maze
+     *
+     * @param point a key in the doormap
+     * @return {@code doorMap.getOrDefault(point, null)}
+     */
+    public Door getDoor(Point point) {
+        return doorMap.getOrDefault(point, null);
     }
 
     /**

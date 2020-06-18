@@ -19,9 +19,7 @@ public class Maze {
     public Point endLocation;
     private final File file;
 
-    public final static char MARKER_PLAYER_ON_DOOR = 'O';
-    public final static char MARKER_CLOSED_DOOR = 'D';
-    public final static char MARKER_OPEN_DOOR = 'd';
+    public final static char MARKER_DOOR = 'D';
     public final static char MARKER_PLAYER = 'P';
     public final static char MARKER_SPACE = ' ';
     public final static char MARKER_ENEMY = 'e';
@@ -45,7 +43,6 @@ public class Maze {
     ) );
 
     public static List<Point> enemyLocation = new ArrayList<>();
-    public static Map<Point, Door> doorMap = new HashMap<>();
 
     /**
      * reads a new file into the maze object
@@ -81,18 +78,16 @@ public class Maze {
         int y_player = -1;
         int x_end = -1;
         int y_end = -1;
-        for (int i = 0; i < grid.length; i++) {
-            for (int j = 0; j < grid[i].length; j++) {
-                if (grid[i][j] == MARKER_PLAYER) {
-                    x_player = i;
-                    y_player = j;
-                }
-                if (grid[i][j] == MARKER_ENEMY) {
-                    enemyLocation.add(new Point(i, j));
-                }
-                if (grid[i][j] == MARKER_END) {
-                    x_end = i;
-                    y_end = j;
+        for (int y = 0; y < grid.length; y++) {
+            for (int x = 0; x < grid[y].length; x++) {
+                if (grid[y][x] == MARKER_PLAYER) {
+                    x_player = x;
+                    y_player = y;
+                } else if (grid[y][x] == MARKER_ENEMY) {
+                    enemyLocation.add(new Point(x, y));
+                } else if (grid[y][x] == MARKER_END) {
+                    x_end = x;
+                    y_end = y;
                 }
             }
         }

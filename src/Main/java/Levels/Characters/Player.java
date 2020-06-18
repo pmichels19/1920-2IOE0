@@ -87,12 +87,21 @@ public class Player extends Character {
      */
     public boolean hasKey() {
         for (Item item : inventory) {
-            if (item.getId() == Item.KEY) {
+            if (item != null && item.getId() == Item.KEY) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    public void useKey() {
+        for (int i = 0; i < inventory.length; i++) {
+            if (inventory[i] != null && inventory[i].getId() == Item.KEY) {
+                player.tossItem(i);
+                return;
+            }
+        }
     }
 
     public void setSelectedItem(int selectedItem) {

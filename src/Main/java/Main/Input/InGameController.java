@@ -4,6 +4,7 @@ import AI.ImageRecognition.RunDrawingCanvas;
 import Levels.Assets.Items.Item;
 import Levels.Framework.Maze;
 import Levels.Framework.Point;
+import Levels.Objects.Door;
 import Main.GameState;
 import SpellCasting.Spell;
 import SpellCasting.SpellAgility;
@@ -209,7 +210,9 @@ public class InGameController extends Controller {
         // enter can be used to pick up items, or to open doors
         if (window.buttonClicked(GLFW_KEY_ENTER)) {
             tryItemCollect();
-            tryDoorInteraction();
+            if (player.hasKey()) {
+                tryDoorInteraction();
+            }
         }
     }
 
@@ -256,39 +259,40 @@ public class InGameController extends Controller {
 
     private void tryDoorInteraction() {
         // get the grid and the facing tile
-        char[][] grid = maze.getGrid();
+        int gridLen = maze.getGrid().length;
         char facing = getFacingTile();
         // get the player direction and place
         int direction = player.getDirection();
-        int x_player = maze.getPlayerLocation().getX();
-        int y_player = maze.getPlayerLocation().getY();
+        int y_player = maze.getPlayerLocation().getX();
+        int x_player = maze.getPlayerLocation().getY();
 
         // if a door is already open, we want to close it
-        if ( facing == Maze.MARKER_OPEN_DOOR ) {
+        Door door = null;
+        if ( facing == Maze.MARKER_DOOR ) {
             switch (direction) {
                 case DIRECTION_LEFT:
+                    door = world.getDoor(new Point( x_player - 1, gridLen - y_player) );
+                    player.useKey();
                     break;
                 case DIRECTION_RIGHT:
+                    door = world.getDoor(new Point( x_player + 1, gridLen - y_player) );
+                    player.useKey();
                     break;
                 case DIRECTION_UP:
+                    door = world.getDoor(new Point( x_player, gridLen - (y_player - 1)) );
+                    player.useKey();
                     break;
                 case DIRECTION_DOWN:
+                    door = world.getDoor(new Point( x_player, gridLen - (y_player + 1)));
+                    player.useKey();
                     break;
             }
         }
-        // but if the door is still closed, we need a key to open it
-        else if ( facing == Maze.MARKER_CLOSED_DOOR && player.hasKey() ) {
-            switch (direction) {
-                case DIRECTION_LEFT:
-                    break;
-                case DIRECTION_RIGHT:
-                    break;
-                case DIRECTION_UP:
-                    break;
-                case DIRECTION_DOWN:
-                    break;
-            }
+
+        if (door == null) {
+            return;
         }
+        door.toggle();
     }
 
     /**

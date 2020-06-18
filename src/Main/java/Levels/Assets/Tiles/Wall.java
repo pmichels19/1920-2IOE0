@@ -12,6 +12,9 @@ public enum Wall {
     CASTLE_WALL (
             "src/Main/java/Textures/Wall/castle_wall.jpg"
     ),
+    FENCE (
+            "src/Main/java/Textures/Wall/fence.png"
+    ),
     CEILING (
             "src/Main/java/Textures/Wall/wall_ceiling.png"
     ),

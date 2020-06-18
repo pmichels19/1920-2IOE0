@@ -84,7 +84,7 @@ public abstract class FlatRender {
     /**
      * prepares the shader, camera and transform for rendering
      */
-    public void prepareRender() {
+    void prepareRender() {
         renderer.setShader(shader);
         renderer.setCamera(camera);
         renderer.setTransform(transform);

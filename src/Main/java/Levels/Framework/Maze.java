@@ -25,6 +25,7 @@ public class Maze {
     public final static char MARKER_ENEMY = 'e';
     public final static char MARKER_WALL = 'x';
     public final static char MARKER_END = 'f';
+    public final static char MARKER_FINAL = 'f';
     // the markers for item orbs based on the item ids found in the Item class
     public final static char MARKER_HEART = (char) Item.HEART + '0';
     public final static char MARKER_MANA = (char) Item.MANA + '0';
@@ -43,6 +44,7 @@ public class Maze {
     ) );
 
     public static List<Point> enemyLocation = new ArrayList<>();
+    public Point endPoint;
 
     /**
      * reads a new file into the maze object
@@ -88,6 +90,10 @@ public class Maze {
                 } else if (grid[y][x] == MARKER_END) {
                     x_end = x;
                     y_end = y;
+                }
+                if (grid[i][j] == MARKER_FINAL) {
+                    endPoint = new Point(i, j);
+                    break;
                 }
             }
         }

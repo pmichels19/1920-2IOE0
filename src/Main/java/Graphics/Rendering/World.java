@@ -14,6 +14,7 @@ import Levels.Framework.Maze;
 import Levels.Framework.Point;
 import Levels.Framework.joml.Vector3f;
 import Levels.Objects.Door;
+import Levels.Objects.GuideBall;
 import Levels.Objects.MagicBall;
 import Levels.Objects.Object3D;
 
@@ -37,22 +38,28 @@ public class World {
     // the tile renderer to actaully draw the world and the player
     private final TileRenderer renderer = TileRenderer.getInstance();
 
-    private final Vector3f DARK_ATTENUATION = new Vector3f(.5f, .2f, 1.5f);
-    private final Vector3f LIGHT_ATTENUATION = new Vector3f(.5f, .2f, .5f);
+    Vector3f NO_LIGHT = new Vector3f(.5f, .2f, 100f);
+    Vector3f DARK_ATTENUATION = new Vector3f(.5f, .2f, 1.5f);
+    Vector3f LIGHT_ATTENUATION = new Vector3f(.5f, .2f, .5f);
 
     // the light object
     private final Light[] player_lights = {
-            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
-            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
-            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
-            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
-            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, LIGHT_ATTENUATION),
+            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, LIGHT_ATTENUATION),
+            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, LIGHT_ATTENUATION),
+            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, LIGHT_ATTENUATION),
+            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, LIGHT_ATTENUATION),
+            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, NO_LIGHT),
     };
 
     // variables to keep track of the player location in the world
     private float xPlayer;
     private float yPlayer;
+    private Player player;
 
+    private GuideBall guide;
+    private boolean reset = true;
+      
     // List that holds the enemies
     private final ArrayList<Enemy> enemyList = new ArrayList<>();
 
@@ -83,9 +90,12 @@ public class World {
         resetCameraPosition();
 
         // Initialize enemies
-        for (Point i : maze.enemyLocation) {
+        int enemyCount = 1;
+        for (int i = 0; i < enemyCount; i++) {
             EyeBall eyeball = new EyeBall(100, 100);
-            eyeball.initializePosition(i.getX(), i.getY(), maze.getGrid().length);
+//            eyeball.initializePosition(maze.getGrid().length / enemyCount * i, maze.getGrid().length / enemyCount * i, maze.getGrid().length);
+            // TODO: Set spawn location for enemies in the maze
+            eyeball.initializePosition(1, 1, maze.getGrid().length);
             enemyList.add(eyeball);
         }
 
@@ -174,8 +184,6 @@ public class World {
     private final Set<Light> lights = new HashSet<>();
     private final Set<Door> doors = new HashSet<>();
 
-    private Player player;
-
     /**
      * renders the maze
      */
@@ -187,6 +195,7 @@ public class World {
         renderer.setShader(SHADER);
         renderer.setCamera(camera);
         renderer.setTransform(transform);
+        SHADER.setUniform("invisibility", player.getInvisibility());
 
         fillRenderSets();
         setActiveLights();
@@ -330,9 +339,56 @@ public class World {
         }
 
         // Render player
-        player.setGridPosition(xPlayer, yPlayer, maze.getGrid().length);
+        player.setGamePositionAndRotate(xPlayer, yPlayer, maze.getGrid().length);
         renderer.renderCharacter(player);
+      
+        Timer timer = new Timer();
 
+        if(player.hasGuide()) {
+            if (guide == null || guide.isNew) {
+                System.out.println("INIT/.....");
+                guide = new GuideBall();
+                guide.setPosition(new Vector3f(maze.playerLocation.getX(), maze.playerLocation.getY(), 3f));
+                guide.setColor(new Vector3f(.7f, .7f, .7f));
+                guide.initializePosition(maze.playerLocation.getX(), maze.playerLocation.getY(), maze.getGrid().length);
+                lights[5].setAttenuation(LIGHT_ATTENUATION);
+                guide.isNew = false;
+            }
+
+            lights[5].setPosition(new Vector3f(guide.getPosition().x, guide.getPosition().y, 1f));
+            guide.move(maze.endPoint, maze.getGrid());
+            renderer.renderObject(guide);
+            reset = true;
+        } else {
+            if (guide != null) {
+                guide.isNew = true;
+                guide.setColor(new Vector3f(.1f, .1f, .1f));
+                lights[5].setAttenuation(DARK_ATTENUATION);
+                renderer.renderObject(guide);
+
+                if (reset) {
+                    reset = false;
+                    timer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            guide = null;
+                            lights[5].setAttenuation(NO_LIGHT);
+                        }
+                    }, 2 * 1000);
+                }
+            }
+        }
+
+        lights[0].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 1f));
+        lights[0].setAttenuation(player.getCurrentAttenuation());
+        lights[1].setPosition(new Vector3f(player.getPosition().x + 1f, player.getPosition().y, 5f));
+        lights[1].setAttenuation(player.getCurrentAttenuation());
+        lights[2].setPosition(new Vector3f(player.getPosition().x - 1f, player.getPosition().y, 5f));
+        lights[2].setAttenuation(player.getCurrentAttenuation());
+        lights[3].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y + 1f, 5f));
+        lights[3].setAttenuation(player.getCurrentAttenuation());
+        lights[4].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y - 1f, 5f));
+        lights[4].setAttenuation(player.getCurrentAttenuation());
         for (Light light : lights) {
             Object3D obj = light.getObject();
             if (light.getObject() != null) {
@@ -420,6 +476,18 @@ public class World {
 
         // adjust the camera for the shader, so it actually has an effect on the position of the render
         SHADER.setCamera(camera);
+    }
+
+    public List<Enemy> getEnemyList() {
+        return this.enemyList;
+    }
+
+    public Light[] getLights() {
+        return this.lights;
+    }
+
+    public void setLights(Light[] lights) {
+        this.lights = lights;
     }
 }
 

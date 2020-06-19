@@ -177,20 +177,20 @@ public class Shader {
             if (i < lights.length) {
                 light = lights[i];
             } else {
-                light = new Light(new Vector3f(0,0,0), new Vector3f(0,0,0), null);
+                light = new Light(new Vector3f(0, 0, 0), new Vector3f(0, 0, 0), null);
             }
 
-            if (LIGHT_POSITIONS[i] != -1)  {
+            if (LIGHT_POSITIONS[i] != -1) {
                 Vector3f position = light.getPosition();
                 glUniform3f(LIGHT_POSITIONS[i], position.x, position.y, position.z);
             }
 
-            if (LIGHT_COLORS[i] != -1)  {
+            if (LIGHT_COLORS[i] != -1) {
                 Vector3f color = light.getColor();
                 glUniform3f(LIGHT_COLORS[i], color.x, color.y, color.z);
             }
 
-            if (LIGHT_ATTENUATIONS[i] != -1)  {
+            if (LIGHT_ATTENUATIONS[i] != -1) {
                 Vector3f attenuation = light.getAttenuation();
                 glUniform3f(LIGHT_ATTENUATIONS[i], attenuation.x, attenuation.y, attenuation.z);
             }

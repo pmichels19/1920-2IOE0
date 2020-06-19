@@ -7,6 +7,10 @@ public class SpellHeal extends Spell {
     private final int manaCost = 10;
     private final int lifeRestore = 10;
 
+    public SpellHeal() {
+        super(0);
+    }
+
     @Override
     public void castSpell(Object[] args) {
         Player player = Player.getInstance();

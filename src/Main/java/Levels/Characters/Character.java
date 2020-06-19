@@ -31,6 +31,11 @@ public abstract class Character {
     private float gamePositionX;
     private float gamePositionY;
 
+    private String animationType;
+
+    // the amount of frames needed to move one tile
+    //private int speed;
+
     // the values for max health and mana
     int max_health;
     int max_mana;
@@ -38,6 +43,9 @@ public abstract class Character {
     // the values for current health and mana
     int cur_health;
     int cur_mana;
+
+    // the amount of damage dealt by normal attack
+    int damage = 10;
 
     // Speed of the character
     private float speed;
@@ -95,14 +103,37 @@ public abstract class Character {
         model.render(shader);
     }
 
+    public String getAnimationType() {
+        return animationType;
+    }
+
+    public void setAnimationType(String animationType) {
+        this.animationType = animationType;
+    }
+
+    private float getHeight() {
+        switch(getAnimationType()) {
+            case "bounce": return getBounce();
+            case "float": return getFloat();
+            default: return position.z;
+        }
+    }
+
+    private float getFloat() {
+        return (float) (1.5f + Math.pow(Math.cos(Math.toRadians(tVal * 150f)),2)/2);
+    }
+
+    private float getBounce() {
+        return (float) (1.5f + Math.abs(2f * Math.sin(Math.toRadians(tVal * 250f))));
+    }
+
+
     public void render(Shader shader) {
         shader.setUniform("transform", 1);
         Matrix4f modelTransform = new Matrix4f();
 
         //floating animation linked to Z-axis
-        float startingPoint = 1.5f;
-        float floatingSpeed = 150f;
-        position.z = (float) (startingPoint + Math.pow(Math.cos(Math.toRadians(tVal * floatingSpeed)),2)/2);
+        position.z = getHeight();
 
         modelTransform.translate(position).rotate(rotationAngle, rotation).scale(scale);
         shader.setUniform("modelTransform", modelTransform);
@@ -187,7 +218,7 @@ public abstract class Character {
         this.position.x = gamePositionX * 2f;
     }
 
-    public void setGridPositionY(float gamePositionY, float gridLength) {
+    public void setGamePositionY(float gamePositionY, float gridLength) {
         this.gamePositionY = gamePositionY;
         this.position.y = (gridLength - 0.5f - gamePositionY) * 2f;
     }
@@ -227,8 +258,8 @@ public abstract class Character {
         this.rotation = new Vector3f(0f, 0f, 1f);
         this.direction = DIRECTION_UP;
     }
-
-    public void setGridPosition(float gamePositionX, float gamePositionY, float gridLength) {
+  
+    public void setGamePositionAndRotate(float gamePositionX, float gamePositionY, float gridLength) {
         if (gamePositionX > this.gamePositionX) {
             turnRight();
         } else if (gamePositionX < this.gamePositionX) {
@@ -240,7 +271,7 @@ public abstract class Character {
             turnUp();
         }
         setGamePositionX(gamePositionX);
-        setGridPositionY(gamePositionY, gridLength);
+        setGamePositionY(gamePositionY, gridLength);
     }
 
     public Point getMazePosition() {
@@ -268,6 +299,14 @@ public abstract class Character {
      */
     public void initializePosition(int x, int y, int gridLength) {
         setMazePosition(new Point(x, y));
-        setGridPosition((float) y, (float) x, gridLength);
+        setGamePositionAndRotate((float) y, (float) x, gridLength);
+    }
+
+    /**
+     * Damages a character by given amount
+     * @param damage amount of damage to be dealt to this player
+     */
+    public void damage(int damage){
+        setHealth(cur_health - damage);
     }
 }

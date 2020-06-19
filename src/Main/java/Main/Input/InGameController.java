@@ -7,7 +7,9 @@ import Levels.Framework.Point;
 import Levels.Objects.Door;
 import Main.GameState;
 import SpellCasting.Spell;
-import SpellCasting.SpellAgility;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static Graphics.IO.ScreenShot.takeScreenShot;
 import static Levels.Characters.Character.*;
@@ -35,6 +37,8 @@ public class InGameController extends Controller {
 
     private Spell spell;
 
+    private List<Spell> activeSpells = new ArrayList<>();
+
     @Override
     void checkInputs() {
         // if the player died, we need to go into the DEAD state
@@ -49,21 +53,24 @@ public class InGameController extends Controller {
             return;
         }
 
+        // handle spell countdown
+        activeSpells.removeIf(Spell::checkDuration);
+
         // check if the player wants to pause/unpause the game
         if (pauseCooldown == 0) {
             if (window.buttonClicked(GLFW_KEY_ESCAPE)) {
                 pauseCooldown = 10;
 
                 // take a screenshot and place it into the saves folder
-                takeScreenShot( "Saves/lastSave.png" );
-                setState( GameState.PAUSED );
+                takeScreenShot("Saves/lastSave.png");
+                setState(GameState.PAUSED);
             }
         } else {
             pauseCooldown--;
         }
 
         // we only check for inventory inputs if allowed and not paused
-        if ( inventoryCooldown == 0 ) {
+        if (inventoryCooldown == 0) {
             checkInventory();
         } else {
             // if switching is still on cooldown, decrement the cooldown by one
@@ -71,11 +78,11 @@ public class InGameController extends Controller {
         }
 
         // we only check for movement inputs if movement is allowed
-        if ( movementCounter == 0 ) {
+        if (movementCounter == 0) {
             checkMovement();
         } else if (movementCounter > 0) {
             // move the player with the specified speed and direction
-            world.movePlayer( speed, vertical );
+            world.movePlayer(speed, vertical);
             // decrement the amount of movement frames left
             movementCounter--;
         }
@@ -172,7 +179,7 @@ public class InGameController extends Controller {
         else if (window.buttonClicked(GLFW_KEY_O)) {
             if (castCooldown == 0) {
                 if (released) {
-                    spell = Spell.determineSpell("agility");
+                    spell = Spell.determineSpell("guide");
                     spell.castSpell(new Object[]{maze});
                     released = false;
                     castCooldown = 20;
@@ -186,7 +193,8 @@ public class InGameController extends Controller {
         } else if (window.buttonClicked(GLFW_KEY_P)) {
             if (castCooldown == 0) {
                 if (released) {
-                    spell = Spell.determineSpell("tp_self");
+                    Spell spell = Spell.determineSpell("beast");
+                    activeSpells.add(spell);
                     spell.castSpell(new Object[]{maze});
                     released = false;
                     castCooldown = 20;
@@ -198,7 +206,7 @@ public class InGameController extends Controller {
             }
             released = true;
         }
-
+      
         // handle spell countdown (can make array or something later for more spells)
         if (spell != null) {
             if (spell instanceof SpellAgility) {

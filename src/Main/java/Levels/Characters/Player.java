@@ -2,9 +2,12 @@ package Levels.Characters;
 
 import Graphics.OBJLoader;
 import Graphics.OBJModel;
+import Graphics.OpenGL.Shader;
 import Graphics.OpenGL.Texture;
 import Levels.Assets.Items.Item;
 import Levels.Framework.Point;
+import Levels.Framework.joml.Matrix4f;
+import Levels.Framework.joml.Vector3f;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,8 +26,17 @@ public class Player extends Character {
 
     private static Player player;
 
+    Vector3f DARK_ATTENUATION = new Vector3f(.5f, .2f, 1.5f);
+    Vector3f STANDARD_ATTENUATION = new Vector3f(.5f, .2f, .5f);
+    Vector3f LIGHT_ATTENUATION = new Vector3f(.5f, .2f, .2f);
+    Vector3f currentAttenuation = STANDARD_ATTENUATION;
+
+    private boolean hasGuide = false;
+    private int invisiblility = 0;
+
     // an array of items the player has collected so far
     private Item[] inventory;
+    // a list of items the player has collected so far
     List<Point> collected_items;
     List<Point> opened_doors;
     private int selectedItem;
@@ -40,6 +52,8 @@ public class Player extends Character {
         collected_items = new ArrayList<>();
         opened_doors = new ArrayList<>();
         selectedItem = 0;
+
+        setAnimationType("float");
     }
 
     public static Player getInstance() {
@@ -72,6 +86,12 @@ public class Player extends Character {
      */
     public static void resetPlayer() {
         player = null;
+
+    @Override
+    public void render(Shader shader) {
+        shader.setUniform("playerCharacter", 1);
+        super.render(shader);
+        shader.setUniform("playerCharacter", 0);
     }
 
     public Item[] getInventory() {
@@ -137,6 +157,14 @@ public class Player extends Character {
 
     public void setMaxMana(int max_mana) {
         this.max_mana = max_mana;
+    }
+
+    public Vector3f getCurrentAttenuation() {
+        return currentAttenuation;
+    }
+
+    public void setCurrentAttenuation(Vector3f currentAttenuation) {
+        this.currentAttenuation = currentAttenuation;
     }
 
     /**
@@ -240,6 +268,14 @@ public class Player extends Character {
         inventory[slot] = Item.getItemById(Item.EMPTY);
     }
 
+    public boolean hasGuide() {
+        return hasGuide;
+    }
+
+    public void setGuide(boolean guide) {
+        this.hasGuide = guide;
+    }
+
     public void setAgilityPower(double agilityPower) {
         this.agilityPower = agilityPower;
     }
@@ -254,5 +290,13 @@ public class Player extends Character {
 
     public List<Point> getCollected() {
         return collected_items;
+    }
+      
+    public void setInvisibility(int invisiblility) {
+        this.invisiblility = invisiblility;
+    }
+
+    public int getInvisibility() {
+        return this.invisiblility;
     }
 }

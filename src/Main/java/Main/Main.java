@@ -75,6 +75,8 @@ public class Main {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         maze = new Maze("level_1");
+
+        // set up the renderable parts
         world = new World(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
         gui = new GUI();
         pauseScreen = new PauseScreen();

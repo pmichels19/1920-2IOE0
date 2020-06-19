@@ -17,11 +17,15 @@ public class SpellTPSelf extends Spell {
 
     Random rand = new Random();
 
-    Maze maze = Main.getMaze();
-    World world = Main.getWorld();
+    public SpellTPSelf() {
+        super(0);
+    }
 
     public void castSpell(Object[] args) {
-        int prevMana = Player.getInstance().getMana();
+        Maze maze = Main.getMaze();
+        World world = Main.getWorld();
+        Player player = Player.getInstance();
+        int prevMana = player.getMana();
 
         if (prevMana < manaCost) {
             // Not enough mana to cast spell

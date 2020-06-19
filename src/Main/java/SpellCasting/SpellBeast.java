@@ -11,14 +11,8 @@ import java.util.*;
 
 public class SpellBeast extends Spell {
 
-    Player player = Player.getInstance();
-    Timer timer = new Timer();
-
     private int prevMana;
     private int manaCost = 10;
-
-    World world = Main.getWorld();
-    Light[] lights = world.getLights();
 
     public SpellBeast() {
         super(10);
@@ -26,6 +20,12 @@ public class SpellBeast extends Spell {
 
     @Override
     public void castSpell(Object[] args) {
+        Player player = Player.getInstance();
+        World world = Main.getWorld();
+        Light[] lights = world.getLights();
+
+        Timer timer = new Timer();
+
         int duration = 5;
         prevMana = player.getMana();
         if (prevMana < manaCost) {

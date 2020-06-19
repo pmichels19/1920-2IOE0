@@ -3,6 +3,10 @@ package Graphics.Rendering;
 import Levels.Framework.joml.Vector3f;
 
 public class VictoryScreen extends FlatRender {
+    public VictoryScreen() {
+        super(new String[]{});
+    }
+
     @Override
     public void render() {
         prepareRender();

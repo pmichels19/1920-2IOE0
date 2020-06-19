@@ -5,10 +5,13 @@ import Graphics.OBJModel;
 import Graphics.OpenGL.Shader;
 import Graphics.OpenGL.Texture;
 import Levels.Assets.Items.Item;
+import Levels.Framework.Point;
 import Levels.Framework.joml.Matrix4f;
 import Levels.Framework.joml.Vector3f;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Player extends Character {
     // Name of the obj file in the res folder corresponding to the player model
@@ -33,7 +36,9 @@ public class Player extends Character {
 
     // a list of items the player has collected so far
     private Item[] inventory;
-    private int selectedItem = 0;
+    List<Point> collected_items;
+    List<Point> opened_doors;
+    private int selectedItem;
 
     // agility spell
     private double agilityPower = 0;
@@ -43,6 +48,10 @@ public class Player extends Character {
 
         // start with an empty inventory of max size 5
         inventory = new Item[5];
+
+        collected_items = new ArrayList<>();
+        opened_doors = new ArrayList<>();
+        selectedItem = 0;
 
         setAnimationType("float");
     }
@@ -72,6 +81,13 @@ public class Player extends Character {
         return player;
     }
 
+    /**
+     * resets the player to a null object
+     */
+    public static void resetPlayer() {
+        player = null;
+    }
+
     @Override
     public void render(Shader shader) {
         shader.setUniform("playerCharacter", 1);
@@ -85,6 +101,39 @@ public class Player extends Character {
 
     public void setInventory(Item[] inventory) {
         this.inventory = inventory;
+    }
+
+    /**
+     * method that checks if the player is in possession of a key
+     *
+     * @return whether {@code inventory} contains a key item
+     */
+    public boolean hasKey() {
+        for (Item item : inventory) {
+            if (item != null && item.getId() == Item.KEY) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void useKey(Point point) {
+        opened_doors.add(point);
+        for (int i = 0; i < inventory.length; i++) {
+            if (inventory[i] != null && inventory[i].getId() == Item.KEY) {
+                player.tossItem(i);
+                return;
+            }
+        }
+    }
+
+    public List<Point> getOpenedDoors() {
+        return opened_doors;
+    }
+
+    public void setOpenedDoors(List<Point> opened_doors) {
+        this.opened_doors = opened_doors;
     }
 
     public void setSelectedItem(int selectedItem) {
@@ -144,51 +193,81 @@ public class Player extends Character {
     }
 
     /**
-     * Sets the item in the inventory at {@code selectedItem} to the provided item
+     * returns the index of the first open slot in the inventory, if no empty slot is found, it returns -1
      *
-     * @param item the new item to add to the inventory
+     * @return the first open index in {@code inventory}, -1 if no open slots exist
      */
-    public void addItem(Item item) {
-        inventory[selectedItem] = item;
+    public int findFirstOpenSlot() {
+        for (int i = 0; i < inventory.length; i++) {
+            if (inventory[i] == null || inventory[i].getId() == Item.EMPTY) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /**
-     * uses the selected item, if possible: the boot, coin and empty item have no use
+     * Sets the item in the inventory at {@code selectedItem / findFirstOpenSlot()} to the provided item
+     *
+     * @param item the new item to add to the inventory
+     * @param point the point that the item was located at in the maze
      */
-    public void useItem() {
+    public void addItem(Item item, Point point) {
+        int openSlot = findFirstOpenSlot();
+        if ( openSlot == -1 ) {
+            inventory[selectedItem] = item;
+        } else {
+            inventory[openSlot] = item;
+        }
+        collected_items.add(point);
+    }
+
+    /**
+     * uses the selected item, if possible: the boot, key and empty item have no use
+     *
+     * @param slot the slot to use the item from
+     */
+    public void useItem(int slot) {
+        // if there is no item in the desired slot yet, return and do nothing
+        if (inventory[slot] == null) {
+            return;
+        }
+
         // we check what kind of item the player has selected
-        switch (inventory[selectedItem].getId()) {
+        switch (inventory[slot].getId()) {
             case Item.H_POTION:
                 // if a health potion is used, add 25 health to the current health
                 setHealth(getHealth() + 25);
-                tossItem();
+                tossItem(slot);
                 break;
             case Item.M_POTION:
                 // if a mana potion is used, add 25 mana to the current mana
                 setMana(getMana() + 25);
-                tossItem();
+                tossItem(slot);
                 break;
             case Item.HEART:
                 // if a heart is used, increase the max health and current health by 25
                 setMaxHealth(getMaxHealth() + 25);
                 setHealth(getHealth() + 25);
-                tossItem();
+                tossItem(slot);
                 break;
             case Item.MANA:
                 // if a heart is used, increase the max mana and current mana by 25
                 setMaxMana(getMaxMana() + 25);
                 setMana(getMana() + 25);
-                tossItem();
+                tossItem(slot);
                 break;
         }
     }
 
     /**
-     * removes the selected item from the player inventory and places the empty item back
+     * removes the specified item from the player inventory and places the empty item back
+     *
+     * @param slot the slot to remove the item from
      */
-    public void tossItem() {
+    public void tossItem(int slot) {
         // replace the consumed item with the empty item
-        inventory[selectedItem] = Item.getItemById(Item.EMPTY);
+        inventory[slot] = Item.getItemById(Item.EMPTY);
     }
 
     public boolean hasGuide() {
@@ -207,6 +286,14 @@ public class Player extends Character {
         return agilityPower;
     }
 
+    public void setCollected(List<Point> collected_items) {
+        this.collected_items = collected_items;
+    }
+
+    public List<Point> getCollected() {
+        return collected_items;
+    }
+
     public void setInvisibility(int invisiblility) {
         this.invisiblility = invisiblility;
     }
@@ -214,6 +301,4 @@ public class Player extends Character {
     public int getInvisibility() {
         return this.invisiblility;
     }
-
-
 }

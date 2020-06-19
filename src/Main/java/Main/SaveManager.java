@@ -4,6 +4,7 @@ import Graphics.OpenGL.Texture;
 import Levels.Assets.Items.Item;
 import Levels.Assets.Tiles.GUIElements;
 import Levels.Characters.Player;
+import Levels.Framework.Maze;
 import Levels.Framework.Point;
 
 import java.io.File;
@@ -12,6 +13,8 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import static Levels.Assets.Items.Item.getItemById;
@@ -62,6 +65,14 @@ public class SaveManager {
      * @param slot the slot to empty
      */
     public static void purgeSlot(int slot) {
+        // before starting a new game, reset the player and the maze
+        Player.resetPlayer();
+        try {
+            Main.getMaze().rebuildGrid();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         checkExistingSaves();
         File[] save_data = SLOTS[slot].listFiles();
         for (File file : save_data) {
@@ -112,13 +123,40 @@ public class SaveManager {
                 .append("/")
                 .append( player.getMaxMana() )
                 .append("\n");
-        // and finally append the current player location
+        // and append the current player location
         Point playerLocation = Main.getMaze().getPlayerLocation();
         stringBuilder
                 .append("# player location\n")
                 .append( playerLocation.getX() )
                 .append(":")
-                .append( playerLocation.getY() );
+                .append( playerLocation.getY() )
+                .append("\n");
+        // then the collected items by the player
+        List<Point> collectedItems = player.getCollected();
+        stringBuilder
+                .append("# collected item locations\n")
+                .append(collectedItems.size())
+                .append("\n");
+        for (Point point : collectedItems) {
+            stringBuilder
+                    .append( point.getX() )
+                    .append(" ")
+                    .append( point.getY() )
+                    .append("\n");
+        }
+        // finally the opened doors
+        List<Point> opened_doors = player.getOpenedDoors();
+        stringBuilder
+                .append("# opened door locations\n")
+                .append(opened_doors.size())
+                .append("\n");
+        for (Point point : opened_doors) {
+            stringBuilder
+                    .append( point.getX() )
+                    .append(" ")
+                    .append( point.getY() )
+                    .append("\n");
+        }
 
         // the player data is now ready for saving
         File data = new File(SLOTS[slot].getPath() + "/data.plr");
@@ -202,7 +240,6 @@ public class SaveManager {
         }
 
         // load the data into the player
-        Player player = Player.getInstance();
         return loadData( player_data );
     }
 
@@ -243,6 +280,14 @@ public class SaveManager {
     }
 
     private static boolean loadData(File player_data) {
+        // before loading in a new save, reset the player and the maze
+        Player.resetPlayer();
+        try {
+            Main.getMaze().rebuildGrid();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         String line;
         String[] splitLine;
         Scanner scanner = null;
@@ -278,8 +323,8 @@ public class SaveManager {
         // then we read the current health and max health
         line = scanner.nextLine();
         splitLine = line.split("/");
-        player.setHealth( Integer.parseInt( splitLine[0] ) );
         player.setMaxHealth( Integer.parseInt( splitLine[1] ) );
+        player.setHealth( Integer.parseInt( splitLine[0] ) );
 
         // and we do the same for the mana
         line = scanner.nextLine();
@@ -287,10 +332,10 @@ public class SaveManager {
         // then we read the current health and max health
         line = scanner.nextLine();
         splitLine = line.split("/");
-        player.setMana( Integer.parseInt( splitLine[0] ) );
         player.setMaxMana( Integer.parseInt( splitLine[1] ) );
+        player.setMana( Integer.parseInt( splitLine[0] ) );
 
-        // finally we set the player location
+        // we set the player location
         line = scanner.nextLine();  // a dummy line again
         line = scanner.nextLine();
         splitLine = line.split(":");
@@ -298,6 +343,42 @@ public class SaveManager {
                 Integer.parseInt( splitLine[0] ),
                 Integer.parseInt( splitLine[1] )
         );
+
+        // finally set the collected items
+        line = scanner.nextLine();  // dummy line
+        // get the amount of collected items
+        int collected = Integer.parseInt( scanner.nextLine().trim() );
+        // retrieve the grid from the main class
+        char[][] grid = Main.getMaze().getGrid();
+        // fill the new CollectedItems list
+        List<Point> collectedItems = new ArrayList<>();
+        for (int i = 0; i < collected; i++) {
+            splitLine = scanner.nextLine().split("\\s+");
+            int x = Integer.parseInt( splitLine[0] );
+            int y = Integer.parseInt( splitLine[1] );
+            collectedItems.add( new Point(x, y) );
+            // remove the items from the maze, as they have already been collected
+            grid[x][y] = Maze.MARKER_SPACE;
+        }
+        // set the collected items
+        player.setCollected(collectedItems);
+
+        // finally set the collected items
+        line = scanner.nextLine();  // dummy line
+        // get the amount of collected items
+        int opened = Integer.parseInt( scanner.nextLine().trim() );
+        // fill the new CollectedItems list
+        List<Point> opened_doors = new ArrayList<>();
+        for (int i = 0; i < opened; i++) {
+            splitLine = scanner.nextLine().split("\\s+");
+            int x = Integer.parseInt( splitLine[0] );
+            int y = Integer.parseInt( splitLine[1] );
+            opened_doors.add( new Point(x, y) );
+            // remove the items from the maze, as they have already been collected
+            grid[grid.length - y][x] = Maze.MARKER_SPACE;
+        }
+        // set the collected items
+        player.setOpenedDoors(opened_doors);
 
         return true;
     }

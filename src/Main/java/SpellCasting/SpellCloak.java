@@ -12,9 +12,6 @@ import java.util.TimerTask;
 
 public class SpellCloak extends Spell {
 
-    Player player = Player.getInstance();
-    Timer timer = new Timer();
-
     private int prevMana;
     private int manaCost = 10;
 
@@ -22,18 +19,21 @@ public class SpellCloak extends Spell {
         super(10);
     }
 
-    World world = Main.getWorld();
-    List<Enemy> enemies = world.getEnemyList();
-
     @Override
     public void castSpell(Object[] args) {
+        Player player = Player.getInstance();
+
+        World world = Main.getWorld();
+        List<Enemy> enemies = world.getEnemyList();
+
+        Timer timer = new Timer();
+
         int duration = 10;
         prevMana = player.getMana();
         if (prevMana < manaCost) {
             System.out.println("Not enough mana!");
         } else {
             player.setMana(prevMana - manaCost);
-
         }
 
         player.setInvisibility(1);

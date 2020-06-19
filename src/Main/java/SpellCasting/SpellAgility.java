@@ -21,7 +21,7 @@ public class SpellAgility extends Spell {
         } else {
             player.setMana(prevMana - manaCost);
             castMoment = Timer.getTime();
-            Player.getInstance().setAgilityPower(1);
+            player.setAgilityPower(1);
         }
     }
 

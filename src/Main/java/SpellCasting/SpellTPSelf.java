@@ -25,6 +25,7 @@ public class SpellTPSelf extends Spell {
         Maze maze = Main.getMaze();
         World world = Main.getWorld();
         Player player = Player.getInstance();
+
         int prevMana = player.getMana();
 
         if (prevMana < manaCost) {

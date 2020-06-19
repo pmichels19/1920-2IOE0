@@ -33,9 +33,6 @@ public abstract class Character {
 
     private String animationType;
 
-    // the amount of frames needed to move one tile
-    //private int speed;
-
     // the values for max health and mana
     int max_health;
     int max_mana;
@@ -53,6 +50,11 @@ public abstract class Character {
     //Time related objects to link animation to
     private double tVal = 0.0;
     Timer timer;
+
+    public static final int DIRECTION_LEFT = 0;
+    public static final int DIRECTION_UP = 1;
+    public static final int DIRECTION_RIGHT = 2;
+    public static final int DIRECTION_DOWN = 3;
 
     public Character(int max_health, int max_mana, int speed, OBJModel model) {
         this.model = model;
@@ -179,10 +181,16 @@ public abstract class Character {
 
     public void setHealth(int health) {
         cur_health = health;
+        if (cur_health > max_health) {
+            cur_health = max_health;
+        }
     }
 
     public void setMana(int mana) {
         cur_mana = mana;
+        if (cur_mana > max_mana) {
+            cur_mana = max_mana;
+        }
     }
 
     public float getGamePositionX() {
@@ -212,31 +220,52 @@ public abstract class Character {
         this.position.y = (gridLength - 0.5f - gamePositionY) * 2f;
     }
 
+    /**
+     * turns the character so it faces to the right
+     */
+    public void turnRight() {
+        this.rotationAngle = (float) ((-90f * Math.PI) / 180.0f);
+        this.rotation = new Vector3f(0f, 0f, 1f);
+        this.direction = DIRECTION_RIGHT;
+    }
+
+    /**
+     * turns the character so it faces to the left
+     */
+    public void turnLeft() {
+        this.rotationAngle = (float) ((90f * Math.PI) / 180.0f);
+        this.rotation = new Vector3f(0f, 0f, 1f);
+        this.direction = DIRECTION_LEFT;
+    }
+
+    /**
+     * turns the character so it faces downwards
+     */
+    public void turnDown() {
+        this.rotationAngle = (float) ((-180f * Math.PI) / 180.0f);
+        this.rotation = new Vector3f(0f, 0f, 1f);
+        this.direction = DIRECTION_DOWN;
+    }
+
+    /**
+     * turns the character so it faces upwards
+     */
+    public void turnUp() {
+        this.rotationAngle = (float) ((0f * Math.PI) / 180.0f);
+        this.rotation = new Vector3f(0f, 0f, 1f);
+        this.direction = DIRECTION_UP;
+    }
+
     public void setGamePositionAndRotate(float gamePositionX, float gamePositionY, float gridLength) {
         if (gamePositionX > this.gamePositionX) {
-            this.rotationAngle = (float) ((-90f * Math.PI) / 180.0f);
-            this.rotation = new Vector3f(0f, 0f, 1f);
-            // right
-            this.direction = 2;
+            turnRight();
         } else if (gamePositionX < this.gamePositionX) {
-            this.rotationAngle = (float) ((90f * Math.PI) / 180.0f);
-
-            this.rotation = new Vector3f(0f, 0f, 1f);
-            // left
-            this.direction = 0;
+            turnLeft();
         }
         if (gamePositionY > this.gamePositionY) {
-            this.rotationAngle = (float) ((-180f * Math.PI) / 180.0f);
-
-            this.rotation = new Vector3f(0f, 0f, 1f);
-            // down
-            this.direction = 3;
+            turnDown();
         } else if (gamePositionY < this.gamePositionY) {
-            this.rotationAngle = (float) ((0f * Math.PI) / 180.0f);
-
-            this.rotation = new Vector3f(0f, 0f, 1f);
-            // up
-            this.direction = 1;
+            turnUp();
         }
         setGamePositionX(gamePositionX);
         setGamePositionY(gamePositionY, gridLength);

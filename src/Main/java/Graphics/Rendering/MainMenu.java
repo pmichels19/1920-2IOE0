@@ -4,36 +4,8 @@ import Levels.Assets.Tiles.GUIElements;
 import Levels.Framework.joml.Vector3f;
 
 public class MainMenu extends FlatRender {
-    private static int selectedOption = 0;
-
-    /**
-     * returns the selected option in the main menu
-     *
-     * @return {@code selectedOption}
-     */
-    public static int getSelectedOption() {
-        return selectedOption;
-    }
-
-    /**
-     * changes the selected option, if going up selectedOption is decremented, and incremented otherwise
-     *
-     * @param up whether to go up or down in the menu
-     */
-    public static void changeOption(boolean up) {
-        if (up) {
-            selectedOption--;
-        } else {
-            selectedOption++;
-        }
-        selectedOption = (selectedOption + 4) % 4;
-    }
-
-    /**
-     * resets the selected option to 0
-     */
-    public static void resetSelected() {
-        selectedOption = 0;
+    public MainMenu() {
+        super(new String[] {"Continue", "New Game", "Load Game", "Exit Game"});
     }
 
     @Override
@@ -73,7 +45,7 @@ public class MainMenu extends FlatRender {
     private void renderOptions() {
         // first we draw the bar to highlight the option the player is currently hovering over
         transform.setScale( new Vector3f( 0.5f, 0.1f, 1 ) );
-        transform.setPosition( new Vector3f( -1, 0.5f - (selectedOption * 0.25f), 0 ) );
+        transform.setPosition( new Vector3f( -1, 0.5f - (selected * 0.25f), 0 ) );
         renderer.setTransform(transform);
         renderer.renderTile( GUIElements.BACKGROUND.getTexture(), 0.3f, 0, TileRenderer.FLOOR );
 
@@ -85,7 +57,7 @@ public class MainMenu extends FlatRender {
             String option = options[i];
             transform.setPosition(new Vector3f(-1, 0.5f - i * 0.25f, 0));
             renderer.setTransform(transform);
-            renderString(option, selectedOption != i, (1f + option.length() / 2f), 0);
+            renderString(option, selected != i, (1f + option.length() / 2f), 0);
         }
     }
 }

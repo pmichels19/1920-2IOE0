@@ -3,6 +3,10 @@ package Graphics.Rendering;
 import Levels.Framework.joml.Vector3f;
 
 public class SaveMenu extends SlotPickMenu {
+    public SaveMenu() {
+        super();
+    }
+
     @Override
     public void render() {
         super.render();

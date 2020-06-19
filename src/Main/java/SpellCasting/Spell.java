@@ -29,7 +29,7 @@ public abstract class Spell {
             case "fireball":
                 ret = new SpellFireball();
                 break;
-            case "HEAL":
+            case "heal":
                 ret = new SpellHeal();
                 break;
             case "agility":
@@ -50,7 +50,7 @@ public abstract class Spell {
             case "guide":
                 ret = new SpellGuide();
                 break;
-            case "beast":
+            case "summon":
                 ret = new SpellBeast();
                 break;
             case "tp_self":

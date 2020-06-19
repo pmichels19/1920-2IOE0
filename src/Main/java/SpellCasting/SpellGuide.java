@@ -15,8 +15,6 @@ public class SpellGuide extends Spell {
 
     Timer timer = new Timer();
 
-    Player player = Player.getInstance();
-
     private int prevMana;
     private int manaCost = 10;
 
@@ -26,8 +24,8 @@ public class SpellGuide extends Spell {
 
     @Override
     public void castSpell(Object[] args) {
-
         Player player = Player.getInstance();
+
         prevMana = player.getMana();
         if (prevMana < manaCost) {
             System.out.println("Not enough mana!");

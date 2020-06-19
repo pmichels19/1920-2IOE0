@@ -71,7 +71,6 @@ public abstract class Enemy extends Character {
             } else {
                 // if the player is outside of the detection distance
                 doRandomMove(grid);
-
             }
         } else if (state == ATTACKING_STATE) {
             attackPlayer(playerLocation, grid.length);

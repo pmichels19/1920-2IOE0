@@ -10,7 +10,7 @@ abstract class Controller {
     static World world;
     static Maze maze;
 
-    static Player player = Player.getInstance();
+    static Player player;
 
     // pause cooldown makes the pause menu appear and disappear in a controllable manner, this is shared by multiple
     // controllers: both the in-game and the pausemenu controller
@@ -41,6 +41,13 @@ abstract class Controller {
      */
     public static void setWorld(World world) {
         Controller.world = world;
+    }
+
+    /**
+     * resets the player to the instance kept in the player class
+     */
+    public static void setPlayer() {
+        player = Player.getInstance();
     }
 
     /**

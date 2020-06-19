@@ -4,6 +4,7 @@ import Graphics.OpenGL.Light;
 import Graphics.OpenGL.Shader;
 import Graphics.Transforming.Camera;
 import Graphics.Transforming.Transform;
+import Levels.Assets.Items.Item;
 import Levels.Assets.Tiles.Background;
 import Levels.Assets.Tiles.Wall;
 import Levels.Characters.Enemy;
@@ -12,12 +13,11 @@ import Levels.Characters.Player;
 import Levels.Framework.Maze;
 import Levels.Framework.Point;
 import Levels.Framework.joml.Vector3f;
+import Levels.Objects.Door;
 import Levels.Objects.MagicBall;
 import Levels.Objects.Object3D;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static java.lang.Math.toRadians;
 
@@ -36,46 +36,29 @@ public class World {
     private final Transform transform;
     // the tile renderer to actaully draw the world and the player
     private final TileRenderer renderer = TileRenderer.getInstance();
-    // the radius around the player that is actually rendered
-    private final int RADIUS = 8;
 
-    Vector3f DARK_ATTENUATION = new Vector3f(.5f, .2f, 1.5f);
-    Vector3f LIGHT_ATTENUATION = new Vector3f(.5f, .2f, .5f);
+    private final Vector3f DARK_ATTENUATION = new Vector3f(.5f, .2f, 1.5f);
+    private final Vector3f LIGHT_ATTENUATION = new Vector3f(.5f, .2f, .5f);
+
     // the light object
-    private final Light[] lights = {
-            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
-            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
-            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
-            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
-            new Light(new Vector3f(0f, 0f, 0f), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
-
-            new Light(new Vector3f(2, 4, 1f), new Vector3f(1f, 0.2f, 0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(2, 4, 5f), new Vector3f(1f, 0.2f, 0.2f), null, LIGHT_ATTENUATION),
-
-            new Light(new Vector3f(6, 4, 1f), new Vector3f(1f, 1f, 0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(6, 4, 5f), new Vector3f(1f, 1f, 0.2f), null, LIGHT_ATTENUATION),
-
-            new Light(new Vector3f(10, 4, 1f), new Vector3f(0.2f, 1f, 0.2f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(10, 4, 5f), new Vector3f(0.2f, 1f, 0.2f), null, LIGHT_ATTENUATION),
-
-            new Light(new Vector3f(2, 16, 1f), new Vector3f(1f, 0.2f, 1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(2, 16, 5f), new Vector3f(1f, 0.2f, 1f), null, LIGHT_ATTENUATION),
-
-            new Light(new Vector3f(6, 16, 1f), new Vector3f(0.2f, 0.2f, 1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(6, 16, 5f), new Vector3f(0.2f, 0.2f, 1f), null, LIGHT_ATTENUATION),
-
-            new Light(new Vector3f(10, 16, 1f), new Vector3f(0.2f, 1f, 1f), MagicBall.getInstance(), LIGHT_ATTENUATION),
-            new Light(new Vector3f(10, 16, 5f), new Vector3f(0.2f, 1f, 1f), null, LIGHT_ATTENUATION)
+    private final Light[] player_lights = {
+            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
+            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, DARK_ATTENUATION),
     };
 
     // variables to keep track of the player location in the world
     private float xPlayer;
     private float yPlayer;
 
-    private Player player;
-
     // List that holds the enemies
-    private ArrayList<Enemy> enemyList = new ArrayList<>();
+    private final ArrayList<Enemy> enemyList = new ArrayList<>();
+
+    // the map that holds light objects to be rendered at the position defined by the point
+    private final Map<Point, Set<Light>> lightMap = new HashMap<>();
+    private final Map<Point, Door> doorMap = new HashMap<>();
 
     /**
      * initialises the global variables for the renderer
@@ -105,6 +88,64 @@ public class World {
             eyeball.initializePosition(i.getX(), i.getY(), maze.getGrid().length);
             enemyList.add(eyeball);
         }
+
+        createLights();
+        createDoors();
+    }
+
+    /**
+     * method that fills the {@code lightMap}
+     */
+    private void createLights() {
+        // loop over the grid to identify where to place lightsources
+        char[][] grid = maze.getGrid();
+        for (int y = 0; y < grid.length; y++) {
+            for (int x = 0; x < grid[y].length; x++) {
+                if ( Maze.ITEM_MARKERS.contains( grid[y][x] ) ) {
+                    Point position = new Point(x, grid.length - y);
+                    // if no set of lights exists for the current position yet, make one
+                    if ( !lightMap.containsKey( position ) ) {
+                        lightMap.put( position, new HashSet<>() );
+                    }
+                    Set<Light> toAdd = lightMap.get(position);
+                    // add the orb with the desired light color
+                    toAdd.add(
+                            new Light(
+                                    new Vector3f(x * 2, (grid.length - y) * 2, 1f),
+                                    Item.getColorById(Character.getNumericValue(grid[y][x])),
+                                    MagicBall.getInstance(),
+                                    LIGHT_ATTENUATION
+                            )
+                    );
+                    toAdd.add(
+                            new Light(
+                                    new Vector3f(x * 2, (grid.length - y) * 2, 5f),
+                                    Item.getColorById(Character.getNumericValue(grid[y][x])),
+                                    null,
+                                    LIGHT_ATTENUATION
+                            )
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * method that fills the {@code doorMap}
+     */
+    private void createDoors() {
+        // loop over the grid to identify where to place lightsources
+        char[][] grid = maze.getGrid();
+        for (int y = 0; y < grid.length; y++) {
+            for (int x = 0; x < grid[y].length; x++) {
+                if ( grid[y][x] == Maze.MARKER_DOOR ) {
+                    doorMap.put(
+                            new Point(x, grid.length - y),
+                            new Door(grid[y - 1][x] == Maze.MARKER_WALL, x, grid.length - y)
+                    );
+                }
+            }
+        }
     }
 
     /**
@@ -121,8 +162,6 @@ public class World {
                 (maze.getGrid().length - yPlayer) * 2 - 10,
                 16
         ));
-
-        this.player = Player.getInstance();
     }
 
     // sets used for gathering points to determine drawing locations of tiles
@@ -132,18 +171,27 @@ public class World {
     private final Set<Point> faceWalls = new HashSet<>();
     private final Set<Point> ceilings = new HashSet<>();
 
+    private final Set<Light> lights = new HashSet<>();
+    private final Set<Door> doors = new HashSet<>();
+
+    private Player player;
+
     /**
      * renders the maze
      */
     public void render() {
+        // first, retrieve the player instance
+        player = Player.getInstance();
+
         // set the camera and shader for the renderer
         renderer.setShader(SHADER);
         renderer.setCamera(camera);
         renderer.setTransform(transform);
-        SHADER.setLights(lights);
 
         fillRenderSets();
+        setActiveLights();
         renderSets();
+        checkDoors();
         clearRenderSets();
     }
 
@@ -156,6 +204,8 @@ public class World {
         int x_player = maze.getPlayerLocation().getX();
         int y_player = maze.getPlayerLocation().getY();
 
+        // the radius around the player that is actually rendered
+        int RADIUS = 8;
         // get the start and end coordinates of both x and y axis
         int x_start = Math.max(x_player - RADIUS, 0);
         int y_start = Math.max(y_player - RADIUS, 0);
@@ -164,33 +214,75 @@ public class World {
 
         for (int i = x_start; i < x_end; i++) {
             for (int j = y_start; j < y_end; j++) {
+                Point position = new Point( j, grid.length - i );
                 // determine what tile needs to be drawn and fill that into the sets made above
                 if (grid[i][j] == Maze.MARKER_WALL) {
                     // we check if the tile to left is also a wall
                     if (j > 0 && grid[i][j - 1] != Maze.MARKER_WALL) {
                         // if there is no wall to the left, we wish to draw the left side of this wall
-                        leftWalls.add(new Point(j, grid.length - i));
+                        leftWalls.add(position);
                     }
 
                     // we check if the tile to right is also a wall
                     if (j < grid[i].length - 1 && grid[i][j + 1] != Maze.MARKER_WALL) {
                         // if there is no wall to the right, we wish to draw the right side of this wall
-                        rightWalls.add(new Point(j, grid.length - i));
+                        rightWalls.add(position);
                     }
 
                     // we check if the tile in front is also a wall
                     if (i < grid.length - 1 && grid[i + 1][j] != Maze.MARKER_WALL) {
                         // if there is no wall in front, we wish to draw the face of this wall
-                        faceWalls.add(new Point(j, grid.length - i));
+                        faceWalls.add(position);
                     }
 
                     // we always want to render a ceiling:
-                    ceilings.add(new Point(j, grid.length - i));
+                    ceilings.add(position);
+                } else if ( Maze.ITEM_MARKERS.contains( grid[i][j] ) ) {
+                    floors.add(position);
+                    // if the maze entry contains an item, then there should be a set of light objects for it
+                    if (lightMap.containsKey(position)) {
+                        lights.addAll(lightMap.get(position));
+                    }
+                } else if (grid[i][j] == Maze.MARKER_DOOR) {
+                    floors.add(position);
+                    if ( doorMap.containsKey(position) ) {
+                        doors.add( doorMap.get(position) );
+                    }
                 } else if (grid[i][j] != Maze.MARKER_WALL) {
-                    floors.add(new Point(j, grid.length - i));
+                    floors.add(position);
                 }
             }
         }
+    }
+
+    /**
+     * method that passes the lights that are currently active in the world to the shader
+     */
+    private void setActiveLights() {
+        // after filling the sets, we want to check which lights are active and pass those to the shader
+        Light[] active_lights = new Light[ lights.size() + player_lights.length ];
+        int i = 0;
+        for (Light light : lights) {
+            active_lights[i] = light;
+            i++;
+        }
+
+        // correct the location of the player lights
+        float x_player = player.getPosition().x;
+        float y_player = player.getPosition().y;
+        player_lights[0].setPosition(new Vector3f(x_player, y_player, 1f));
+        player_lights[1].setPosition(new Vector3f(x_player + 1f, y_player, 5f));
+        player_lights[2].setPosition(new Vector3f(x_player - 1f, y_player, 5f));
+        player_lights[3].setPosition(new Vector3f(x_player, y_player + 1f, 5f));
+        player_lights[4].setPosition(new Vector3f(x_player, y_player - 1f, 5f));
+
+        active_lights[i] = player_lights[0];
+        active_lights[i + 1] = player_lights[1];
+        active_lights[i + 2] = player_lights[2];
+        active_lights[i + 3] = player_lights[3];
+        active_lights[i + 4] = player_lights[4];
+
+        SHADER.setLights( active_lights );
     }
 
     /**
@@ -212,9 +304,23 @@ public class World {
             renderer.renderTile(Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.RIGHT);
         }
 
+        for (Door door : doors) {
+            if (!door.isVertical()) {
+                float x_door = door.getX() - (1f - (((float) door.getOffset()) / ((float) Door.getToggleFrames())));
+                renderer.renderTile(Wall.FENCE.getTexture(), x_door, door.getY() + 0.5f, TileRenderer.FACES);
+            }
+        }
+
         for (Point point : faceWalls) {
             renderer.addNormalMap(Wall.BRICKWALL_NORMAL.getTexture());
             renderer.renderTile(Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES);
+        }
+
+        for (Door door : doors) {
+            if (door.isVertical()) {
+                float y_door = door.getY() - (1f - (((float) door.getOffset()) / ((float) Door.getToggleFrames())));
+                renderer.renderTile(Wall.FENCE.getTexture(), door.getX() + 0.5f, y_door, TileRenderer.LEFTS);
+            }
         }
 
         // Render enemies
@@ -226,12 +332,6 @@ public class World {
         // Render player
         player.setGridPosition(xPlayer, yPlayer, maze.getGrid().length);
         renderer.renderCharacter(player);
-
-        lights[0].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 1f));
-        lights[1].setPosition(new Vector3f(player.getPosition().x + 1f, player.getPosition().y, 5f));
-        lights[2].setPosition(new Vector3f(player.getPosition().x - 1f, player.getPosition().y, 5f));
-        lights[3].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y + 1f, 5f));
-        lights[4].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y - 1f, 5f));
 
         for (Light light : lights) {
             Object3D obj = light.getObject();
@@ -249,6 +349,21 @@ public class World {
     }
 
     /**
+     * this method checks the doors in the doors set to see if any doors have been opened
+     */
+    private void checkDoors() {
+        for (Door door : doors) {
+            if ( door.isOpen() ) {
+                // if the door has been opened, remove it from the doorMap and put a space in the grid on the door entry
+                doorMap.remove( new Point( door.getX(), door.getY() ) );
+                char[][] grid = maze.getGrid();
+                // remove the door from the grid, so the player can walk through
+                grid[grid.length - door.getY()][door.getX()] = Maze.MARKER_SPACE;
+            }
+        }
+    }
+
+    /**
      * clears all the sets with points specifying render positions
      */
     private void clearRenderSets() {
@@ -257,6 +372,8 @@ public class World {
         rightWalls.clear();
         faceWalls.clear();
         ceilings.clear();
+        lights.clear();
+        doors.clear();
     }
 
     /**
@@ -274,6 +391,16 @@ public class World {
 
         // upon moving the player, we also have to move the camera
         adjustCamera(speed * 2f, vertical);
+    }
+
+    /**
+     * returns the door found at point {@code point} in the maze
+     *
+     * @param point a key in the doormap
+     * @return {@code doorMap.getOrDefault(point, null)}
+     */
+    public Door getDoor(Point point) {
+        return doorMap.getOrDefault(point, null);
     }
 
     /**

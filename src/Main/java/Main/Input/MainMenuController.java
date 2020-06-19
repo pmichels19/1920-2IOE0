@@ -2,6 +2,7 @@ package Main.Input;
 
 import Graphics.Rendering.MainMenu;
 import Main.GameState;
+import Main.Main;
 
 import static Main.Main.setState;
 import static org.lwjgl.glfw.GLFW.*;
@@ -20,19 +21,22 @@ public class MainMenuController extends Controller {
         if (mainMenuCooldown == 0) {
             // if the player selected an option, we need to execute the selected option
             if ( window.buttonClicked(GLFW_KEY_ENTER) ) {
-                switch ( MainMenu.getSelectedOption() ) {
+                switch ( Main.getMainMenu().getSelected() ) {
                     // 0 is mapped to continuing from the latest game
                     case 0:
                         if ( loadLatest() ) {
+                            Main.getMainMenu().resetSelected();
                             setState( GameState.IN_GAME );
                         }
                         break;
                     // 1 is mapped to starting a new game
                     case 1:
+                        Main.getMainMenu().resetSelected();
                         setState( GameState.STARTING_GAME );
                         break;
                     // 2 is mapped to loading a saved game
                     case 2:
+                        Main.getMainMenu().resetSelected();
                         setState( GameState.LOADING_SAVE );
                         break;
                     // 3 is mapped to exiting the game
@@ -45,10 +49,10 @@ public class MainMenuController extends Controller {
             }
 
             if ( window.buttonClicked(GLFW_KEY_UP) ) {
-                MainMenu.changeOption(true);
+                Main.getMainMenu().changeSelected(true);
                 mainMenuCooldown = 5;
             } else if ( window.buttonClicked(GLFW_KEY_DOWN) ) {
-                MainMenu.changeOption(false);
+                Main.getMainMenu().changeSelected(false);
                 mainMenuCooldown = 5;
             }
         } else {

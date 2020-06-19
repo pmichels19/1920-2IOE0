@@ -37,20 +37,16 @@ public abstract class Enemy extends Character {
                     doRandomMove(grid);
                 } else {
                     // If player is in detection range, move towards the player and update the grid
-                    Point currentPoint = getMazePosition();
                     Point newPoint = pathToPlayer.get(pathToPlayer.size() - 1);
                     // Check if the position you're moving to is the position of the player
                     if (grid[newPoint.getX()][newPoint.getY()] != MARKER_PLAYER) {
                         // If it is not the player's position, move there.
-                        grid[currentPoint.getX()][currentPoint.getY()] = MARKER_SPACE;
-                        moveToPoint(newPoint, grid.length);
-                        grid[newPoint.getX()][newPoint.getY()] = MARKER_ENEMY;
+                        moveToPoint(newPoint, grid.length, grid);
                     }
                 }
             } else {
                 // if the player is outside of the detection distance
                 doRandomMove(grid);
-
             }
         } else {
             // Updates the movement step if the enemy is already moving
@@ -64,7 +60,12 @@ public abstract class Enemy extends Character {
      * @param location   the new location grid point that should be next to the current location of the enemy
      * @param gridLength length of the grid for updating the y correctly
      */
-    private void moveToPoint(Point location, int gridLength) {
+    private void moveToPoint(Point location, int gridLength, char[][] grid) {
+
+        Point currentLocation = getMazePosition();
+        grid[currentLocation.getX()][currentLocation.getY()] = MARKER_SPACE;
+        grid[location.getX()][location.getY()] = MARKER_ENEMY;
+
         // Set the new maze location of the enemy
         super.setMazePosition(location);
 
@@ -135,7 +136,7 @@ public abstract class Enemy extends Character {
             // Get next step towards new location
             AStarSolver ass = AStarSolver.getInstance();
             ArrayList<Point> nextPoint = ass.CalculateShortestPath(getMazePosition(), randomLocation, grid);
-            moveToPoint(nextPoint.get(nextPoint.size() - 1), grid.length);
+            moveToPoint(nextPoint.get(nextPoint.size() - 1), grid.length, grid);
         }
     }
 

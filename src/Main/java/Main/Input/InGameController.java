@@ -1,11 +1,16 @@
 package Main.Input;
 
 import AI.ImageRecognition.RunDrawingCanvas;
+import Levels.Assets.Items.Item;
+import Levels.Framework.Maze;
+import Levels.Framework.Point;
+import Levels.Objects.Door;
 import Main.GameState;
 import SpellCasting.Spell;
 import SpellCasting.SpellAgility;
 
 import static Graphics.IO.ScreenShot.takeScreenShot;
+import static Levels.Characters.Character.*;
 import static Main.Main.setState;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -35,6 +40,12 @@ public class InGameController extends Controller {
         // if the player died, we need to go into the DEAD state
         if (player.getHealth() == 0) {
             setState(GameState.DEAD);
+            return;
+        }
+
+        // check if the player has reached the exit to the maze
+        if (maze.playerLocation.getX() == maze.endLocation.getX() && maze.playerLocation.getY() == maze.endLocation.getY()) {
+            setState(GameState.VICTORY);
             return;
         }
 
@@ -81,16 +92,31 @@ public class InGameController extends Controller {
         // we can go up and down in our inventory
         if ( window.buttonClicked(GLFW_KEY_UP) ) {
             player.setSelectedItem( player.getSelectedItem() - 1 );
+            inventoryCooldown = 5;
         } else if ( window.buttonClicked(GLFW_KEY_DOWN) ) {
             player.setSelectedItem( player.getSelectedItem() + 1 );
+            inventoryCooldown = 5;
         }
 
-        if (window.buttonClicked( GLFW_KEY_ENTER )) {
-            player.useItem();
+        if ( window.buttonClicked(GLFW_KEY_1) ) {
+            player.useItem(0);
         }
 
-        // set a cooldown of 5 frames, so the player has better control over what item he wants to select
-        inventoryCooldown = 5;
+        if ( window.buttonClicked(GLFW_KEY_2) ) {
+            player.useItem(1);
+        }
+
+        if ( window.buttonClicked(GLFW_KEY_3) ) {
+            player.useItem(2);
+        }
+
+        if ( window.buttonClicked(GLFW_KEY_4) ) {
+            player.useItem(3);
+        }
+
+        if ( window.buttonClicked(GLFW_KEY_5) ) {
+            player.useItem(4);
+        }
     }
 
     /**
@@ -102,41 +128,47 @@ public class InGameController extends Controller {
          If movement in the desired direction is allowed, we adjust the speed, counter and vertical variables
          accordingly and move the player in the maze
          */
-        if ( window.buttonClicked( GLFW_KEY_W ) ) {
-            if ( maze.canMoveUp() ) {
+        if (window.buttonClicked(GLFW_KEY_W)) {
+            if (maze.canMoveUp()) {
                 maze.moveUp();
 
                 movementCounter = (int) player.getSpeed();
                 speed = 1f / player.getSpeed();
                 vertical = true;
+            } else {
+                player.turnUp();
             }
-        } else if ( window.buttonClicked( GLFW_KEY_A ) ) {
-            if ( maze.canMoveLeft() ) {
+        } else if (window.buttonClicked(GLFW_KEY_A)) {
+            if (maze.canMoveLeft()) {
                 maze.moveLeft();
 
                 movementCounter = (int) player.getSpeed();
                 speed = -1f / player.getSpeed();
                 vertical = false;
+            } else {
+                player.turnLeft();
             }
-        } else if ( window.buttonClicked( GLFW_KEY_S ) ) {
-            if ( maze.canMoveDown() ) {
+        } else if (window.buttonClicked(GLFW_KEY_S)) {
+            if (maze.canMoveDown()) {
                 maze.moveDown();
 
                 movementCounter = (int) player.getSpeed();
                 speed = -1f / player.getSpeed();
                 vertical = true;
+            } else {
+                player.turnDown();
             }
-        } else if ( window.buttonClicked( GLFW_KEY_D ) ) {
-            if ( maze.canMoveRight() ) {
+        } else if (window.buttonClicked(GLFW_KEY_D)) {
+            if (maze.canMoveRight()) {
                 maze.moveRight();
 
                 movementCounter = (int) player.getSpeed();
                 speed = 1f / player.getSpeed();
                 vertical = false;
+            } else {
+                player.turnRight();
             }
-        }
-
-        // spell casting
+        } // spell casting
         else if (window.buttonClicked(GLFW_KEY_O)) {
             if (castCooldown == 0) {
                 if (released) {
@@ -173,5 +205,120 @@ public class InGameController extends Controller {
                 ((SpellAgility) spell).checkDuration();
             }
         }
+
+
+        // enter can be used to pick up items, or to open doors
+        if (window.buttonClicked(GLFW_KEY_ENTER)) {
+            tryItemCollect();
+            if (player.hasKey()) {
+                tryDoorInteraction();
+            }
+        }
+    }
+
+
+    /**
+     * method that looks at the grid, the player position and the direction the player is facing
+     * to see if an item can be picked up
+     *
+     * @throws IllegalStateException if the direction the player is facing does not correspond with any direction
+     */
+    private void tryItemCollect() throws IllegalStateException {
+        // get the grid and the facing tile
+        char[][] grid = maze.getGrid();
+        char facing = getFacingTile();
+        // get the player direction and place
+        int direction = player.getDirection();
+        int x_player = maze.getPlayerLocation().getX();
+        int y_player = maze.getPlayerLocation().getY();
+        // get the numerical value of the potential item
+        int facingValue = Character.getNumericValue( facing );
+
+        // if the facing character is actually an item, we can pick it up
+        if ( Maze.ITEM_MARKERS.contains( facing ) ) {
+            switch (direction) {
+                case DIRECTION_LEFT:
+                    player.addItem(Item.getItemById(facingValue), new Point(x_player, y_player - 1));
+                    grid[x_player][y_player - 1] = Maze.MARKER_SPACE;
+                    break;
+                case DIRECTION_RIGHT:
+                    player.addItem(Item.getItemById(facingValue), new Point(x_player, y_player + 1));
+                    grid[x_player][y_player + 1] = Maze.MARKER_SPACE;
+                    break;
+                case DIRECTION_UP:
+                    player.addItem(Item.getItemById(facingValue), new Point(x_player - 1, y_player));
+                    grid[x_player - 1][y_player] = Maze.MARKER_SPACE;
+                    break;
+                case DIRECTION_DOWN:
+                    player.addItem(Item.getItemById(facingValue), new Point(x_player + 1, y_player));
+                    grid[x_player + 1][y_player] = Maze.MARKER_SPACE;
+                    break;
+            }
+        }
+    }
+
+    private void tryDoorInteraction() {
+        // get the grid and the facing tile
+        int grid_length = maze.getGrid().length;
+        char facing = getFacingTile();
+        // get the player direction and place
+        int direction = player.getDirection();
+        int y_player = maze.getPlayerLocation().getX();
+        int x_player = maze.getPlayerLocation().getY();
+
+        // if a door is already open, we want to close it
+        Door door = null;
+        Point point = null;
+        if ( facing == Maze.MARKER_DOOR ) {
+            switch (direction) {
+                case DIRECTION_LEFT:
+                    point = new Point( x_player - 1, grid_length - y_player);
+                    break;
+                case DIRECTION_RIGHT:
+                    point = new Point( x_player + 1, grid_length - y_player);
+                    break;
+                case DIRECTION_UP:
+                    point = new Point( x_player, grid_length - (y_player - 1));
+                    break;
+                case DIRECTION_DOWN:
+                    point = new Point( x_player, grid_length - (y_player + 1));
+                    break;
+            }
+        }
+
+        door = world.getDoor( point );
+        if (door == null || point == null) {
+            return;
+        }
+        player.useKey( point );
+        door.toggle();
+    }
+
+    /**
+     * returns the grid tile the player is currently facing as a character
+     *
+     * @return the tile the player is facing
+     */
+    private char getFacingTile() {
+        // get the grid
+        char[][] grid = maze.getGrid();
+        int direction = player.getDirection();
+        int x_player = maze.getPlayerLocation().getX();
+        int y_player = maze.getPlayerLocation().getY();
+
+        char facing;
+        if (direction == DIRECTION_LEFT) {
+            facing = grid[x_player][y_player - 1];
+        } else if (direction == DIRECTION_RIGHT) {
+            facing = grid[x_player][y_player + 1];
+        } else if (direction == DIRECTION_UP) {
+            facing = grid[x_player - 1][y_player];
+        } else if (direction == DIRECTION_DOWN) {
+            facing = grid[x_player + 1][y_player];
+        } else {
+            throw new IllegalStateException("the player is facing a non-existent direction somehow");
+        }
+
+        return facing;
     }
 }

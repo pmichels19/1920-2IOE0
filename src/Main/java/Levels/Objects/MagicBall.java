@@ -41,7 +41,7 @@ public class MagicBall extends Object3D {
                     model.setNormalMap(new Texture(normalMapFile));
                 }
 
-                // Instantiate the player
+                // Instantiate the object
                 object = new MagicBall(model);
             } catch (IOException e) {
                 e.printStackTrace();

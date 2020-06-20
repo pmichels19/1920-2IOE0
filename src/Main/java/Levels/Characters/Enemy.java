@@ -196,7 +196,13 @@ public abstract class Enemy extends Character {
             // Get next step towards new location
             AStarSolver ass = AStarSolver.getInstance();
             ArrayList<Point> nextPoint = ass.CalculateShortestPath(getMazePosition(), randomLocation, grid);
-            moveToPoint(nextPoint.get(nextPoint.size() - 1), grid.length);
+            Point newPoint = nextPoint.get(nextPoint.size() - 1);
+            Point curPoint = getMazePosition();
+            if (grid[newPoint.getX()][newPoint.getY()] != MARKER_PLAYER) {
+                grid[curPoint.getX()][curPoint.getY()] = MARKER_SPACE;
+                moveToPoint(newPoint, grid.length);
+                grid[newPoint.getX()][newPoint.getY()] = MARKER_ENEMY;
+            }
         }
     }
 

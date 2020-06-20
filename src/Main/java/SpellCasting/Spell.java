@@ -22,7 +22,6 @@ public abstract class Spell {
     // make spell with string returned from google VisionML
     public static Spell determineSpell(String spell) {
         Spell ret;
-        System.out.println(spell);
         switch (spell) {
             case "illuminate":
                 ret = new SpellIlluminate();
@@ -64,11 +63,10 @@ public abstract class Spell {
                 ret = new SpellLightning();
                 break;
             default:
-                // to cancel spell casting
+                // to cancel spellcasting
                 ret = new SpellEmpty();
                 break;
         }
-        System.out.println(ret.getClass().getName());
         return ret;
     }
 

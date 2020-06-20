@@ -1,7 +1,6 @@
 package AI.ImageRecognition;
 
 import SpellCasting.Spell;
-import SpellCasting.SpellAgility;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -40,7 +39,7 @@ public class DrawingCanvas extends JFrame implements Runnable {
     private ArrayList<Point> current = new ArrayList<>();
 
     // canvas background color
-    private Color canvasColor = new Color(255, 0, 0);
+    private Color canvasColor = new Color(200, 100, 0);
 
     // exit call
     private volatile boolean exit = false;
@@ -105,12 +104,9 @@ public class DrawingCanvas extends JFrame implements Runnable {
      * @return the path to the image
      */
     private String saveGridAsImage() throws IOException {
-        BufferedImage im = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_RGB);
-        // need black and white for image recognition
-        canvasColor = Color.WHITE;
-        canvas.paintComponent(im.getGraphics());
-        // revert to old color
-        canvasColor = new Color(255, 0, 0);
+        Container c = canvas;
+        BufferedImage im = new BufferedImage(c.getWidth(), c.getHeight(), BufferedImage.TYPE_INT_RGB);
+        c.paint(im.getGraphics());
 
         String tempPath = Paths.get("").toAbsolutePath().toString() + "\\" + "spell.jpg";
         ImageIO.write(im, "jpg", new File(tempPath));
@@ -149,17 +145,14 @@ public class DrawingCanvas extends JFrame implements Runnable {
             super.paintComponent(g);
             for (int i = 0; i < gridX; i++) {
                 for (int j = 0; j < gridY; j++) {
-                    g.setColor((grid[i][j] == 0 ? canvasColor : Color.BLACK));
+                    g.setColor((grid[i][j] == 0 ? canvasColor : new Color(0, 0, 0)));
                     g.fillRect(i * pixelSize, j * pixelSize, pixelSize, pixelSize);
                 }
             }
-            // don't render text when saving image
-            if (canvasColor != Color.WHITE) {
-                // drawing canvas usage text (may be placed in canvas border texture later)
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("DialogInput", Font.PLAIN, 20));
-                g.drawString("\'E\' to cast spell, \'Q\' to clear drawing", 5, 20);
-            }
+            // drawing canvas usage text (may be placed in canvas border texture later)
+            g.setColor(Color.WHITE);
+            g.setFont(new Font("DialogInput", Font.PLAIN, 20));
+            g.drawString("\'E\' to cast spell, \'Q\' to clear drawing", 5, 20);
         }
     }
 
@@ -294,8 +287,7 @@ public class DrawingCanvas extends JFrame implements Runnable {
                     try {
                         String[] tempData = googleConfig.predict(saveGridAsImage());
                         imageClass.setText(defaultLabel + tempData[0] + ", " + tempData[1]);
-                        Spell cast = Spell.determineSpell(tempData[0]);
-                        cast.castSpell(new Object[] {tempData[1]});
+                        spell.castSpell(new Object[] {tempData[0]});
                     } catch (Exception ex) {
                         System.out.println(ex);
                     }

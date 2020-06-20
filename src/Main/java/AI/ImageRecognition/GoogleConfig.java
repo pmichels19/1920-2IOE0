@@ -32,7 +32,7 @@ import java.nio.file.Paths;
 class GoogleConfig {
 
      final String PROJECTID = "dbl-2ioe0-276912";
-     final String MODELID = "ICN6359155241614573568";
+     final String MODELID = "ICN6912598817502134272";
 
      /** Classifies the image stored in the sent path.
       *
@@ -54,7 +54,7 @@ class GoogleConfig {
                                .setName(name.toString())
                                .setPayload(payload)
                                .putParams(
-                                       "score_threshold", "0.2") // [0.0-1.0] Only produce results higher than this value
+                                       "score_threshold", "0.4") // [0.0-1.0] Only produce results higher than this value
                                .build();
 
                PredictResponse response = client.predict(predictRequest);

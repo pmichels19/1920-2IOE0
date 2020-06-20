@@ -179,7 +179,7 @@ public class InGameController extends Controller {
         else if (window.buttonClicked(GLFW_KEY_O)) {
             if (castCooldown == 0) {
                 if (released) {
-                    spell = Spell.determineSpell("guide");
+                    spell = Spell.determineSpell("unlock");
                     spell.castSpell(new Object[]{maze});
                     released = false;
                     castCooldown = 20;
@@ -256,7 +256,7 @@ public class InGameController extends Controller {
         }
     }
 
-    private void tryDoorInteraction() {
+    public static void tryDoorInteraction() {
         // get the grid and the facing tile
         int grid_length = maze.getGrid().length;
         char facing = getFacingTile();
@@ -298,7 +298,7 @@ public class InGameController extends Controller {
      *
      * @return the tile the player is facing
      */
-    private char getFacingTile() {
+    private static char getFacingTile() {
         // get the grid
         char[][] grid = maze.getGrid();
         int direction = player.getDirection();

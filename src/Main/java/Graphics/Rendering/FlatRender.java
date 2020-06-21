@@ -11,6 +11,8 @@ import static java.lang.Character.toUpperCase;
  * class for rendering things with the flatShader
  */
 public abstract class FlatRender {
+    int selected;
+    final String[] options;
     /**
      * the TileRenderer object that is to be used by all subclasses
      */
@@ -32,11 +34,45 @@ public abstract class FlatRender {
     final Transform transform;
 
     /**
-     * in the constructor we just initialize a new(, empty) camera and transform object
+     * in the constructor we just initialize a new(, empty) camera and transform object and set the max amount of
+     * options specified in the subclass
+     *
+     * @param options the options that can be used in this subclass
      */
-    public FlatRender() {
+    public FlatRender(String[] options) {
         camera = new Camera();
         transform = new Transform();
+        this.options = options;
+    }
+
+    /**
+     * returns the selected option in the menu defined by the subclass
+     *
+     * @return {@code selected}
+     */
+    public int getSelected() {
+        return selected;
+    }
+
+    /**
+     * resets the selected option to 0, the initial value
+     */
+    public void resetSelected() {
+        selected = 0;
+    }
+
+    /**
+     * changes the selected option upwards or downwards according to the parameter and takes it modulo the max options
+     *
+     * @param up whether to increment or decrement {@code selected}
+     */
+    public void changeSelected(boolean up) {
+        if (up) {
+            selected--;
+        } else {
+            selected++;
+        }
+        selected = (selected + options.length) % options.length;
     }
 
     /**
@@ -47,7 +83,7 @@ public abstract class FlatRender {
     /**
      * prepares the shader, camera and transform for rendering
      */
-    public void prepareRender() {
+    void prepareRender() {
         renderer.setShader(shader);
         renderer.setCamera(camera);
         renderer.setTransform(transform);

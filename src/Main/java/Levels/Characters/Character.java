@@ -37,8 +37,7 @@ public abstract class Character {
     private float gamePositionX;
     private float gamePositionY;
 
-    // the amount of frames needed to move one tile
-    //private int speed;
+    private String animationType;
 
     // the values for max health and mana
     int max_health;
@@ -48,12 +47,20 @@ public abstract class Character {
     int cur_health;
     int cur_mana;
 
+    // the amount of damage dealt by normal attack
+    int damage = 10;
+
     // Speed of the character
     private float speed;
 
     //Time related objects to link animation to
     private double tVal = 0.0;
     Timer timer;
+
+    public static final int DIRECTION_LEFT = 0;
+    public static final int DIRECTION_UP = 1;
+    public static final int DIRECTION_RIGHT = 2;
+    public static final int DIRECTION_DOWN = 3;
 
     public Character(int max_health, int max_mana, int speed, OBJModel model) {
         this.model = model;
@@ -108,6 +115,31 @@ public abstract class Character {
         model.render(shader);
     }
 
+    public String getAnimationType() {
+        return animationType;
+    }
+
+    public void setAnimationType(String animationType) {
+        this.animationType = animationType;
+    }
+
+    private float getHeight() {
+        switch(getAnimationType()) {
+            case "bounce": return getBounce();
+            case "float": return getFloat();
+            default: return position.z;
+        }
+    }
+
+    private float getFloat() {
+        return (float) (1.5f + Math.pow(Math.cos(Math.toRadians(tVal * 150f)),2)/2);
+    }
+
+    private float getBounce() {
+        return (float) (1.5f + Math.abs(2f * Math.sin(Math.toRadians(tVal * 250f))));
+    }
+
+
     public void render(Shader shader) {
 
         //floating spheres
@@ -119,9 +151,7 @@ public abstract class Character {
         Matrix4f modelTransform = new Matrix4f();
 
         //floating animation linked to Z-axis
-        float startingPoint = 1.5f;
-        float floatingSpeed = 150f;
-        position.z = (float) (startingPoint + Math.pow(Math.cos(Math.toRadians(tVal * floatingSpeed)),2)/2);
+        position.z = getHeight();
 
         modelTransform.translate(position).rotate(rotationAngle, rotation).scale(scale);
         shader.setUniform("modelTransform", modelTransform);
@@ -172,10 +202,16 @@ public abstract class Character {
 
     public void setHealth(int health) {
         cur_health = health;
+        if (cur_health > max_health) {
+            cur_health = max_health;
+        }
     }
 
     public void setMana(int mana) {
         cur_mana = mana;
+        if (cur_mana > max_mana) {
+            cur_mana = max_mana;
+        }
     }
 
     public float getGamePositionX() {
@@ -200,39 +236,60 @@ public abstract class Character {
         this.position.x = gamePositionX * 2f;
     }
 
-    public void setGridPositionY(float gamePositionY, float gridLength) {
+    public void setGamePositionY(float gamePositionY, float gridLength) {
         this.gamePositionY = gamePositionY;
         this.position.y = (gridLength - 0.5f - gamePositionY) * 2f;
     }
 
-    public void setGridPosition(float gamePositionX, float gamePositionY, float gridLength) {
-        if (gamePositionX > this.gamePositionX) {
-            this.rotationAngle = (float) ((-90f * Math.PI) / 180.0f);
-            this.rotation = new Vector3f(0f, 0f, 1f);
-            // right
-            this.direction = 2;
-        } else if (gamePositionX < this.gamePositionX) {
-            this.rotationAngle = (float) ((90f * Math.PI) / 180.0f);
+    /**
+     * turns the character so it faces to the right
+     */
+    public void turnRight() {
+        this.rotationAngle = (float) ((-90f * Math.PI) / 180.0f);
+        this.rotation = new Vector3f(0f, 0f, 1f);
+        this.direction = DIRECTION_RIGHT;
+    }
 
-            this.rotation = new Vector3f(0f, 0f, 1f);
-            // left
-            this.direction = 0;
+    /**
+     * turns the character so it faces to the left
+     */
+    public void turnLeft() {
+        this.rotationAngle = (float) ((90f * Math.PI) / 180.0f);
+        this.rotation = new Vector3f(0f, 0f, 1f);
+        this.direction = DIRECTION_LEFT;
+    }
+
+    /**
+     * turns the character so it faces downwards
+     */
+    public void turnDown() {
+        this.rotationAngle = (float) ((-180f * Math.PI) / 180.0f);
+        this.rotation = new Vector3f(0f, 0f, 1f);
+        this.direction = DIRECTION_DOWN;
+    }
+
+    /**
+     * turns the character so it faces upwards
+     */
+    public void turnUp() {
+        this.rotationAngle = (float) ((0f * Math.PI) / 180.0f);
+        this.rotation = new Vector3f(0f, 0f, 1f);
+        this.direction = DIRECTION_UP;
+    }
+
+    public void setGamePositionAndRotate(float gamePositionX, float gamePositionY, float gridLength) {
+        if (gamePositionX > this.gamePositionX) {
+            turnRight();
+        } else if (gamePositionX < this.gamePositionX) {
+            turnLeft();
         }
         if (gamePositionY > this.gamePositionY) {
-            this.rotationAngle = (float) ((-180f * Math.PI) / 180.0f);
-
-            this.rotation = new Vector3f(0f, 0f, 1f);
-            // down
-            this.direction = 3;
+            turnDown();
         } else if (gamePositionY < this.gamePositionY) {
-            this.rotationAngle = (float) ((0f * Math.PI) / 180.0f);
-
-            this.rotation = new Vector3f(0f, 0f, 1f);
-            // up
-            this.direction = 1;
+            turnUp();
         }
         setGamePositionX(gamePositionX);
-        setGridPositionY(gamePositionY, gridLength);
+        setGamePositionY(gamePositionY, gridLength);
     }
 
     public Point getMazePosition() {
@@ -260,6 +317,14 @@ public abstract class Character {
      */
     public void initializePosition(int x, int y, int gridLength) {
         setMazePosition(new Point(x, y));
-        setGridPosition((float) y, (float) x, gridLength);
+        setGamePositionAndRotate((float) y, (float) x, gridLength);
+    }
+
+    /**
+     * Damages a character by given amount
+     * @param damage amount of damage to be dealt to this player
+     */
+    public void damage(int damage){
+        setHealth(cur_health - damage);
     }
 }

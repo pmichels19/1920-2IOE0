@@ -8,6 +8,10 @@ public class SpellFireball extends Spell {
     Vector3f loc;
     int dir;
 
+    public SpellFireball() {
+        super(0);
+    }
+
     @Override
     public void castSpell(Object[] args) {
         Player player = Player.getInstance();

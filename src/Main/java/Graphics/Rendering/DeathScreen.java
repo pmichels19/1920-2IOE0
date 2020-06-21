@@ -4,14 +4,9 @@ import Levels.Assets.Tiles.GUIElements;
 import Levels.Framework.joml.Vector3f;
 
 public class DeathScreen extends FlatRender {
-
-    private  static int selected = 0;
-    private static final String[] options = new String[] {
-            "Continue from last save",
-            "Load save",
-            "Exit to main menu",
-            "Exit to desktop"
-    };
+    public DeathScreen() {
+        super(new String[] {"Continue from last save", "Load save", "Exit to main menu", "Exit to desktop"});
+    }
 
     @Override
     public void render() {
@@ -39,27 +34,5 @@ public class DeathScreen extends FlatRender {
 
             renderString(option, i != selected);
         }
-    }
-
-    /**
-     * changes the selected option by one and than takes it modulo all the available options, so we can wrap around
-     *
-     * @param up whether {@code selectedOption} needs to be in- or decremented
-     */
-    public static void changeSelected(boolean up) {
-        if (up) {
-            selected--;
-        } else {
-            selected++;
-        }
-        selected = (selected + options.length) % options.length;
-    }
-
-    public static void resetSelected() {
-        selected = 0;
-    }
-
-    public static int getSelected() {
-        return selected;
     }
 }

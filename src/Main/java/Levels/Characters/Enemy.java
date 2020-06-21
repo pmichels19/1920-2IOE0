@@ -2,10 +2,13 @@ package Levels.Characters;
 
 import AI.AStar.AStarSolver;
 import Graphics.OBJModel;
-import Levels.Framework.Maze;
+import Graphics.OpenGL.Shader;
 import Levels.Framework.Point;
 
 import java.util.ArrayList;
+import java.util.Timer;
+
+import static Levels.Framework.Maze.*;
 
 public abstract class Enemy extends Character {
     public Enemy(int max_health, int max_mana, OBJModel model) {
@@ -21,6 +24,33 @@ public abstract class Enemy extends Character {
     // Random location grid size (should be an even number)
     private final int randomPathDistance = 16;
 
+    private boolean highAmbience;
+
+    @Override
+    public void render(Shader shader) {
+        if (highAmbience) {
+            shader.setUniform("highAmbience", 1);
+        }
+        shader.setUniform("enemyCharacter", 1);
+
+        super.render(shader);
+        shader.setUniform("enemyCharacter", 0);
+        shader.setUniform("highAmbience", 0);
+    }
+    // Some states the enemy can be in to change behavior during states
+    public final static int NORMAL_STATE = 0;
+    public final static int ATTACKING_STATE = 1;
+    public final static int RETURNING_STATE = 2;
+
+    // State of the current enemy
+    private int state = NORMAL_STATE;
+
+    // Minimum amount of time between attacks (in milliseconds)
+    private long attackDelay = 1000;
+
+    // Holds the last timestamp of last attack
+    private long lastAttackTime = 0;
+
 
     /**
      * Moves the enemy, either to a random location or the player (if it is close enough)
@@ -31,23 +61,46 @@ public abstract class Enemy extends Character {
     public void move(Point playerLocation, char[][] grid) {
         if (!isMoving()) {
             if (getMazePosition().calculateManhattanDistance(playerLocation) <= detectionDistance) { // First check manhattan distance since it's faster
-                ArrayList<Point> pathToPlayer = getPathToPlayer(playerLocation, grid);
-                if (pathToPlayer.size() > detectionDistance) {
-                    // if the player is outside of the detection distance
-                    doRandomMove(grid);
+                if (getMazePosition().calculateManhattanDistance(playerLocation) == 1) {
+                    if (canAttack()) {
+                        startAttack(playerLocation, grid.length);
+                    }
                 } else {
-                    // If player is in detection range, move towards the player
-                    moveToPoint(pathToPlayer.get(pathToPlayer.size() - 1), grid.length);
+                    setNewLocation(playerLocation, grid);
                 }
             } else {
                 // if the player is outside of the detection distance
-                // TODO: HAVE RANDOM MOVEMENT OF ENEMIES WORK WITH THE LARGE MAZE
-                //doRandomMove(grid);
-
+                doRandomMove(grid);
             }
+        } else if (state == ATTACKING_STATE) {
+            attackPlayer(playerLocation, grid.length);
         } else {
             // Updates the movement step if the enemy is already moving
             reposition(grid.length);
+        }
+    }
+
+    /**
+     * Sets a new location for the enemy, either towards the player or towards a random point
+     *
+     * @param playerLocation Current maze location of the player
+     * @param grid           Current maze state
+     */
+    private void setNewLocation(Point playerLocation, char[][] grid) {
+        ArrayList<Point> pathToPlayer = getPathToPlayer(playerLocation, grid);
+        if (pathToPlayer.size() > detectionDistance) {
+            // if the player is outside of the detection distance
+            doRandomMove(grid);
+        } else {
+            // If player is in detection range, move towards the player
+            Point curPoint = getMazePosition();
+            Point newPoint = pathToPlayer.get(pathToPlayer.size() - 1);
+
+            if (grid[newPoint.getX()][newPoint.getY()] != MARKER_PLAYER) {
+                grid[curPoint.getX()][curPoint.getY()] = MARKER_SPACE;
+                moveToPoint(newPoint, grid.length);
+                grid[newPoint.getX()][newPoint.getY()] = MARKER_ENEMY;
+            }
         }
     }
 
@@ -99,18 +152,33 @@ public abstract class Enemy extends Character {
             newY -= getSpeed();
         }
 
+        // Updates the location based on state
+        if (state == RETURNING_STATE) {
+            // If returned to original position
+            if (Math.abs(locationX - newX) < getSpeed() && Math.abs(locationY - newY) < getSpeed()) {
+                newX = locationX;
+                newY = locationY;
+                state = NORMAL_STATE;
+            } else if (Math.abs(locationX - newX) < getSpeed()) {
+                newX = locationX;
+            } else if (Math.abs(locationY - newY) < getSpeed()) {
+                newY = locationY;
+            }
 
-        // Fix differences between float and int
-        if (Math.abs(locationX - newX) < getSpeed() + 0.01f) {
-            newX = locationX;
+
+            setGamePositionX(newX);
+            setGamePositionY(newY, gridLength);
+
+        } else {// Fix differences between float and int
+            if (Math.abs(locationX - newX) < getSpeed()) {
+                newX = locationX;
+            }
+            if (Math.abs(locationY - newY) < getSpeed()) {
+                newY = locationY;
+            }
+
+            setGamePositionAndRotate(newX, newY, gridLength);
         }
-        if (Math.abs(locationY - newY) < getSpeed() + 0.01f) {
-            newY = locationY;
-        }
-
-        // Updates the location
-        setGridPosition(newX, newY, gridLength);
-
     }
 
     /**
@@ -126,7 +194,7 @@ public abstract class Enemy extends Character {
             randomLocation = null;
         } else { // if not reached the random location
             // Get next step towards new location
-            AStarSolver ass = new AStarSolver();
+            AStarSolver ass = AStarSolver.getInstance();
             ArrayList<Point> nextPoint = ass.CalculateShortestPath(getMazePosition(), randomLocation, grid);
             moveToPoint(nextPoint.get(nextPoint.size() - 1), grid.length);
         }
@@ -140,7 +208,7 @@ public abstract class Enemy extends Character {
      * @return Shortest path enemy to the player, from back to front (first move is path[-1]
      */
     public ArrayList<Point> getPathToPlayer(Point playerLocation, char[][] grid) {
-        AStarSolver ass = new AStarSolver();
+        AStarSolver ass = AStarSolver.getInstance();
         return ass.CalculateShortestPath(this.getMazePosition(), playerLocation, grid);
     }
 
@@ -160,16 +228,93 @@ public abstract class Enemy extends Character {
 //        }
         if (!(randomX < 0 || randomX >= grid.length
                 || randomY < 0 || randomY >= grid[0].length
-                || grid[randomX][randomY] != Maze.MARKER_SPACE)) { // check if the random location is a correct one
+                || grid[randomX][randomY] != MARKER_SPACE)) { // check if the random location is a correct one
             this.randomLocation = new Point(randomX, randomY);
         }
 
     }
 
     /**
+     * Initiates an attack from the enemy
+     *
+     * @param playerLocation current maze location of the player
+     * @param gridLength     the length of the maze
+     */
+    private void startAttack(Point playerLocation, int gridLength) {
+        state = ATTACKING_STATE;
+        attackPlayer(playerLocation, gridLength);
+    }
+
+    /**
+     * Makes enemy attack the player
+     *
+     * @param playerLocation Current maze position of the player
+     */
+    private void attackPlayer(Point playerLocation, int gridLength) {
+        // Get the current position in world coordinates
+        float currentX = super.getGamePositionX();
+        float currentY = super.getGamePositionY();
+
+        // Set the desired X and Y, note that game positions have the X and Y flipped from the Maze positions
+        float locationX = getMazePosition().getY() + ((playerLocation.getY() - getMazePosition().getY()) / 2f);
+        float locationY = getMazePosition().getX() + ((playerLocation.getX() - getMazePosition().getX()) / 2f);
+
+        // Initialize new positions
+        float newX = currentX;
+        float newY = currentY;
+
+        // Change in x
+        if (currentX < locationX) {
+            newX += getSpeed();
+        } else if (currentX > locationX) {
+            newX -= getSpeed();
+        }
+
+        // Change in y
+        if (currentY < locationY) {
+            newY += getSpeed();
+        } else if (currentY > locationY) {
+            newY -= getSpeed();
+        }
+
+
+        // Fix differences between float and int, player has reached attack location
+        if (Math.abs(locationX - newX) < getSpeed() && Math.abs(locationX - newX) != 0f) {
+            newX = locationX;
+            if (playerLocation.calculateManhattanDistance(getMazePosition()) < 2) { // check for dodge
+                Player.getInstance().damage(damage);
+                lastAttackTime = System.currentTimeMillis();
+            }
+
+            state = RETURNING_STATE;
+        }
+        if (Math.abs(locationY - newY) < getSpeed() && Math.abs(locationY - newY) != 0f) {
+            newY = locationY;
+            if (playerLocation.calculateManhattanDistance(getMazePosition()) < 2) { // check for dodge
+                Player.getInstance().damage(damage);
+                lastAttackTime = System.currentTimeMillis();
+            }
+            lastAttackTime = System.currentTimeMillis();
+            state = RETURNING_STATE;
+        }
+        if (Math.abs(locationY - newY) == 0f && Math.abs(locationX - newX) == 0f) {
+            if (playerLocation.calculateManhattanDistance(getMazePosition()) < 2) { // check for dodge
+                Player.getInstance().damage(damage);
+                lastAttackTime = System.currentTimeMillis();
+            }
+            lastAttackTime = System.currentTimeMillis();
+            state = RETURNING_STATE;
+        }
+
+        // Updates the location
+        setGamePositionAndRotate(newX, newY, gridLength);
+    }
+
+
+    /**
      * @return Whether the enemy is still moving
      */
-    private boolean isMoving() {
+    public boolean isMoving() {
         return !((getGamePositionX() == (getMazePosition().getY()))
                 && (getGamePositionY() == getMazePosition().getX()));
     }
@@ -186,4 +331,13 @@ public abstract class Enemy extends Character {
     public void setDetectionDistance(int detectionDistance) {
         this.detectionDistance = detectionDistance;
     }
+
+    public void setHighAmbience(boolean highAmbience) {
+        this.highAmbience = highAmbience;
+    }
+
+    private boolean canAttack() {
+        return System.currentTimeMillis() > lastAttackTime + attackDelay;
+    }
+
 }

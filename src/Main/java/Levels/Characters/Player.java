@@ -31,6 +31,7 @@ public class Player extends Character {
     Vector3f currentAttenuation = STANDARD_ATTENUATION;
 
     private boolean hasGuide = false;
+    private boolean hasShield = false;
     private int invisiblility = 0;
 
     // a list of items the player has collected so far
@@ -308,4 +309,13 @@ public class Player extends Character {
     public int getInvisibility() {
         return this.invisiblility;
     }
+
+    public boolean hasShield() {
+        return hasShield;
+    }
+
+    public void setShield(boolean shield) {
+        this.hasShield = shield;
+    }
+
 }

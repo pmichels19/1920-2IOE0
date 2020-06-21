@@ -2,6 +2,7 @@ package Levels.Characters;
 
 import AI.AStar.AStarSolver;
 import Graphics.OBJModel;
+import Graphics.OpenGL.Shader;
 import Levels.Framework.Point;
 
 import java.util.ArrayList;
@@ -23,6 +24,19 @@ public abstract class Enemy extends Character {
     // Random location grid size (should be an even number)
     private final int randomPathDistance = 16;
 
+    private boolean highAmbience;
+
+    @Override
+    public void render(Shader shader) {
+        if (highAmbience) {
+            shader.setUniform("highAmbience", 1);
+        }
+        shader.setUniform("enemyCharacter", 1);
+
+        super.render(shader);
+        shader.setUniform("enemyCharacter", 0);
+        shader.setUniform("highAmbience", 0);
+    }
     // Some states the enemy can be in to change behavior during states
     public final static int NORMAL_STATE = 0;
     public final static int ATTACKING_STATE = 1;
@@ -38,6 +52,7 @@ public abstract class Enemy extends Character {
     private long lastAttackTime = 0;
 
 
+>>>>>>>>> Temporary merge branch 2
     /**
      * Moves the enemy, either to a random location or the player (if it is close enough)
      *
@@ -57,7 +72,6 @@ public abstract class Enemy extends Character {
             } else {
                 // if the player is outside of the detection distance
                 doRandomMove(grid);
-
             }
         } else if (state == ATTACKING_STATE) {
             attackPlayer(playerLocation, grid.length);
@@ -315,7 +329,12 @@ public abstract class Enemy extends Character {
         this.detectionDistance = detectionDistance;
     }
 
+    public void setHighAmbience(boolean highAmbience) {
+        this.highAmbience = highAmbience;
+    }
+
     private boolean canAttack() {
         return System.currentTimeMillis() > lastAttackTime + attackDelay;
     }
+
 }

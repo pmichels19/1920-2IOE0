@@ -1,11 +1,10 @@
 package Levels.Framework;
 
 import Levels.Assets.Items.Item;
+import Levels.Objects.Door;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -20,6 +19,7 @@ public class Maze {
     public Point endLocation;
     private final File file;
 
+    public final static char MARKER_DOOR = 'D';
     public final static char MARKER_PLAYER = 'P';
     public final static char MARKER_SPACE = ' ';
     public final static char MARKER_ENEMY = 'e';
@@ -29,7 +29,7 @@ public class Maze {
     public final static char MARKER_HEART = (char) Item.HEART + '0';
     public final static char MARKER_MANA = (char) Item.MANA + '0';
     public final static char MARKER_BOOT = (char) Item.BOOT + '0';
-    public final static char MARKER_COIN = (char) Item.COIN + '0';
+    public final static char MARKER_KEY = (char) Item.KEY + '0';
     public final static char MARKER_HPOT = (char) Item.H_POTION + '0';
     public final static char MARKER_MPOT = (char) Item.M_POTION + '0';
 
@@ -37,7 +37,7 @@ public class Maze {
             MARKER_HEART,
             MARKER_MANA,
             MARKER_BOOT,
-            MARKER_COIN,
+            MARKER_KEY,
             MARKER_HPOT,
             MARKER_MPOT
     ) );
@@ -76,26 +76,25 @@ public class Maze {
 
         int x_player = -1;
         int y_player = -1;
-        int x_end = -1;
-        int y_end = -1;
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[i].length; j++) {
                 if (grid[i][j] == MARKER_PLAYER) {
                     x_player = i;
                     y_player = j;
+                    break;
                 }
                 if (grid[i][j] == MARKER_ENEMY) {
                     enemyLocation.add(new Point(i, j));
+                    break;
                 }
                 if (grid[i][j] == MARKER_END) {
-                    x_end = i;
-                    y_end = j;
+                    endLocation = new Point(i, j);
+                    break;
                 }
             }
         }
 
         playerLocation = new Point(x_player, y_player);
-        endLocation = new Point(x_end, y_end);
     }
 
     /**

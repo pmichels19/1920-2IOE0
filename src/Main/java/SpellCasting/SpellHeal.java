@@ -6,12 +6,14 @@ public class SpellHeal extends Spell {
 
     private final int manaCost = 10;
     private final int lifeRestore = 10;
-    private int newHP;
+
+    public SpellHeal() {
+        super(0);
+    }
 
     @Override
     public void castSpell(Object[] args) {
         Player player = Player.getInstance();
-        int maxHP = player.getMaxHealth();
         int prevMana = player.getMana();
 
         if (prevMana < manaCost) {

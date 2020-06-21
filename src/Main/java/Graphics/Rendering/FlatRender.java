@@ -13,7 +13,6 @@ import static java.lang.Character.toUpperCase;
 public abstract class FlatRender {
     int selected;
     final String[] options;
-
     /**
      * the TileRenderer object that is to be used by all subclasses
      */
@@ -84,7 +83,7 @@ public abstract class FlatRender {
     /**
      * prepares the shader, camera and transform for rendering
      */
-    public void prepareRender() {
+    void prepareRender() {
         renderer.setShader(shader);
         renderer.setCamera(camera);
         renderer.setTransform(transform);

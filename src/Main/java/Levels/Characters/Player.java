@@ -2,8 +2,12 @@ package Levels.Characters;
 
 import Graphics.OBJLoader;
 import Graphics.OBJModel;
+import Graphics.OpenGL.Shader;
 import Graphics.OpenGL.Texture;
 import Levels.Assets.Items.Item;
+import Levels.Framework.Point;
+import Levels.Framework.joml.Matrix4f;
+import Levels.Framework.joml.Vector3f;
 import Levels.Framework.Maze;
 import Levels.Framework.Point;
 
@@ -27,9 +31,18 @@ public class Player extends Character {
 
     private static Player player;
 
-    // an array of items the player has collected so far
+    Vector3f DARK_ATTENUATION = new Vector3f(.5f, .2f, 1.5f);
+    Vector3f STANDARD_ATTENUATION = new Vector3f(.5f, .2f, .5f);
+    Vector3f LIGHT_ATTENUATION = new Vector3f(.5f, .2f, .2f);
+    Vector3f currentAttenuation = STANDARD_ATTENUATION;
+
+    private boolean hasGuide = false;
+    private int invisiblility = 0;
+
+    // a list of items the player has collected so far
     private Item[] inventory;
     List<Point> collected_items;
+    List<Point> opened_doors;
     private int selectedItem;
 
     // agility spell
@@ -62,8 +75,12 @@ public class Player extends Character {
 
         // start with an empty inventory of max size 5
         inventory = new Item[5];
+
         collected_items = new ArrayList<>();
+        opened_doors = new ArrayList<>();
         selectedItem = 0;
+
+        setAnimationType("float");
     }
 
     public static Player getInstance() {
@@ -98,12 +115,52 @@ public class Player extends Character {
         player = null;
     }
 
+    @Override
+    public void render(Shader shader) {
+        shader.setUniform("playerCharacter", 1);
+        super.render(shader);
+        shader.setUniform("playerCharacter", 0);
+    }
+
     public Item[] getInventory() {
         return inventory;
     }
 
     public void setInventory(Item[] inventory) {
         this.inventory = inventory;
+    }
+
+    /**
+     * method that checks if the player is in possession of a key
+     *
+     * @return whether {@code inventory} contains a key item
+     */
+    public boolean hasKey() {
+        for (Item item : inventory) {
+            if (item != null && item.getId() == Item.KEY) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void useKey(Point point) {
+        opened_doors.add(point);
+        for (int i = 0; i < inventory.length; i++) {
+            if (inventory[i] != null && inventory[i].getId() == Item.KEY) {
+                player.tossItem(i);
+                return;
+            }
+        }
+    }
+
+    public List<Point> getOpenedDoors() {
+        return opened_doors;
+    }
+
+    public void setOpenedDoors(List<Point> opened_doors) {
+        this.opened_doors = opened_doors;
     }
 
     public void setSelectedItem(int selectedItem) {
@@ -130,6 +187,14 @@ public class Player extends Character {
         this.max_mana = max_mana;
     }
 
+    public Vector3f getCurrentAttenuation() {
+        return currentAttenuation;
+    }
+
+    public void setCurrentAttenuation(Vector3f currentAttenuation) {
+        this.currentAttenuation = currentAttenuation;
+    }
+
     /**
      * the player class overrides the getspeed to take the boots in the inventory into account
      *
@@ -145,7 +210,7 @@ public class Player extends Character {
             }
         }
 
-        int modifier = (int) Math.round(0.75 * (bootCount + agilityPower));
+        int modifier = (int) Math.round( 0.75 * (bootCount + agilityPower));
 
         return super.getSpeed() / modifier;
     }
@@ -155,18 +220,37 @@ public class Player extends Character {
     }
 
     /**
-     * Sets the item in the inventory at {@code selectedItem} to the provided item
+     * returns the index of the first open slot in the inventory, if no empty slot is found, it returns -1
      *
-     * @param item  the new item to add to the inventory
+     * @return the first open index in {@code inventory}, -1 if no open slots exist
+     */
+    public int findFirstOpenSlot() {
+        for (int i = 0; i < inventory.length; i++) {
+            if (inventory[i] == null || inventory[i].getId() == Item.EMPTY) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Sets the item in the inventory at {@code selectedItem / findFirstOpenSlot()} to the provided item
+     *
+     * @param item the new item to add to the inventory
      * @param point the point that the item was located at in the maze
      */
     public void addItem(Item item, Point point) {
-        inventory[selectedItem] = item;
+        int openSlot = findFirstOpenSlot();
+        if ( openSlot == -1 ) {
+            inventory[selectedItem] = item;
+        } else {
+            inventory[openSlot] = item;
+        }
         collected_items.add(point);
     }
 
     /**
-     * uses the selected item, if possible: the boot, coin and empty item have no use
+     * uses the selected item, if possible: the boot, key and empty item have no use
      *
      * @param slot the slot to use the item from
      */
@@ -175,8 +259,9 @@ public class Player extends Character {
         if (inventory[slot] == null) {
             return;
         }
+
         // we check what kind of item the player has selected
-        switch (inventory[slot].getId()) {
+        switch (inventory[selectedItem].getId()) {
             case Item.H_POTION:
                 // if a health potion is used, add 25 health to the current health
                 setHealth(getHealth() + 25);
@@ -212,6 +297,14 @@ public class Player extends Character {
         inventory[slot] = Item.getItemById(Item.EMPTY);
     }
 
+    public boolean hasGuide() {
+        return hasGuide;
+    }
+
+    public void setGuide(boolean guide) {
+        this.hasGuide = guide;
+    }
+
     public void setAgilityPower(double agilityPower) {
         this.agilityPower = agilityPower;
     }
@@ -226,6 +319,14 @@ public class Player extends Character {
 
     public List<Point> getCollected() {
         return collected_items;
+    }
+
+    public void setInvisibility(int invisiblility) {
+        this.invisiblility = invisiblility;
+    }
+
+    public int getInvisibility() {
+        return this.invisiblility;
     }
 
     /**

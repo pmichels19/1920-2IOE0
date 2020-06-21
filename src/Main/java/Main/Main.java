@@ -56,7 +56,6 @@ public class Main {
 
         // terminate GLFW
         glfwTerminate();
-        // hard exit for now
         System.exit(1);
     }
 
@@ -74,7 +73,10 @@ public class Main {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        maze = new Maze("playerAttackTest");
+        // start the maze found in specified file and create the player object
+        maze = new Maze("custom");
+
+        // set up the world, corresponding GUI, the main menu and pause screen
         world = new World(maze, SCREEN_WIDTH, SCREEN_HEIGHT);
         gui = new GUI();
         pauseScreen = new PauseScreen();
@@ -84,6 +86,7 @@ public class Main {
         newGameMenu = new NewGameMenu();
         deathScreen = new DeathScreen();
         victoryScreen = new VictoryScreen();
+
         // drawing canvas
         RunDrawingCanvas drawingCanvas = new RunDrawingCanvas();
 
@@ -200,7 +203,9 @@ public class Main {
         Main.maze = maze;
     }
 
-    public static World getWorld() { return Main.world; }
+    public static World getWorld() {
+        return Main.world;
+    }
 
     public static GUI getGui() {
         return gui;

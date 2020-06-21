@@ -34,13 +34,14 @@ public class SlotPickController extends Controller {
             // the slot picker is only shown in 3 menus: new game, load game, save game
             if (state == GameState.STARTING_GAME || state == GameState.LOADING_SAVE) {
                 // if you are starting a new game from and press escape, you will go back to the main menu
-                menu.resetSelected();
                 setState(GameState.MAIN_MENU);
             } else {
                 // if you are saving the game, you go back to the pause screen
-                menu.resetSelected();
                 setState(GameState.PAUSED);
             }
+
+            // after exiting a slot picker, we reset the selected slot and return
+            menu.resetSelected();
             return;
         }
 

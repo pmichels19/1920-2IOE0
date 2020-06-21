@@ -45,7 +45,7 @@ public class MainController {
      */
     public void checkInputs() {
         if ( startUpCooldown == 0 ) {
-            // first, set the player
+            // first set the player
             Controller.setPlayer();
             // depending on the current game state, we wish to check different inputs
             GameState state = Main.Main.getState();
@@ -75,22 +75,4 @@ public class MainController {
             startUpCooldown--;
         }
     }
-
-//    /**
-//     * returns the speed with which the player is currently moving
-//     *
-//     * @return {@code speed}
-//     */
-//    public float getSpeed() {
-//        return gameController.getSpeed();
-//    }
-//
-//    /**
-//     * returns whether the current movement is vertical or not
-//     *
-//     * @return {@code vertical}
-//     */
-//    public boolean isVertical() {
-//        return gameController.isVertical();
-//    }
 }

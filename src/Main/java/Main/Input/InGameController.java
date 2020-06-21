@@ -23,6 +23,7 @@ public class InGameController extends Controller {
     // inventory cooldown allows for control when switching up/down in the inventory
     private int inventoryCooldown = 0;
     private int castCooldown = 0;
+    private int doorCooldown = 0;
 
     // the variables used for player movement
     int movementCounter = 0;
@@ -211,7 +212,12 @@ public class InGameController extends Controller {
         if (window.buttonClicked(GLFW_KEY_ENTER)) {
             tryItemCollect();
             if (player.hasKey()) {
-                tryDoorInteraction();
+                if (doorCooldown == 0) {
+                    doorCooldown = 10;
+                    tryDoorInteraction();
+                }else{
+                    doorCooldown--;
+                }
             }
         }
     }

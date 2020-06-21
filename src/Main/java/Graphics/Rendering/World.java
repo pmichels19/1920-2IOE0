@@ -98,11 +98,11 @@ public class World {
         char[][] grid = maze.getGrid();
         for (int y = 0; y < grid.length; y++) {
             for (int x = 0; x < grid[y].length; x++) {
-                if ( Maze.ITEM_MARKERS.contains( grid[y][x] ) ) {
+                if (Maze.ITEM_MARKERS.contains(grid[y][x])) {
                     Point position = new Point(x, grid.length - y);
                     // if no set of lights exists for the current position yet, make one
-                    if ( !lightMap.containsKey( position ) ) {
-                        lightMap.put( position, new HashSet<>() );
+                    if (!lightMap.containsKey(position)) {
+                        lightMap.put(position, new HashSet<>());
                     }
                     Set<Light> toAdd = lightMap.get(position);
                     // add the orb with the desired light color
@@ -191,7 +191,7 @@ public class World {
 
         for (int i = x_start; i < x_end; i++) {
             for (int j = y_start; j < y_end; j++) {
-                Point position = new Point( j, grid.length - i );
+                Point position = new Point(j, grid.length - i);
                 // determine what tile needs to be drawn and fill that into the sets made above
                 if (grid[i][j] == Maze.MARKER_WALL) {
                     // we check if the tile to left is also a wall
@@ -214,7 +214,7 @@ public class World {
 
                     // we always want to render a ceiling:
                     ceilings.add(position);
-                } else if ( Maze.ITEM_MARKERS.contains( grid[i][j] ) ) {
+                } else if (Maze.ITEM_MARKERS.contains(grid[i][j])) {
                     floors.add(position);
                     // if the maze entry contains an item, then there should be a set of light objects for it
                     if (lightMap.containsKey(position)) {
@@ -232,7 +232,7 @@ public class World {
      */
     private void setActiveLights() {
         // after filling the sets, we want to check which lights are active and pass those to the shader
-        Light[] active_lights = new Light[ lights.size() + player_lights.length ];
+        Light[] active_lights = new Light[lights.size() + player_lights.length];
         int i = 0;
         for (Light light : lights) {
             active_lights[i] = light;
@@ -254,7 +254,7 @@ public class World {
         active_lights[i + 3] = player_lights[3];
         active_lights[i + 4] = player_lights[4];
 
-        SHADER.setLights( active_lights );
+        SHADER.setLights(active_lights);
     }
 
     /**
@@ -283,12 +283,28 @@ public class World {
 
         // Render enemies
         for (Enemy enemy : enemyList) {
+            // Check if enemy is dead
+            if (enemy.getHealth() <= 0) {
+                enemyList.remove(enemy);
+                maze.getGrid()[enemy.getMazePosition().getX()][enemy.getMazePosition().getY()] = Maze.MARKER_SPACE;
+                break;
+            }
             enemy.move(maze.getPlayerLocation(), maze.getGrid());
             renderer.renderCharacter(enemy);
         }
 
+
+        // Update players maze location so the player object knows where it is
+        player.setMazePosition(maze.getPlayerLocation());
         // Render player
-        player.setGamePositionAndRotate(xPlayer, yPlayer, maze.getGrid().length);
+        if (player.getState() == Player.NORMAL_STATE) {
+            // if player is in normal state move normally
+            player.setGamePositionAndRotate(xPlayer, yPlayer, maze.getGrid().length);
+        } else {
+            // if player is still attacking or returning from a attack handle the corresponding move
+            player.moveAttacking(maze.getGrid().length);
+        }
+
         renderer.renderCharacter(player);
 
         for (Light light : lights) {
@@ -352,6 +368,10 @@ public class World {
 
         // adjust the camera for the shader, so it actually has an effect on the position of the render
         SHADER.setCamera(camera);
+    }
+
+    public ArrayList<Enemy> getEnemyList() {
+        return enemyList;
     }
 }
 

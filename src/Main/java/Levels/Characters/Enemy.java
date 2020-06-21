@@ -277,7 +277,6 @@ public abstract class Enemy extends Character {
             newY = locationY;
             if (playerLocation.calculateManhattanDistance(getMazePosition()) < 2) { // check for dodge
                 Player.getInstance().damage(damage);
-                lastAttackTime = System.currentTimeMillis();
             }
             lastAttackTime = System.currentTimeMillis();
             state = RETURNING_STATE;
@@ -285,7 +284,6 @@ public abstract class Enemy extends Character {
         if (Math.abs(locationY - newY) == 0f && Math.abs(locationX - newX) == 0f) {
             if (playerLocation.calculateManhattanDistance(getMazePosition()) < 2) { // check for dodge
                 Player.getInstance().damage(damage);
-                lastAttackTime = System.currentTimeMillis();
             }
             lastAttackTime = System.currentTimeMillis();
             state = RETURNING_STATE;

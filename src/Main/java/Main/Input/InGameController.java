@@ -10,6 +10,7 @@ import SpellCasting.SpellAgility;
 
 import static Graphics.IO.ScreenShot.takeScreenShot;
 import static Levels.Characters.Character.*;
+import static Main.Main.getMaze;
 import static Main.Main.setState;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -54,15 +55,15 @@ public class InGameController extends Controller {
                 pauseCooldown = 10;
 
                 // take a screenshot and place it into the saves folder
-                takeScreenShot( "Saves/lastSave.png" );
-                setState( GameState.PAUSED );
+                takeScreenShot("Saves/lastSave.png");
+                setState(GameState.PAUSED);
             }
         } else {
             pauseCooldown--;
         }
 
         // we only check for inventory inputs if allowed and not paused
-        if ( inventoryCooldown == 0 ) {
+        if (inventoryCooldown == 0) {
             checkInventory();
         } else {
             // if switching is still on cooldown, decrement the cooldown by one
@@ -70,11 +71,11 @@ public class InGameController extends Controller {
         }
 
         // we only check for movement inputs if movement is allowed
-        if ( movementCounter == 0 ) {
+        if (movementCounter == 0) {
             checkMovement();
         } else if (movementCounter > 0) {
             // move the player with the specified speed and direction
-            world.movePlayer( speed, vertical );
+            world.movePlayer(speed, vertical);
             // decrement the amount of movement frames left
             movementCounter--;
         }
@@ -89,31 +90,31 @@ public class InGameController extends Controller {
      */
     private void checkInventory() {
         // we can go up and down in our inventory
-        if ( window.buttonClicked(GLFW_KEY_UP) ) {
-            player.setSelectedItem( player.getSelectedItem() - 1 );
+        if (window.buttonClicked(GLFW_KEY_UP)) {
+            player.setSelectedItem(player.getSelectedItem() - 1);
             inventoryCooldown = 5;
-        } else if ( window.buttonClicked(GLFW_KEY_DOWN) ) {
-            player.setSelectedItem( player.getSelectedItem() + 1 );
+        } else if (window.buttonClicked(GLFW_KEY_DOWN)) {
+            player.setSelectedItem(player.getSelectedItem() + 1);
             inventoryCooldown = 5;
         }
 
-        if ( window.buttonClicked(GLFW_KEY_1) ) {
+        if (window.buttonClicked(GLFW_KEY_1)) {
             player.useItem(0);
         }
 
-        if ( window.buttonClicked(GLFW_KEY_2) ) {
+        if (window.buttonClicked(GLFW_KEY_2)) {
             player.useItem(1);
         }
 
-        if ( window.buttonClicked(GLFW_KEY_3) ) {
+        if (window.buttonClicked(GLFW_KEY_3)) {
             player.useItem(2);
         }
 
-        if ( window.buttonClicked(GLFW_KEY_4) ) {
+        if (window.buttonClicked(GLFW_KEY_4)) {
             player.useItem(3);
         }
 
-        if ( window.buttonClicked(GLFW_KEY_5) ) {
+        if (window.buttonClicked(GLFW_KEY_5)) {
             player.useItem(4);
         }
     }
@@ -167,6 +168,10 @@ public class InGameController extends Controller {
             } else {
                 player.turnRight();
             }
+        } else if (window.buttonClicked(GLFW_KEY_SPACE)) {
+            player.setGamePositionX(player.getMazePosition().getY());
+            player.setGamePositionY(player.getMazePosition().getX(), maze.getGrid().length);
+            player.attack(maze, world.getEnemyList());
         } // spell casting
         else if (window.buttonClicked(GLFW_KEY_O)) {
             if (castCooldown == 0) {
@@ -213,8 +218,6 @@ public class InGameController extends Controller {
     }
 
 
-
-
     /**
      * method that looks at the grid, the player position and the direction the player is facing
      * to see if an item can be picked up
@@ -229,40 +232,40 @@ public class InGameController extends Controller {
         switch (direction) {
             case DIRECTION_LEFT:
                 facing = grid[x_player][y_player - 1];
-                if ( Maze.ITEM_MARKERS.contains( facing ) ) {
+                if (Maze.ITEM_MARKERS.contains(facing)) {
                     player.addItem(
-                            Item.getItemById( Character.getNumericValue( facing ) ),
-                            new Point( x_player, y_player - 1 )
+                            Item.getItemById(Character.getNumericValue(facing)),
+                            new Point(x_player, y_player - 1)
                     );
                     grid[x_player][y_player - 1] = Maze.MARKER_SPACE;
                 }
                 break;
             case DIRECTION_RIGHT:
                 facing = grid[x_player][y_player + 1];
-                if ( Maze.ITEM_MARKERS.contains( facing ) ) {
+                if (Maze.ITEM_MARKERS.contains(facing)) {
                     player.addItem(
-                            Item.getItemById( Character.getNumericValue( facing ) ),
-                            new Point( x_player, y_player + 1 )
+                            Item.getItemById(Character.getNumericValue(facing)),
+                            new Point(x_player, y_player + 1)
                     );
                     grid[x_player][y_player + 1] = Maze.MARKER_SPACE;
                 }
                 break;
             case DIRECTION_UP:
                 facing = grid[x_player - 1][y_player];
-                if ( Maze.ITEM_MARKERS.contains( facing ) ) {
+                if (Maze.ITEM_MARKERS.contains(facing)) {
                     player.addItem(
-                            Item.getItemById( Character.getNumericValue( facing ) ),
-                            new Point( x_player - 1, y_player )
+                            Item.getItemById(Character.getNumericValue(facing)),
+                            new Point(x_player - 1, y_player)
                     );
                     grid[x_player - 1][y_player] = Maze.MARKER_SPACE;
                 }
                 break;
             case DIRECTION_DOWN:
                 facing = grid[x_player + 1][y_player];
-                if ( Maze.ITEM_MARKERS.contains( facing ) ) {
+                if (Maze.ITEM_MARKERS.contains(facing)) {
                     player.addItem(
-                            Item.getItemById( Character.getNumericValue( facing ) ),
-                            new Point( x_player + 1, y_player )
+                            Item.getItemById(Character.getNumericValue(facing)),
+                            new Point(x_player + 1, y_player)
                     );
                     grid[x_player + 1][y_player] = Maze.MARKER_SPACE;
                 }

@@ -4,15 +4,21 @@ import Graphics.OBJModel;
 import Graphics.OpenGL.Shader;
 import Levels.Framework.Point;
 import Levels.Framework.joml.Matrix4f;
+import Levels.Framework.joml.Vector2f;
 import Levels.Framework.joml.Vector3f;
+import Levels.Objects.FloatingSphere;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public abstract class Character {
     // Holds the model
     private OBJModel model;
+
+    // Holds the floating objects
+    private FloatingSphere[] floatingElements;
 
     // Holds the current position
     private Vector3f position;
@@ -67,6 +73,16 @@ public abstract class Character {
 
         this.speed = speed;
 
+        floatingElements = new FloatingSphere[2];
+        floatingElements[0] = new FloatingSphere();
+        floatingElements[1] = new FloatingSphere();
+
+        floatingElements[0].setColor(new Vector3f(0f, 0.96f, 1f));
+        floatingElements[0].setRotation(-90f, new Vector3f(0, 0, 1));
+        floatingElements[0].setHeight(1.3f);
+        floatingElements[0].setBezierCoords(new Vector2f(2f, 1.1f), new Vector2f(5.5f, 3f),
+                new Vector2f(0f, 3f), new Vector2f(3.5f, 0.95f));
+
         //Setting up the animation timer
         timer = new Timer( 10, new ActionListener() {
 
@@ -89,11 +105,16 @@ public abstract class Character {
     public void render(Shader shader, float x_pos, float y_pos) {
 //        generateModel(x_pos, y_pos);
 
-
         model.render(shader);
     }
 
     public void render(Shader shader) {
+
+        //floating spheres
+        for (FloatingSphere a : floatingElements) {
+            a.render(shader, position);
+        }
+
         shader.setUniform("transform", 1);
         Matrix4f modelTransform = new Matrix4f();
 

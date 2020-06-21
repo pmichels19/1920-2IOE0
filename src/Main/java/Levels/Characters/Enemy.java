@@ -52,7 +52,7 @@ public abstract class Enemy extends Character {
     private long lastAttackTime = 0;
 
 
->>>>>>>>> Temporary merge branch 2
+
     /**
      * Moves the enemy, either to a random location or the player (if it is close enough)
      *

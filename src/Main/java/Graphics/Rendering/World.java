@@ -102,42 +102,7 @@ public class World {
         createDoors();
     }
 
-    /**
-     * method that fills the {@code lightMap}
-     */
-    private void createLights() {
-        // loop over the grid to identify where to place lightsources
-        char[][] grid = maze.getGrid();
-        for (int y = 0; y < grid.length; y++) {
-            for (int x = 0; x < grid[y].length; x++) {
-                if ( Maze.ITEM_MARKERS.contains( grid[y][x] ) ) {
-                    Point position = new Point(x, grid.length - y);
-                    // if no set of lights exists for the current position yet, make one
-                    if ( !lightMap.containsKey( position ) ) {
-                        lightMap.put( position, new HashSet<>() );
-                    }
-                    Set<Light> toAdd = lightMap.get(position);
-                    // add the orb with the desired light color
-                    toAdd.add(
-                            new Light(
-                                    new Vector3f(x * 2, (grid.length - y) * 2, 1f),
-                                    Item.getColorById(Character.getNumericValue(grid[y][x])),
-                                    MagicBall.getInstance(),
-                                    LIGHT_ATTENUATION
-                            )
-                    );
-                    toAdd.add(
-                            new Light(
-                                    new Vector3f(x * 2, (grid.length - y) * 2, 5f),
-                                    Item.getColorById(Character.getNumericValue(grid[y][x])),
-                                    null,
-                                    LIGHT_ATTENUATION
-                            )
-                    );
-                }
-            }
-        }
-    }
+//
 
     /**
      * method that fills the {@code doorMap}

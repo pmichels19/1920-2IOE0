@@ -43,7 +43,7 @@ public class InGameController extends Controller {
     @Override
     void checkInputs() {
         // if the player died, we need to go into the DEAD state
-        if (player.getHealth() == 0) {
+        if (player.getHealth() <= 0) {
             setState(GameState.DEAD);
             return;
         }

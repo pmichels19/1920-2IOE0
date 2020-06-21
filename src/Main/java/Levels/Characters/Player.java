@@ -6,7 +6,6 @@ import Graphics.OpenGL.Shader;
 import Graphics.OpenGL.Texture;
 import Levels.Assets.Items.Item;
 import Levels.Framework.Point;
-import Levels.Framework.joml.Matrix4f;
 import Levels.Framework.joml.Vector3f;
 
 import java.io.IOException;
@@ -237,7 +236,11 @@ public class Player extends Character {
         switch (inventory[slot].getId()) {
             case Item.H_POTION:
                 // if a health potion is used, add 25 health to the current health
-                setHealth(getHealth() + 25);
+                if (getHealth() + 25 > getMaxHealth()) {
+                    setHealth(getMaxHealth());
+                } else {
+                    setHealth(getHealth() + 25);
+                }
                 tossItem(slot);
                 break;
             case Item.M_POTION:
@@ -248,7 +251,11 @@ public class Player extends Character {
             case Item.HEART:
                 // if a heart is used, increase the max health and current health by 25
                 setMaxHealth(getMaxHealth() + 25);
-                setHealth(getHealth() + 25);
+                if (getHealth() + 25 > getMaxHealth()) {
+                    setHealth(getMaxHealth());
+                } else {
+                    setHealth(getHealth() + 25);
+                }
                 tossItem(slot);
                 break;
             case Item.MANA:

@@ -214,7 +214,7 @@ public class InGameController extends Controller {
             if (player.hasKey()) {
                 if (doorCooldown == 0) {
                     doorCooldown = 10;
-                    tryDoorInteraction();
+                    tryDoorInteraction(true);
                 }else{
                     doorCooldown--;
                 }
@@ -262,7 +262,7 @@ public class InGameController extends Controller {
         }
     }
 
-    private void tryDoorInteraction() {
+    public static void tryDoorInteraction(boolean casted) {
         // get the grid and the facing tile
         int grid_length = maze.getGrid().length;
         char facing = getFacingTile();
@@ -295,7 +295,10 @@ public class InGameController extends Controller {
         if (door == null || point == null) {
             return;
         }
-        player.useKey( point );
+        // only use a key if the player wanted to unlock the door with a key
+        if (!casted) {
+            player.useKey(point);
+        }
         door.toggle();
     }
 
@@ -304,7 +307,7 @@ public class InGameController extends Controller {
      *
      * @return the tile the player is facing
      */
-    private char getFacingTile() {
+    private static char getFacingTile() {
         // get the grid
         char[][] grid = maze.getGrid();
         int direction = player.getDirection();

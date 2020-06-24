@@ -25,6 +25,7 @@ public class Maze {
     public final static char MARKER_ENEMY = 'e';
     public final static char MARKER_WALL = 'x';
     public final static char MARKER_END = 'f';
+    public final static char MARKER_END_WALL = 'F';
     // the markers for item orbs based on the item ids found in the Item class
     public final static char MARKER_HEART = (char) Item.HEART + '0';
     public final static char MARKER_MANA = (char) Item.MANA + '0';

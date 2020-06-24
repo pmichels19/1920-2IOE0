@@ -214,7 +214,7 @@ public class InGameController extends Controller {
             if (player.hasKey()) {
                 if (doorCooldown == 0) {
                     doorCooldown = 10;
-                    tryDoorInteraction(true);
+                    tryDoorInteraction(false);
                 }else{
                     doorCooldown--;
                 }

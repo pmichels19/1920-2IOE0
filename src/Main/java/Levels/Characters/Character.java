@@ -4,11 +4,14 @@ import Graphics.OBJModel;
 import Graphics.OpenGL.Shader;
 import Levels.Framework.Point;
 import Levels.Framework.joml.Matrix4f;
+import Levels.Framework.joml.Vector2f;
 import Levels.Framework.joml.Vector3f;
+import Levels.Objects.FloatingSphere;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public abstract class Character {
     // Holds the model
@@ -96,7 +99,6 @@ public abstract class Character {
     public void render(Shader shader, float x_pos, float y_pos) {
 //        generateModel(x_pos, y_pos);
 
-
         model.render(shader);
     }
 
@@ -126,6 +128,7 @@ public abstract class Character {
 
 
     public void render(Shader shader) {
+
         shader.setUniform("transform", 1);
         Matrix4f modelTransform = new Matrix4f();
 

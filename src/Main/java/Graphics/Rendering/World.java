@@ -186,6 +186,7 @@ public class World {
     private final Set<Point> leftWalls = new HashSet<>();
     private final Set<Point> rightWalls = new HashSet<>();
     private final Set<Point> faceWalls = new HashSet<>();
+    private final Set<Point> doorWalls = new HashSet<>();
     private final Set<Point> ceilings = new HashSet<>();
 
     private final Set<Light> lights = new HashSet<>();
@@ -253,7 +254,12 @@ public class World {
 
                     // we always want to render a ceiling:
                     ceilings.add(position);
-                } else if ( Maze.ITEM_MARKERS.contains( grid[i][j] ) ) {
+                }
+                else if (grid[i][j] == Maze.MARKER_END_WALL) {
+                    doorWalls.add(position);
+                    ceilings.add(position);
+                }
+                else if ( Maze.ITEM_MARKERS.contains( grid[i][j] ) ) {
                     floors.add(position);
                     // if the maze entry contains an item, then there should be a set of light objects for it
                     if (lightMap.containsKey(position)) {
@@ -370,6 +376,11 @@ public class World {
         for (Point point : faceWalls) {
             renderer.addNormalMap(Wall.BRICKWALL_NORMAL.getTexture());
             renderer.renderTile(Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES);
+        }
+
+        for (Point point : doorWalls) {
+            renderer.addNormalMap(Wall.DOORWALL_NORMAL.getTexture());
+            renderer.renderTile(Wall.DOORWALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES);
         }
 
         for (Door door : doors) {

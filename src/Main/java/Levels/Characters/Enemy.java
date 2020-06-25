@@ -61,8 +61,9 @@ public abstract class Enemy extends Character {
      */
     public void move(Point playerLocation, char[][] grid) {
         if (!isMoving()) {
-            if (getMazePosition().calculateManhattanDistance(playerLocation) <= detectionDistance) { // First check manhattan distance since it's faster
-                if (getMazePosition().calculateManhattanDistance(playerLocation) == 1) {
+            int player_dist = getMazePosition().calculateManhattanDistance(playerLocation);
+            if (player_dist <= detectionDistance) { // First check manhattan distance since it's faster
+                if (player_dist == 1) {
                     if (canAttack()) {
                         startAttack(playerLocation, grid.length);
                     }

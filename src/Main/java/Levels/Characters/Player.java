@@ -7,11 +7,14 @@ import Graphics.OpenGL.Texture;
 import Levels.Assets.Items.Item;
 import Levels.Framework.Point;
 import Levels.Framework.joml.Matrix4f;
+import Levels.Framework.joml.Vector2f;
 import Levels.Framework.joml.Vector3f;
-import Levels.Framework.Maze;
-import Levels.Framework.Point;
+
 
 import static Levels.Framework.Maze.*;
+
+import Levels.Objects.FloatingSphere;
+
 
 import java.io.Console;
 import java.io.IOException;
@@ -19,6 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Player extends Character {
+    // Holds the floating objects
+    private FloatingSphere[] floatingElements;
+
     // Name of the obj file in the res folder corresponding to the player model
     private static String objModelFile = "character";
 
@@ -81,6 +87,16 @@ public class Player extends Character {
         selectedItem = 0;
 
         setAnimationType("float");
+
+        floatingElements = new FloatingSphere[2];
+        floatingElements[0] = new FloatingSphere();
+        floatingElements[1] = new FloatingSphere();
+
+        floatingElements[0].setColor(new Vector3f(0f, 0.96f, 1f));
+        floatingElements[0].setRotation(-90f, new Vector3f(0, 0, 1));
+        floatingElements[0].setHeight(1.3f);
+        floatingElements[0].setBezierCoords(new Vector2f(2f, 1.1f), new Vector2f(5.5f, 3f),
+                new Vector2f(0f, 3f), new Vector2f(3.5f, 0.95f));
     }
 
     public static Player getInstance() {
@@ -117,6 +133,11 @@ public class Player extends Character {
 
     @Override
     public void render(Shader shader) {
+        //floating spheres
+        for (FloatingSphere a : floatingElements) {
+            a.render(shader, super.getPosition());
+        }
+
         shader.setUniform("playerCharacter", 1);
         super.render(shader);
         shader.setUniform("playerCharacter", 0);

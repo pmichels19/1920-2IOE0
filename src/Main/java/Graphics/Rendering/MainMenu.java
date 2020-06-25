@@ -52,7 +52,6 @@ public class MainMenu extends FlatRender {
         transform.setScale( new Vector3f( 0.06f * 1080f/1920f, 0.06f, 1 ) );
 
         // render all available options
-        String[] options = new String[] {"Continue", "New Game", "Load Game", "Exit Game"};
         for (int i = 0; i < options.length; i++) {
             String option = options[i];
             transform.setPosition(new Vector3f(-1, 0.5f - i * 0.25f, 0));

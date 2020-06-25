@@ -13,6 +13,7 @@ import java.util.List;
 
 import static Graphics.IO.ScreenShot.takeScreenShot;
 import static Levels.Characters.Character.*;
+import static Main.Main.getMaze;
 import static Main.Main.setState;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -176,6 +177,10 @@ public class InGameController extends Controller {
             } else {
                 player.turnRight();
             }
+        } else if (window.buttonClicked(GLFW_KEY_SPACE)) {
+            player.setGamePositionX(player.getMazePosition().getY());
+            player.setGamePositionY(player.getMazePosition().getX(), maze.getGrid().length);
+            player.attack(maze, world.getEnemyList());
         } // spell casting
         else if (window.buttonClicked(GLFW_KEY_O)) {
             if (castCooldown == 0) {

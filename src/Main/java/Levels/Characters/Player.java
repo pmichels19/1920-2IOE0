@@ -9,8 +9,14 @@ import Levels.Framework.Point;
 import Levels.Framework.joml.Matrix4f;
 import Levels.Framework.joml.Vector2f;
 import Levels.Framework.joml.Vector3f;
+
+
+import static Levels.Framework.Maze.*;
+
 import Levels.Objects.FloatingSphere;
 
+
+import java.io.Console;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +53,28 @@ public class Player extends Character {
 
     // agility spell
     private double agilityPower = 0;
+
+    // player attack damage
+    private int playerAttackDamage = 25;
+
+    private Enemy enemyToAttack = null;
+
+    // Some states the enemy can be in to change behavior during states
+    public final static int NORMAL_STATE = 0;
+    public final static int ATTACKING_STATE = 1;
+    public final static int RETURNING_STATE = 2;
+
+    // State of the current enemy
+    private int state = NORMAL_STATE;
+
+    // Minimum amount of time between attacks (in milliseconds)
+    private long attackDelay = 800;
+
+    // Holds the last timestamp of last attack
+    private long lastAttackTime = 0;
+
+    // How big the steps are for the movement per frame of a attack
+    private float attackMovementStep = 1f/super.getSpeed();
 
     private Player(int hp, int mp, int speed, OBJModel model) {
         super(hp, mp, speed, model);
@@ -254,7 +282,7 @@ public class Player extends Character {
         }
 
         // we check what kind of item the player has selected
-        switch (inventory[slot].getId()) {
+        switch (inventory[selectedItem].getId()) {
             case Item.H_POTION:
                 // if a health potion is used, add 25 health to the current health
                 setHealth(getHealth() + 25);
@@ -320,5 +348,150 @@ public class Player extends Character {
 
     public int getInvisibility() {
         return this.invisiblility;
+    }
+
+    /**
+     * Method that lets the player attack an enemy that is next to the player
+     *
+     * @param maze      current maze
+     * @param enemyList list of enemies in game
+     */
+    public void attack(Maze maze, ArrayList<Enemy> enemyList) {
+        if (canAttack() && state == NORMAL_STATE) {
+            Point playerPos = maze.getPlayerLocation();
+            for (Enemy enemy : enemyList) {
+                if (playerPos.calculateManhattanDistance(enemy.getMazePosition()) == 1) {
+                    state = ATTACKING_STATE;
+                    enemyToAttack = enemy;
+                    moveAttacking(maze.getGrid().length);
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Makes enemy attack the player
+     *
+     * @param gridLength Length of the grid array
+     */
+    public void moveAttacking(int gridLength) {
+        if (state == ATTACKING_STATE) {
+            // Get the current position in world coordinates
+            float currentX = getGamePositionX();
+            float currentY = getGamePositionY();
+
+
+            // Set the desired X and Y, note that game positions have the X and Y flipped from the Maze positions
+            float locationX = getMazePosition().getY() + ((enemyToAttack.getMazePosition().getY() - getMazePosition().getY()) / 2f);
+            float locationY = getMazePosition().getX() + ((enemyToAttack.getMazePosition().getX() - getMazePosition().getX()) / 2f);
+
+            // Initialize new positions
+            float newX = currentX;
+            float newY = currentY;
+
+            // Change in x
+            if (currentX < locationX) {
+                newX += attackMovementStep;
+            } else if (currentX > locationX) {
+                newX -= attackMovementStep;
+            }
+
+            // Change in y
+            if (currentY < locationY) {
+                newY += attackMovementStep;
+            } else if (currentY > locationY) {
+                newY -= attackMovementStep;
+            }
+
+
+            // Fix differences between float and int, player has reached attack location
+            if (Math.abs(locationX - newX) < attackMovementStep + 0.001 && Math.abs(locationX - newX) != 0f) {
+                newX = locationX;
+
+                enemyToAttack.damage(playerAttackDamage);
+                lastAttackTime = System.currentTimeMillis();
+
+                state = RETURNING_STATE;
+            } else if (Math.abs(locationY - newY) < attackMovementStep + 0.001 && Math.abs(locationY - newY) != 0f) {
+                newY = locationY;
+
+                enemyToAttack.damage(playerAttackDamage);
+
+                lastAttackTime = System.currentTimeMillis();
+                state = RETURNING_STATE;
+            }
+            if (Math.abs(locationY - newY) == 0f && Math.abs(locationX - newX) == 0f) {
+
+                enemyToAttack.damage(playerAttackDamage);
+                lastAttackTime = System.currentTimeMillis();
+                state = RETURNING_STATE;
+            }
+            // Updates the location
+            setGamePositionAndRotate(newX, newY, gridLength);
+        } else if (state == RETURNING_STATE) {
+            // Get the current position in world coordinates
+            float currentX = getGamePositionX();
+            float currentY = getGamePositionY();
+
+            // Set the desired X and Y, note that game positions have the X and Y flipped from the Maze positions
+            float locationX = getMazePosition().getY();
+            float locationY = getMazePosition().getX();
+
+            // Initialize new positions
+            float newX = currentX;
+            float newY = currentY;
+
+            // Change in x
+            if (currentX < locationX) {
+                newX += attackMovementStep;
+            } else if (currentX > locationX) {
+                newX -= attackMovementStep;
+            }
+
+            // Change in y
+            if (currentY < locationY) {
+                newY += attackMovementStep;
+            } else if (currentY > locationY) {
+                newY -= attackMovementStep;
+            }
+
+
+            // Fix differences between float and int, player has reached attack location
+            if (Math.abs(locationX - newX) < attackMovementStep+ 0.001 && Math.abs(locationX - newX) != 0f) {
+                newX = locationX;
+
+                state = NORMAL_STATE;
+            } else if (Math.abs(locationY - newY) < attackMovementStep+ 0.001 && Math.abs(locationY - newY) != 0f) {
+                newY = locationY;
+
+                state = NORMAL_STATE;
+            }
+            if (Math.abs(locationY - newY) == 0f && Math.abs(locationX - newX) == 0f) {
+
+                state = NORMAL_STATE;
+            }
+            // Updates the location
+            setGamePositionX(newX);
+            setGamePositionY(newY, gridLength);
+        }
+
+
+    }
+
+    private boolean canAttack() {
+        return System.currentTimeMillis() > lastAttackTime + attackDelay;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public int getPlayerAttackDamage() {
+        return playerAttackDamage;
+    }
+
+    public void setPlayerAttackDamage(int playerAttackDamage) {
+        this.playerAttackDamage = playerAttackDamage;
     }
 }

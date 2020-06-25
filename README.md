@@ -1,17 +1,14 @@
 # Mazes of Magic
-
 Mazes of Magic is a game developed by Group Five of the DBL Interactive Intelligent Systems (2IOE0) course. 
 
 ## Description
-
 Inspired by Terraria and some of the rogue-like indie games, our team came up with an idea of a maze game filled with hostile creatures where one has to gain the strength to find the key and to get out of the maze alive. One might think there is nothing hard about this game until they experience the dark corridors filled with traps and monsters. The only hope would be to use the pathfinder buddy who can light up the surroundings and lead the player to the key. In order to increase the chance of surviving, one is introduced to spellcasting ability which might help to deal with darkness and monsters. However, the player must be careful when using magic, since it's pretty unstable and can go wrong any time. To motivate the adventurer every maze contains secret treasures and spells to find, which then can be used to upgrade the character, refill the mana points or to use those against the enemy.
 
 ## Usage
-
-1. Clone the repo
-2. Go to **File > Project Structure > Add > Library > New Library > Java**
-3. Add ```1920-2IOE0\lwjgl-release-3.2-light```
-4. Run ```Main\Main.java```
+ 1. Clone the repo
+ 2. Go to **File > Project Structure > Add > Library > New Library > Java**
+ 3. Add ```1920-2IOE0\lwjgl-release-3.2-light```
+ 4. Run ```Main\Main.java```
 
 ## User Manual
 

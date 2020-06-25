@@ -5,6 +5,7 @@ import Graphics.OBJModel;
 import Graphics.OpenGL.Shader;
 import Graphics.OpenGL.Texture;
 import Levels.Assets.Items.Item;
+import Levels.Framework.Maze;
 import Levels.Framework.Point;
 import Levels.Framework.joml.Matrix4f;
 import Levels.Framework.joml.Vector2f;

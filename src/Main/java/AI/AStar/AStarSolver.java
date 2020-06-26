@@ -149,7 +149,7 @@ public class AStarSolver {
      */
     private Boolean containsSmaller(AStarPoint successor, ArrayList<AStarPoint> list) {
         for (AStarPoint p : list) {
-            if (p.x == successor.x && p.y == successor.y && p.f < successor.f) {
+            if (p.x == successor.x && p.y == successor.y && p.f <= successor.f) {
                 return true;
             }
         }

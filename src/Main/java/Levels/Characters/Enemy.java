@@ -21,6 +21,8 @@ public abstract class Enemy extends Character {
     // The distance that an enemy should be from the player to move towards the player
     private int detectionDistance = 15;
 
+    private char currentTilePrevious = MARKER_SPACE;
+
     // Random location grid size (should be an even number)
     private final int randomPathDistance = 16;
 
@@ -108,7 +110,8 @@ public abstract class Enemy extends Character {
     private void moveToPoint(Point location, int gridLength, char[][] grid) {
         // Update grid location of enemy
         Point currentLocation = getMazePosition();
-        grid[currentLocation.getX()][currentLocation.getY()] = MARKER_SPACE;
+        grid[currentLocation.getX()][currentLocation.getY()] = currentTilePrevious;
+        currentTilePrevious = grid[location.getX()][location.getY()];
         grid[location.getX()][location.getY()] = MARKER_ENEMY;
 
         // Set the new maze location of the enemy

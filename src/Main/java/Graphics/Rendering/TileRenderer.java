@@ -117,7 +117,7 @@ public class TileRenderer {
         }
 
         // enable depth test for side walls
-        if (model != CEILS && model != FLAT) {
+        if ( model != FLAT) {
             glEnable(GL_DEPTH_TEST);
         }
         // and finally render the selected model
@@ -125,7 +125,7 @@ public class TileRenderer {
 
 
          // reset depth test for side walls
-        if (model != CEILS && model != FLAT) {
+        if ( model != FLAT) {
             glDisable(GL_DEPTH_TEST);
         }
 

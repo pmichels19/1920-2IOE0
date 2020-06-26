@@ -16,7 +16,7 @@ public class AStarSolver {
     private AStarPoint destinationPoint;
 
     private final Boolean allowDiagonal = false;
-    private final int diagonalMoveCost = 14 * 99999999; //TODO: When diagonal movement is implemented change back to 14
+    private  int diagonalMoveCost = 14 * 99999999;
     private final int normalMoveCost = 10;
 
     private AStarSolver() {
@@ -25,6 +25,9 @@ public class AStarSolver {
     public static AStarSolver getInstance() {
         if (instance == null) {
             instance = new AStarSolver();
+            if (instance.allowDiagonal){
+                instance.diagonalMoveCost = 14;
+            }
         }
         return instance;
     }

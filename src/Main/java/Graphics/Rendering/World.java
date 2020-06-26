@@ -438,7 +438,7 @@ public class World {
             // Check if enemy is dead
             if (enemy.getHealth() <= 0) {
                 enemyList.remove(enemy);
-                maze.getGrid()[enemy.getMazePosition().getX()][enemy.getMazePosition().getY()] = Maze.MARKER_SPACE;
+                maze.getGrid()[enemy.getMazePosition().getX()][enemy.getMazePosition().getY()] = enemy.getCurrentTilePrevious();
                 break;
             }
             enemy.move(maze.getPlayerLocation(), maze.getGrid());

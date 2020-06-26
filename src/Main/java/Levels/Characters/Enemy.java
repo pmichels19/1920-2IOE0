@@ -341,4 +341,7 @@ public abstract class Enemy extends Character {
         return System.currentTimeMillis() > lastAttackTime + attackDelay;
     }
 
+    public char getCurrentTilePrevious() {
+        return currentTilePrevious;
+    }
 }

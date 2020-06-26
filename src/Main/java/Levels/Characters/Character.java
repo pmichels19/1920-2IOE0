@@ -61,7 +61,7 @@ public abstract class Character {
 
     public Character(int max_health, int max_mana, int speed, OBJModel model) {
         this.model = model;
-        position = new Vector3f(0, 0f, 1.5f);
+        position = new Vector3f(0, 0f, 0f);
         scale = 1.2f;
         rotationAngle = (float) ((-90f * Math.PI) / 180.0f);
         rotation = new Vector3f(0f, 0f, 1f);
@@ -119,11 +119,11 @@ public abstract class Character {
     }
 
     private float getFloat() {
-        return (float) (1.5f + Math.pow(Math.cos(Math.toRadians(tVal * 150f)),2)/2);
+        return (float) ( 0.1f + Math.pow(Math.cos(Math.toRadians(tVal * 150f)),2)/2);
     }
 
     private float getBounce() {
-        return (float) (1.5f + Math.abs(2f * Math.sin(Math.toRadians(tVal * 250f))));
+        return (float) (0.1f + Math.abs(2f * Math.sin(Math.toRadians(tVal * 250f))));
     }
 
 
@@ -217,7 +217,7 @@ public abstract class Character {
 
     public void setGamePositionY(float gamePositionY, float gridLength) {
         this.gamePositionY = gamePositionY;
-        this.position.y = (gridLength - 0.5f - gamePositionY) * 2f;
+        this.position.y = (gridLength - gamePositionY) * 2f;
     }
 
     /**

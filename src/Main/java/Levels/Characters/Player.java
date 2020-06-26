@@ -120,8 +120,8 @@ public class Player extends Character {
 
                 // Instantiate the player
                 player = new Player(100, 100, 12, model);
-                player.setPosition( new Vector3f(0, 0f, 1.5f));
-                player.setScale(1f);
+                player.setPosition( new Vector3f(0, 0f, 0.1f));
+                player.setScale(1.3f);
             } catch (IOException e) {
                 e.printStackTrace();
             }

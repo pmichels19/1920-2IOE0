@@ -347,7 +347,8 @@ public class World {
                         player.setFireball(false);
                         shot = false;
                         fireBall = null;
-                        player_lights[6].setAttenuation(NO_LIGHT);
+                        player_lights[6].setColor(new Vector3f(1f, .75f, .0f));
+                        player_lights[6].setAttenuation(new Vector3f(.5f, .2f, .2f));
                     }
                     if (shot) {
                         player_lights[6].setPosition(new Vector3f(fireBall.getPosition().x, fireBall.getPosition().y, 1f));

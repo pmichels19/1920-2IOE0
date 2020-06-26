@@ -152,7 +152,7 @@ public class DrawingCanvas extends JFrame implements Runnable {
                 }
             }
             // don't render text when saving image
-            if (canvasColor != Color.BLACK) {
+            if (canvasColor != Color.WHITE) {
                 // drawing canvas usage text (may be placed in canvas border texture later)
                 g.setColor(Color.BLACK);
                 g.setFont(new Font("DialogInput", Font.PLAIN, 20));

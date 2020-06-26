@@ -17,7 +17,7 @@ public class FireBall extends Object3D {
     private static String textureFile = "res/Models/nothing.png";
     private static String normalMapFile = null;
 
-    private float speed = 1f / 60f;
+    private float speed = 1f / 15f;
     private Point mazePosition;
 
     public FireBall() {

@@ -48,6 +48,7 @@ public class World {
             new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, LIGHT_ATTENUATION),
 
             new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, NO_LIGHT),
+            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, NO_LIGHT),
     };
 
     // variables to keep track of the player location in the world
@@ -59,6 +60,7 @@ public class World {
     private GuideBall guide;
     private boolean reset = true;
     private FireBall fireBall;
+    private boolean shot = false;
 
     // List that holds the enemies
     private final ArrayList<Enemy> enemyList = new ArrayList<>();
@@ -319,10 +321,22 @@ public class World {
             if (fireBall == null) {
                 fireBall = new FireBall();
                 fireBall.setPosition(new Vector3f(maze.playerLocation.getX(), maze.playerLocation.getY(), 3f));
+                fireBall.setColor(new Vector3f(1f, .75f, .0f));
                 fireBall.initializePosition(maze.playerLocation.getX(), maze.playerLocation.getY(), maze.getGrid().length);
+                player_lights[6].setAttenuation(LIGHT_ATTENUATION);
+                shot = true;
             }
-            fireBall.move(nearestEnemyLoc(fireBall.getMazePosition()), maze.getGrid());
-            // renderer.renderObject(fireBall);
+            if (fireBall.getMazePosition().equals(nearestEnemyLoc(fireBall.getMazePosition()))) {
+                player.setFireball(false);
+                shot = false;
+                fireBall = null;
+                player_lights[6].setAttenuation(NO_LIGHT);
+            }
+            if (shot) {
+                player_lights[6].setPosition(new Vector3f(fireBall.getPosition().x, fireBall.getPosition().y, 1f));
+                fireBall.move(nearestEnemyLoc(fireBall.getMazePosition()), maze.getGrid());
+                renderer.renderObject(fireBall);
+            }
         }
 
         // correct the location of the player lights
@@ -343,6 +357,7 @@ public class World {
         active_lights[i + 3] = player_lights[3];
         active_lights[i + 4] = player_lights[4];
         active_lights[i + 5] = player_lights[5];
+        active_lights[i + 6] = player_lights[6];
 
         SHADER.setLights( active_lights );
     }
@@ -484,6 +499,9 @@ public class World {
         SHADER.setCamera(camera);
     }
 
+    /**
+    *  Get nearest enemy to attack with fireball
+    */
     private Point nearestEnemyLoc(Point p) {
         Enemy nearest = null;
         float score = Float.MAX_VALUE;
@@ -498,7 +516,6 @@ public class World {
                 score = newScore;
             }
         }
-        System.out.println(nearest.getMazePosition());
         return nearest.getMazePosition();
     }
 

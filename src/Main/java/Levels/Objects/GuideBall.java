@@ -69,7 +69,11 @@ public class GuideBall extends Object3D {
         if (!isMoving()) {
             AStarSolver ass = AStarSolver.getInstance();
             ArrayList<Point> pathToEnd = ass.CalculateShortestPath(mazePosition, endPoint, grid);
-            mazePosition = pathToEnd.get(pathToEnd.size() - 1);
+            if (pathToEnd != null) {
+                mazePosition = pathToEnd.get(pathToEnd.size() - 1);
+            } else {
+                Player.getInstance().setGuide(false);
+            }
         }
         reposition(grid.length);
     }

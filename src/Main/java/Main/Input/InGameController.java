@@ -32,7 +32,7 @@ public class InGameController extends Controller {
     boolean vertical;
 
     // variables used for the drawing canvas
-    private final RunDrawingCanvas drawingCanvas = new RunDrawingCanvas();
+    private final RunDrawingCanvas drawingCanvas = RunDrawingCanvas.getInstance();
     private boolean stopped = false;
 
     private boolean released = true;

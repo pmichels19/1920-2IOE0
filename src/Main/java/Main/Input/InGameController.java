@@ -185,7 +185,7 @@ public class InGameController extends Controller {
         else if (window.buttonClicked(GLFW_KEY_O)) {
             if (castCooldown == 0) {
                 if (released) {
-                    spell = Spell.determineSpell("fireball");
+                    spell = Spell.determineSpell("guide");
                     spell.castSpell(null);
                     released = false;
                     castCooldown = 5;

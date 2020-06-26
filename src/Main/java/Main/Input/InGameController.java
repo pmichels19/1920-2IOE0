@@ -13,6 +13,7 @@ import java.util.List;
 
 import static Graphics.IO.ScreenShot.takeScreenShot;
 import static Levels.Characters.Character.*;
+import static Main.Main.getMaze;
 import static Main.Main.setState;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -23,6 +24,7 @@ public class InGameController extends Controller {
     // inventory cooldown allows for control when switching up/down in the inventory
     private int inventoryCooldown = 0;
     private int castCooldown = 0;
+    private int doorCooldown = 0;
 
     // the variables used for player movement
     int movementCounter = 0;
@@ -42,7 +44,7 @@ public class InGameController extends Controller {
     @Override
     void checkInputs() {
         // if the player died, we need to go into the DEAD state
-        if (player.getHealth() == 0) {
+        if (player.getHealth() <= 0) {
             setState(GameState.DEAD);
             return;
         }
@@ -175,6 +177,10 @@ public class InGameController extends Controller {
             } else {
                 player.turnRight();
             }
+        } else if (window.buttonClicked(GLFW_KEY_SPACE)) {
+            player.setGamePositionX(player.getMazePosition().getY());
+            player.setGamePositionY(player.getMazePosition().getX(), maze.getGrid().length);
+            player.attack(maze, world.getEnemyList());
         } // spell casting
         else if (window.buttonClicked(GLFW_KEY_O)) {
             if (castCooldown == 0) {
@@ -211,7 +217,12 @@ public class InGameController extends Controller {
         if (window.buttonClicked(GLFW_KEY_ENTER)) {
             tryItemCollect();
             if (player.hasKey()) {
-                tryDoorInteraction();
+                if (doorCooldown == 0) {
+                    doorCooldown = 10;
+                    tryDoorInteraction(false);
+                }else{
+                    doorCooldown--;
+                }
             }
         }
     }
@@ -256,7 +267,7 @@ public class InGameController extends Controller {
         }
     }
 
-    public static void tryDoorInteraction() {
+    public static void tryDoorInteraction(boolean casted) {
         // get the grid and the facing tile
         int grid_length = maze.getGrid().length;
         char facing = getFacingTile();
@@ -289,7 +300,10 @@ public class InGameController extends Controller {
         if (door == null || point == null) {
             return;
         }
-        player.useKey( point );
+        // only use a key if the player wanted to unlock the door with a key
+        if (!casted) {
+            player.useKey(point);
+        }
         door.toggle();
     }
 

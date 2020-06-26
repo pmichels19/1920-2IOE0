@@ -1,13 +1,10 @@
 package SpellCasting;
 
 import Levels.Characters.Player;
-
-import static Main.Input.InGameController.tryDoorInteraction;
+import Main.Input.InGameController;
 
 public class SpellUnlock extends Spell {
-
-    private int prevMana;
-    private int manaCost = 10;
+    int manaCost = 10;
 
     public SpellUnlock() {
         super(0);
@@ -16,12 +13,15 @@ public class SpellUnlock extends Spell {
     @Override
     public void castSpell(Object[] args) {
         Player player = Player.getInstance();
-        prevMana = player.getMana();
+        int prevMana = player.getMana();
+
         if (prevMana < manaCost) {
-            System.out.println("Not enough mana");
+            // Not enough mana to cast spell
+            System.out.println("No Mana!");
         } else {
+            // Use mana to cast spell
             player.setMana(prevMana - manaCost);
-            tryDoorInteraction();
+            InGameController.tryDoorInteraction(true);
         }
     }
 

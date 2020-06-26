@@ -92,17 +92,40 @@ public class World {
         resetCameraPosition();
 
         // Initialize enemies
-        int enemyCount = 1;
-        for (int i = 0; i < enemyCount; i++) {
+        for (Point i : maze.enemyLocation) {
             EyeBall eyeball = new EyeBall(100, 100);
-//            eyeball.initializePosition(maze.getGrid().length / enemyCount * i, maze.getGrid().length / enemyCount * i, maze.getGrid().length);
-            // TODO: Set spawn location for enemies in the maze
-            eyeball.initializePosition(1, 1, maze.getGrid().length);
+            eyeball.initializePosition(i.getX(), i.getY(), maze.getGrid().length);
             enemyList.add(eyeball);
         }
 
         createLights();
         createDoors();
+    }
+
+//
+
+    /**
+     * method that fills the {@code doorMap}
+     */
+    private void createDoors() {
+        // loop over the grid to identify where to place lightsources
+        char[][] grid = maze.getGrid();
+        for (int y = 0; y < grid.length; y++) {
+            for (int x = 0; x < grid[y].length; x++) {
+                if ( grid[y][x] == Maze.MARKER_DOOR ) {
+                    doorMap.put(
+                            new Point(x, grid.length - y),
+                            new Door(
+                                    grid[y - 1][x] == Maze.MARKER_WALL && grid[y + 1][x] == Maze.MARKER_WALL,
+                                    x,
+                                    grid.length - y
+                            )
+                    );
+                }
+            }
+        }
+
+        createLights();
     }
 
     /**
@@ -113,11 +136,11 @@ public class World {
         char[][] grid = maze.getGrid();
         for (int y = 0; y < grid.length; y++) {
             for (int x = 0; x < grid[y].length; x++) {
-                if ( Maze.ITEM_MARKERS.contains( grid[y][x] ) ) {
+                if (Maze.ITEM_MARKERS.contains(grid[y][x])) {
                     Point position = new Point(x, grid.length - y);
                     // if no set of lights exists for the current position yet, make one
-                    if ( !lightMap.containsKey( position ) ) {
-                        lightMap.put( position, new HashSet<>() );
+                    if (!lightMap.containsKey(position)) {
+                        lightMap.put(position, new HashSet<>());
                     }
                     Set<Light> toAdd = lightMap.get(position);
                     // add the orb with the desired light color
@@ -135,28 +158,6 @@ public class World {
                                     Item.getColorById(Character.getNumericValue(grid[y][x])),
                                     null,
                                     LIGHT_ATTENUATION
-                            )
-                    );
-                }
-            }
-        }
-    }
-
-    /**
-     * method that fills the {@code doorMap}
-     */
-    private void createDoors() {
-        // loop over the grid to identify where to place lightsources
-        char[][] grid = maze.getGrid();
-        for (int y = 0; y < grid.length; y++) {
-            for (int x = 0; x < grid[y].length; x++) {
-                if ( grid[y][x] == Maze.MARKER_DOOR ) {
-                    doorMap.put(
-                            new Point(x, grid.length - y),
-                            new Door(
-                                    grid[y - 1][x] == Maze.MARKER_WALL && grid[y + 1][x] == Maze.MARKER_WALL,
-                                    x,
-                                    grid.length - y
                             )
                     );
                 }
@@ -185,6 +186,7 @@ public class World {
     private final Set<Point> leftWalls = new HashSet<>();
     private final Set<Point> rightWalls = new HashSet<>();
     private final Set<Point> faceWalls = new HashSet<>();
+    private final Set<Point> doorWalls = new HashSet<>();
     private final Set<Point> ceilings = new HashSet<>();
 
     private final Set<Light> lights = new HashSet<>();
@@ -252,7 +254,12 @@ public class World {
 
                     // we always want to render a ceiling:
                     ceilings.add(position);
-                } else if ( Maze.ITEM_MARKERS.contains( grid[i][j] ) ) {
+                }
+                else if (grid[i][j] == Maze.MARKER_END_WALL) {
+                    doorWalls.add(position);
+                    ceilings.add(position);
+                }
+                else if ( Maze.ITEM_MARKERS.contains( grid[i][j] ) ) {
                     floors.add(position);
                     // if the maze entry contains an item, then there should be a set of light objects for it
                     if (lightMap.containsKey(position)) {
@@ -393,6 +400,11 @@ public class World {
             renderer.renderTile(Wall.BRICKWALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES);
         }
 
+        for (Point point : doorWalls) {
+            renderer.addNormalMap(Wall.DOORWALL_NORMAL.getTexture());
+            renderer.renderTile(Wall.DOORWALL.getTexture(), point.getX(), point.getY(), TileRenderer.FACES);
+        }
+
         for (Door door : doors) {
             if (door.isVertical()) {
                 float y_door = door.getY() - (1f - (((float) door.getOffset()) / ((float) Door.getToggleFrames())));
@@ -402,12 +414,28 @@ public class World {
 
         // Render enemies
         for (Enemy enemy : enemyList) {
+            // Check if enemy is dead
+            if (enemy.getHealth() <= 0) {
+                enemyList.remove(enemy);
+                maze.getGrid()[enemy.getMazePosition().getX()][enemy.getMazePosition().getY()] = Maze.MARKER_SPACE;
+                break;
+            }
             enemy.move(maze.getPlayerLocation(), maze.getGrid());
             renderer.renderCharacter(enemy);
         }
 
+
+        // Update players maze location so the player object knows where it is
+        player.setMazePosition(maze.getPlayerLocation());
         // Render player
-        player.setGamePositionAndRotate(xPlayer, yPlayer, maze.getGrid().length);
+        if (player.getState() == Player.NORMAL_STATE) {
+            // if player is in normal state move normally
+            player.setGamePositionAndRotate(xPlayer, yPlayer, maze.getGrid().length);
+        } else {
+            // if player is still attacking or returning from a attack handle the corresponding move
+            player.moveAttacking(maze.getGrid().length);
+        }
+
         renderer.renderCharacter(player);
 
         for (Light light : lights) {
@@ -519,9 +547,13 @@ public class World {
         return nearest.getMazePosition();
     }
 
-    public List<Enemy> getEnemyList() {
-        return this.enemyList;
+    public ArrayList<Enemy> getEnemyList() {
+        return enemyList;
     }
+
+//    public List<Enemy> getEnemyList() {
+//        return this.enemyList;
+//    }
 
     public Light[] getLights() {
         return this.player_lights;

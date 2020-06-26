@@ -21,8 +21,14 @@ public enum Wall {
     BRICKWALL (
             "src/Main/java/Textures/Wall/brickwall.jpg"
     ),
+    DOORWALL (
+            "src/Main/java/Textures/Wall/doorwall.jpg"
+    ),
     BRICKWALL_NORMAL (
             "src/Main/java/Textures/Wall/brickwall_normal.jpg"
+    ),
+    DOORWALL_NORMAL (
+            "src/Main/java/Textures/Wall/doorwall_normal.jpg"
     );
 
     private final Texture texture;

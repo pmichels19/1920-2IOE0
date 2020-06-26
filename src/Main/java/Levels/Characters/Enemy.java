@@ -19,7 +19,7 @@ public abstract class Enemy extends Character {
     private Point randomLocation = null;
 
     // The distance that an enemy should be from the player to move towards the player
-    private int detectionDistance = 10;
+    private int detectionDistance = 15;
 
     // Random location grid size (should be an even number)
     private final int randomPathDistance = 16;

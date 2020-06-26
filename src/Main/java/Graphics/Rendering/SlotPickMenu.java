@@ -15,7 +15,7 @@ public abstract class SlotPickMenu extends FlatRender {
         transform.setScale( new Vector3f( 0.8f, 0.25f, 1 ) );
         transform.setPosition( new Vector3f( -1, 0.35f - 0.5f * selected, 0 ) );
         renderer.setTransform(transform);
-        renderer.renderTile( GUIElements.BACKGROUND.getTexture(), 0.2f, 0, TileRenderer.FLOOR );
+        renderer.renderTile( GUIElements.BACKGROUND.getTexture(), 0.2f, 0, TileRenderer.FLAT );
 
         // set the scale for rendering the text
         transform.setScale( new Vector3f( 0.03f * 1080f / 1920f, 0.03f, 1 ) );
@@ -32,7 +32,7 @@ public abstract class SlotPickMenu extends FlatRender {
         transform.setScale( new Vector3f( 0.2f, 0.2f, 1 ) );
         transform.setPosition( new Vector3f( -0.2f, 0.35f - 0.5f * selected, 0 ) );
         renderer.setTransform(transform);
-        renderer.renderTile( texture, 0, 0, TileRenderer.FLOOR );
+        renderer.renderTile( texture, 0, 0, TileRenderer.FLAT );
     }
 
     /**

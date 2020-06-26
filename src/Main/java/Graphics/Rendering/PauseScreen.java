@@ -16,7 +16,7 @@ public class PauseScreen extends FlatRender {
         transform.setScale( new Vector3f( 0.65f, 0.1f, 1 ) );
         transform.setPosition( new Vector3f( 0, 0.25f - (0.25f * selected), 0 ) );
         renderer.setTransform(transform);
-        renderer.renderTile(GUIElements.BACKGROUND.getTexture(), 0, 0, TileRenderer.FLOOR);
+        renderer.renderTile(GUIElements.BACKGROUND.getTexture(), 0, 0, TileRenderer.FLAT);
 
         // render the text of the pause screen
         transform.setScale(new Vector3f(0.1f * 1080f / 1920f, 0.1f, 1));

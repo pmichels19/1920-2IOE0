@@ -40,6 +40,7 @@ public class FireBall extends Object3D {
             e.printStackTrace();
         }
         setScale(1f);
+
         super.setModel(model);
     }
 

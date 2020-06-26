@@ -120,6 +120,7 @@ public class Player extends Character {
 
                 // Instantiate the player
                 player = new Player(100, 100, 12, model);
+                player.setScale(1f);
             } catch (IOException e) {
                 e.printStackTrace();
             }

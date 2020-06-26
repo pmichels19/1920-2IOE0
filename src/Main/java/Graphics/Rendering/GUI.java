@@ -38,22 +38,22 @@ public class GUI extends FlatRender {
         // first we render the max health bar
         transform.setScale( new Vector3f( 0.19f * maxHealthPercent, 0.04f, 1 ) );
         renderer.setTransform(transform);
-        renderer.renderTile( GUIElements.MISSING_HEALTH.getTexture(), 0.5f, -1.75f, TileRenderer.FLOOR );
+        renderer.renderTile( GUIElements.MISSING_HEALTH.getTexture(), 0.5f, -1.75f, TileRenderer.FLAT );
 
         // then the current health bar
         transform.setScale( new Vector3f( 0.19f * healthPercent, 0.04f, 1 ) );
         renderer.setTransform(transform);
-        renderer.renderTile( GUIElements.HEALTH.getTexture(), 0.5f, -1.75f, TileRenderer.FLOOR );
+        renderer.renderTile( GUIElements.HEALTH.getTexture(), 0.5f, -1.75f, TileRenderer.FLAT );
 
         // then the max mana bar
         transform.setScale( new Vector3f( 0.19f * maxManaPercent, 0.04f, 1 ) );
         renderer.setTransform(transform);
-        renderer.renderTile( GUIElements.MISSING_MANA.getTexture(), 0.5f, -0.5f, TileRenderer.FLOOR );
+        renderer.renderTile( GUIElements.MISSING_MANA.getTexture(), 0.5f, -0.5f, TileRenderer.FLAT );
 
         // and finally the current mana bar
         transform.setScale( new Vector3f( 0.19f * manaPercent, 0.04f, 1 ) );
         renderer.setTransform(transform);
-        renderer.renderTile( GUIElements.MANA.getTexture(), 0.5f, -0.5f, TileRenderer.FLOOR );
+        renderer.renderTile( GUIElements.MANA.getTexture(), 0.5f, -0.5f, TileRenderer.FLAT );
     }
 
     private void renderInventory() {
@@ -64,14 +64,14 @@ public class GUI extends FlatRender {
         transform.setScale( new Vector3f(0.17f, 0.1f, 1) );
         transform.setPosition( new Vector3f( 1, (2f / 3f) - ((1f / 3f) * player.getSelectedItem()), 0 ) );
         renderer.setTransform( transform );
-        renderer.renderTile( GUIElements.BACKGROUND.getTexture(), 0, 0, TileRenderer.FLOOR );
+        renderer.renderTile( GUIElements.BACKGROUND.getTexture(), 0, 0, TileRenderer.FLAT );
 
         // loop over all the inventory slots and render them
         for (int i = 0; i < inventory.length; i++) {
             transform.setScale( new Vector3f(0.09f * (1080f/1920f), 0.09f, 1 ) );
             transform.setPosition(new Vector3f(1, (2f - i) / 3f, 0));
             renderer.setTransform(transform);
-            renderer.renderTile(GUIElements.ITEM_BACKGROUND.getTexture(), -1, 0, TileRenderer.FLOOR);
+            renderer.renderTile(GUIElements.ITEM_BACKGROUND.getTexture(), -1, 0, TileRenderer.FLAT);
 
             // draw the items
             transform.setScale( new Vector3f(0.08f * (1080f/1920f), 0.08f, 1 ) );
@@ -80,7 +80,7 @@ public class GUI extends FlatRender {
                     inventory[i] == null ? GUIElements.ITEM_BACKGROUND.getTexture() : inventory[i].getTexture(),
                     -(0.09f/0.08f),
                     0,
-                    TileRenderer.FLOOR
+                    TileRenderer.FLAT
             );
         }
     }

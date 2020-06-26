@@ -33,7 +33,7 @@ public abstract class Object3D {
 
     public Object3D(OBJModel model) {
         this.model = model;
-        position = new Vector3f(0, 0f, 1.5f);
+        position = new Vector3f(0, 0f, 2f);
         scale = 1f;
         rotationAngle = (float) ((-90f * Math.PI) / 180.0f);
         rotation = new Vector3f(0f, 0f, 1f);

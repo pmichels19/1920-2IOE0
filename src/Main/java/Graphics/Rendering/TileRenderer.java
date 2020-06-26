@@ -10,6 +10,8 @@ import Levels.Framework.joml.Matrix4f;
 import Levels.Framework.joml.Vector3f;
 import Levels.Objects.Object3D;
 
+import static org.lwjgl.opengl.GL11.*;
+
 public class TileRenderer {
 
     // variables to make sure the render ends up in the right position
@@ -28,6 +30,7 @@ public class TileRenderer {
     public static final int FLOOR = 2;
     public static final int FACES = 3;
     public static final int LEFTS = 4;
+    public static final int FLAT = 5;
 
     /**
      * Sets up a new TileRenderer object, instantiating the basic model
@@ -87,7 +90,7 @@ public class TileRenderer {
      * @param model   the model to render based on assignments above
      */
     public void renderTile(Texture texture, float x, float y, int model) {
-        if (model < CEILS || model > LEFTS) {
+        if (model < CEILS || model > FLAT) {
             throw new IllegalArgumentException("model specified does not exist");
         }
 
@@ -98,7 +101,7 @@ public class TileRenderer {
         Matrix4f tilePosition = new Matrix4f().translate(new Vector3f(x * 2f, y * 2f, 0));
 
         // set the shader uniforms, so the proper position and texture is used
-        shader.setUniform("tilePosition", tilePosition );
+        shader.setUniform("tilePosition", tilePosition);
         shader.setUniform("diffuseMap", 0);
         shader.setUniform("normalMapping", 0);
 
@@ -113,17 +116,28 @@ public class TileRenderer {
             normalMapping = false;
         }
 
+        // enable depth test for side walls
+        if ( model != FLAT) {
+            glEnable(GL_DEPTH_TEST);
+        }
         // and finally render the selected model
         Model.getModels()[model].render();
+
+
+         // reset depth test for side walls
+        if ( model != FLAT) {
+            glDisable(GL_DEPTH_TEST);
+        }
+
     }
 
 
     /**
      * Renders a character using the same shader as the maze
      *
-     * @param character   the character to render based on assignments above
+     * @param character the character to render based on assignments above
      */
-    public void renderCharacter( Character character) {
+    public void renderCharacter(Character character) {
         // bind the shader
         shader.bind();
 
@@ -138,7 +152,7 @@ public class TileRenderer {
     /**
      * Renders a character using the same shader as the maze
      *
-     * @param object   the character to render based on assignments above
+     * @param object the character to render based on assignments above
      */
     public void renderObject(Object3D object) {
         // bind the shader

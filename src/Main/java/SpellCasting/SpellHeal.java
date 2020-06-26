@@ -22,7 +22,11 @@ public class SpellHeal extends Spell {
         } else {
             player.setMana(prevMana - manaCost);
             int prevHP = player.getHealth();
-            player.setHealth(prevHP + lifeRestore);
+            if (prevHP + lifeRestore > player.getMaxHealth()) {
+                player.setHealth(player.getMaxHealth());
+            } else {
+                player.setHealth(prevHP + lifeRestore);
+            }
         }
     }
 

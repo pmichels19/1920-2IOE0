@@ -101,7 +101,7 @@ public class AStarSolver {
         // Go over all neighbouring grid points
         for (int rowNum = startPosX; rowNum <= endPosX; rowNum++) {
             for (int colNum = startPosY; colNum <= endPosY; colNum++) {
-                if (grid[rowNum][colNum] != Maze.MARKER_WALL) { // Check if point is not a wall
+                if (grid[rowNum][colNum] != Maze.MARKER_WALL && grid[rowNum][colNum] != Maze.MARKER_DOOR  && grid[rowNum][colNum] != Maze.MARKER_END_WALL) { // Check if point is not a wall
                     AStarPoint successor = new AStarPoint();
                     successor.parent = q;
                     successor.x = rowNum;

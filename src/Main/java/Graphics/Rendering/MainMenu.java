@@ -32,7 +32,7 @@ public class MainMenu extends FlatRender {
         transform.setPosition( new Vector3f( 0.5f, 0.5f, 0 ) );
         transform.setScale( new Vector3f( 0.18f, 0.1f, 1 ) );
         renderer.setTransform(transform);
-        renderer.renderTile( GUIElements.BACKGROUND.getTexture(), 0, 0, TileRenderer.FLOOR );
+        renderer.renderTile( GUIElements.BACKGROUND.getTexture(), 0, 0, TileRenderer.FLAT );
 
         transform.setScale( new Vector3f( 0.06f * 1080f/1920f, 0.06f, 1 ) );
         renderer.setTransform(transform);
@@ -47,7 +47,7 @@ public class MainMenu extends FlatRender {
         transform.setScale( new Vector3f( 0.5f, 0.1f, 1 ) );
         transform.setPosition( new Vector3f( -1, 0.5f - (selected * 0.25f), 0 ) );
         renderer.setTransform(transform);
-        renderer.renderTile( GUIElements.BACKGROUND.getTexture(), 0.3f, 0, TileRenderer.FLOOR );
+        renderer.renderTile( GUIElements.BACKGROUND.getTexture(), 0.3f, 0, TileRenderer.FLAT );
 
         transform.setScale( new Vector3f( 0.06f * 1080f/1920f, 0.06f, 1 ) );
 

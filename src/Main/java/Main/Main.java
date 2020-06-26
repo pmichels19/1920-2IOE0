@@ -88,7 +88,7 @@ public class Main {
         victoryScreen = new VictoryScreen();
 
         // drawing canvas
-        RunDrawingCanvas drawingCanvas = new RunDrawingCanvas();
+        RunDrawingCanvas drawingCanvas = RunDrawingCanvas.getInstance();
 
         // and initialize the controller for input checking
         MainController mainController = new MainController(maze, world, window);

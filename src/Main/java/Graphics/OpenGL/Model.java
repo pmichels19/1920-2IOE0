@@ -57,6 +57,12 @@ public class Model {
                             new float[] { -1, -1, 0,      -1, 1, 0,       -1, 1, 2,       -1, -1, 2 },
                             textures,
                             new float[] { -1, 0, 0,       -1, 0, 0,       -1, 0, 0,       -1, 0, 0 }
+                    ),
+                   // the bottom of a cube
+                    new Model(
+                            new float[] { 1, -1, 0.5f,       -1, -1, 0.5f,      -1, 1, 0.5f,       1, 1, 0.5f },
+                            textures,
+                            new float[] {0, 0, 1,         0, 0, 1,        0, 0, 1,        0, 0, 1 }
                     )
             };
         }

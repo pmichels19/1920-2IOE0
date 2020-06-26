@@ -22,7 +22,7 @@ public class DeathScreen extends FlatRender {
         transform.setScale( new Vector3f( 0.85f, 0.125f, 1  ) );
         transform.setPosition( new Vector3f( 0, 0.25f - selected * 0.25f, 0 ) );
         renderer.setTransform( transform );
-        renderer.renderTile(GUIElements.BACKGROUND.getTexture(), 0, 0, TileRenderer.FLOOR);
+        renderer.renderTile(GUIElements.BACKGROUND.getTexture(), 0, 0, TileRenderer.FLAT);
 
         // render the options in the death screen
         transform.setScale( new Vector3f( 0.06f * 1080f / 1920f, 0.06f, 1  ) );

@@ -32,7 +32,7 @@ public class InGameController extends Controller {
     boolean vertical;
 
     // variables used for the drawing canvas
-    private final RunDrawingCanvas drawingCanvas = new RunDrawingCanvas();
+    private final RunDrawingCanvas drawingCanvas = RunDrawingCanvas.getInstance();
     private boolean stopped = false;
 
     private boolean released = true;
@@ -185,10 +185,10 @@ public class InGameController extends Controller {
         else if (window.buttonClicked(GLFW_KEY_O)) {
             if (castCooldown == 0) {
                 if (released) {
-                    spell = Spell.determineSpell("guide");
-                    spell.castSpell(new Object[]{maze});
+                    spell = Spell.determineSpell("fireball");
+                    spell.castSpell(null);
                     released = false;
-                    castCooldown = 20;
+                    castCooldown = 5;
                 }
             } else {
                 if (castCooldown > 0) {
@@ -199,9 +199,9 @@ public class InGameController extends Controller {
         } else if (window.buttonClicked(GLFW_KEY_P)) {
             if (castCooldown == 0) {
                 if (released) {
-                    Spell spell = Spell.determineSpell("beast");
+                    Spell spell = Spell.determineSpell("summon");
                     activeSpells.add(spell);
-                    spell.castSpell(new Object[]{maze});
+                    spell.castSpell(null);
                     released = false;
                     castCooldown = 20;
                 }

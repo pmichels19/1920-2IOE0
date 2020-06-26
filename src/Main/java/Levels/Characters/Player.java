@@ -44,6 +44,8 @@ public class Player extends Character {
     Vector3f currentAttenuation = STANDARD_ATTENUATION;
 
     private boolean hasGuide = false;
+    private boolean hasShield = false;
+    private boolean shotFireball = false;
     private int invisiblility = 0;
 
     // a list of items the player has collected so far
@@ -118,6 +120,8 @@ public class Player extends Character {
 
                 // Instantiate the player
                 player = new Player(100, 100, 12, model);
+                player.setPosition( new Vector3f(0, 0f, 0.1f));
+                player.setScale(1.1f);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -286,7 +290,11 @@ public class Player extends Character {
         switch (inventory[selectedItem].getId()) {
             case Item.H_POTION:
                 // if a health potion is used, add 25 health to the current health
-                setHealth(getHealth() + 25);
+                if (getHealth() + 25 > getMaxHealth()) {
+                    setHealth(getMaxHealth());
+                } else {
+                    setHealth(getHealth() + 25);
+                }
                 tossItem(slot);
                 break;
             case Item.M_POTION:
@@ -297,7 +305,11 @@ public class Player extends Character {
             case Item.HEART:
                 // if a heart is used, increase the max health and current health by 25
                 setMaxHealth(getMaxHealth() + 25);
-                setHealth(getHealth() + 25);
+                if (getHealth() + 25 > getMaxHealth()) {
+                    setHealth(getMaxHealth());
+                } else {
+                    setHealth(getHealth() + 25);
+                }
                 tossItem(slot);
                 break;
             case Item.MANA:
@@ -323,8 +335,16 @@ public class Player extends Character {
         return hasGuide;
     }
 
+    public boolean fireballShot() {
+        return shotFireball;
+    }
+
     public void setGuide(boolean guide) {
         this.hasGuide = guide;
+    }
+
+    public void setFireball(boolean shot) {
+        this.shotFireball = shot;
     }
 
     public void setAgilityPower(double agilityPower) {
@@ -350,6 +370,15 @@ public class Player extends Character {
     public int getInvisibility() {
         return this.invisiblility;
     }
+
+    public boolean hasShield() {
+        return hasShield;
+    }
+
+    public void setShield(boolean shield) {
+        this.hasShield = shield;
+    }
+
 
     /**
      * Method that lets the player attack an enemy that is next to the player

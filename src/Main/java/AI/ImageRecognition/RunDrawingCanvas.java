@@ -8,6 +8,7 @@ import Levels.Assets.Tiles.GUIElements;
 import Levels.Framework.joml.Vector3f;
 
 public class RunDrawingCanvas {
+    private static RunDrawingCanvas instance;
 
     private DrawingCanvas canvas;
     private boolean running = false;
@@ -19,7 +20,14 @@ public class RunDrawingCanvas {
     private Transform transform;
     private TileRenderer renderer;
 
-    public RunDrawingCanvas() {
+    public static  RunDrawingCanvas getInstance(){
+        if (instance == null) {
+            instance = new RunDrawingCanvas();
+        }
+        return instance;
+    }
+
+    private RunDrawingCanvas() {
         // rendering
         canvasTextureLoc = new Vector3f(-1124f / 1920f, -687f / 1080f, 0f);
         shader = new Shader("flatShader");

@@ -13,10 +13,7 @@ import Levels.Characters.Player;
 import Levels.Framework.Maze;
 import Levels.Framework.Point;
 import Levels.Framework.joml.Vector3f;
-import Levels.Objects.Door;
-import Levels.Objects.GuideBall;
-import Levels.Objects.MagicBall;
-import Levels.Objects.Object3D;
+import Levels.Objects.*;
 
 import java.util.*;
 
@@ -51,6 +48,7 @@ public class World {
             new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, LIGHT_ATTENUATION),
 
             new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, NO_LIGHT),
+            new Light(new Vector3f(), new Vector3f(1f, 1f, 1f), null, NO_LIGHT),
     };
 
     // variables to keep track of the player location in the world
@@ -61,6 +59,8 @@ public class World {
 
     private GuideBall guide;
     private boolean reset = true;
+    private FireBall fireBall;
+    private boolean shot = false;
 
     // List that holds the enemies
     private final ArrayList<Enemy> enemyList = new ArrayList<>();
@@ -291,7 +291,6 @@ public class World {
 
         if(player.hasGuide()) {
             if (guide == null || guide.isNew) {
-                System.out.println("INIT/.....");
                 guide = new GuideBall();
                 guide.setPosition(new Vector3f(maze.playerLocation.getX(), maze.playerLocation.getY(), 3f));
                 guide.setColor(new Vector3f(.7f, .7f, .7f));
@@ -325,6 +324,49 @@ public class World {
             }
         }
 
+        if (player.fireballShot()) {
+            if (!enemyList.isEmpty()) {
+                if (fireBall == null) {
+                    fireBall = new FireBall();
+                    fireBall.setPosition(new Vector3f(maze.playerLocation.getX(), maze.playerLocation.getY(), 3f));
+                    fireBall.setColor(new Vector3f(1f, .75f, .0f));
+                    fireBall.initializePosition(maze.playerLocation.getX(), maze.playerLocation.getY(), maze.getGrid().length);
+                    player_lights[6].setAttenuation(LIGHT_ATTENUATION);
+                    shot = true;
+                }
+                Point enemyPos = nearestEnemyLoc(fireBall.getMazePosition());
+                float xPart = enemyPos.getX() - player.getMazePosition().getX();
+                float yPart = enemyPos.getY() - player.getMazePosition().getY();
+                if (xPart * xPart + yPart * yPart < 49) {
+                    if (fireBall.getMazePosition().equals(enemyPos)) {
+                        for (Enemy e : enemyList) {
+                            if (e.getMazePosition().equals(enemyPos)) {
+                                e.damage(50);
+                            }
+                        }
+                        player.setFireball(false);
+                        shot = false;
+                        fireBall = null;
+                        player_lights[6].setAttenuation(NO_LIGHT);
+                    }
+                    if (shot) {
+                        player_lights[6].setPosition(new Vector3f(fireBall.getPosition().x, fireBall.getPosition().y, 1f));
+                        fireBall.move(enemyPos, maze.getGrid());
+                        renderer.renderObject(fireBall);
+                    }
+                } else {
+                    player.setFireball(false);
+                    shot = false;
+                    fireBall = null;
+                    player_lights[6].setAttenuation(NO_LIGHT);
+                    player.setMana(player.getMana() + 10);
+                }
+            } else {
+                player.setMana(player.getMana() + 10);
+                player.setFireball(false);
+            }
+        }
+
         // correct the location of the player lights
         player_lights[0].setPosition(new Vector3f(player.getPosition().x, player.getPosition().y, 1f));
         player_lights[0].setAttenuation(player.getCurrentAttenuation());
@@ -343,6 +385,7 @@ public class World {
         active_lights[i + 3] = player_lights[3];
         active_lights[i + 4] = player_lights[4];
         active_lights[i + 5] = player_lights[5];
+        active_lights[i + 6] = player_lights[6];
 
         SHADER.setLights( active_lights );
     }
@@ -503,6 +546,26 @@ public class World {
 
         // adjust the camera for the shader, so it actually has an effect on the position of the render
         SHADER.setCamera(camera);
+    }
+
+    /**
+    *  Get nearest enemy to attack with fireball
+    */
+    private Point nearestEnemyLoc(Point p) {
+        Enemy nearest = null;
+        float score = Float.MAX_VALUE;
+        int px = p.getX();
+        int py = p.getY();
+        for (Enemy e : this.enemyList) {
+            int x = e.getMazePosition().getX();
+            int y = e.getMazePosition().getY();
+            float newScore = (x - px) * (x - px) + (y - py) * (y - py);
+            if (newScore < score) {
+                nearest = e;
+                score = newScore;
+            }
+        }
+        return nearest.getMazePosition();
     }
 
     public ArrayList<Enemy> getEnemyList() {

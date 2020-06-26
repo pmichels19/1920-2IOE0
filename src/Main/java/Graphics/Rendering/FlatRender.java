@@ -97,6 +97,7 @@ public abstract class FlatRender {
      * @param white whether the text is to be white or black
      */
     void renderString(String toRender, boolean white) {
+
         // we check if toRender has an even length as this would impact where the center of the text is
         boolean evenLength = toRender.length() % 2 == 0;
         // we calculate the middle of the text
@@ -115,7 +116,7 @@ public abstract class FlatRender {
                     // if toRender has even length, we want to displace by an additional half
                     evenLength ? i - mid + 0.5f : i - mid,
                     0,
-                    TileRenderer.FLOOR);
+                    TileRenderer.FLAT);
         }
     }
 
@@ -147,7 +148,7 @@ public abstract class FlatRender {
                     // if toRender has even length, we want to displace by an additional half
                     (evenLength ? i - mid + 0.5f : i - mid) + x,
                     y,
-                    TileRenderer.FLOOR);
+                    TileRenderer.FLAT);
         }
     }
 }

@@ -40,7 +40,7 @@ public class DrawingCanvas extends JFrame implements Runnable {
     private ArrayList<Point> current = new ArrayList<>();
 
     // canvas background color
-    private Color canvasColor = new Color(255, 0, 0);
+    private Color canvasColor = new Color(199, 189, 167);
 
     // exit call
     private volatile boolean exit = false;
@@ -110,12 +110,10 @@ public class DrawingCanvas extends JFrame implements Runnable {
         canvasColor = Color.WHITE;
         canvas.paintComponent(im.getGraphics());
         // revert to old color
-        canvasColor = new Color(255, 0, 0);
+        canvasColor = new Color(199, 189, 167);
 
         String tempPath = Paths.get("").toAbsolutePath().toString() + "\\" + "spell.jpg";
         ImageIO.write(im, "jpg", new File(tempPath));
-
-        System.out.println(tempPath);
 
         return tempPath;
     }
@@ -154,9 +152,9 @@ public class DrawingCanvas extends JFrame implements Runnable {
                 }
             }
             // don't render text when saving image
-            if (canvasColor != Color.WHITE) {
+            if (canvasColor != Color.BLACK) {
                 // drawing canvas usage text (may be placed in canvas border texture later)
-                g.setColor(Color.WHITE);
+                g.setColor(Color.BLACK);
                 g.setFont(new Font("DialogInput", Font.PLAIN, 20));
                 g.drawString("\'E\' to cast spell, \'Q\' to clear drawing", 5, 20);
             }
@@ -295,7 +293,7 @@ public class DrawingCanvas extends JFrame implements Runnable {
                         String[] tempData = googleConfig.predict(saveGridAsImage());
                         imageClass.setText(defaultLabel + tempData[0] + ", " + tempData[1]);
                         Spell cast = Spell.determineSpell(tempData[0]);
-                        cast.castSpell(new Object[] {tempData[1]});
+                        cast.castSpell(null);
                     } catch (Exception ex) {
                         System.out.println(ex);
                     }
@@ -307,6 +305,9 @@ public class DrawingCanvas extends JFrame implements Runnable {
                     resetGrid();
                     repaint();
                     released = false;
+                } else if (e.getKeyChar() == 'l') {
+                    released = false;
+                    stop();
                 }
             }
         }

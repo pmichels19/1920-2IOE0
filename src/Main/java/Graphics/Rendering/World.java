@@ -13,10 +13,7 @@ import Levels.Characters.Player;
 import Levels.Framework.Maze;
 import Levels.Framework.Point;
 import Levels.Framework.joml.Vector3f;
-import Levels.Objects.Door;
-import Levels.Objects.GuideBall;
-import Levels.Objects.MagicBall;
-import Levels.Objects.Object3D;
+import Levels.Objects.*;
 
 import java.util.*;
 
@@ -61,6 +58,7 @@ public class World {
 
     private GuideBall guide;
     private boolean reset = true;
+    private FireBall fireBall;
 
     // List that holds the enemies
     private final ArrayList<Enemy> enemyList = new ArrayList<>();
@@ -284,7 +282,6 @@ public class World {
 
         if(player.hasGuide()) {
             if (guide == null || guide.isNew) {
-                System.out.println("INIT/.....");
                 guide = new GuideBall();
                 guide.setPosition(new Vector3f(maze.playerLocation.getX(), maze.playerLocation.getY(), 3f));
                 guide.setColor(new Vector3f(.7f, .7f, .7f));
@@ -316,6 +313,16 @@ public class World {
                     }, 2 * 1000);
                 }
             }
+        }
+
+        if (player.fireballShot()) {
+            if (fireBall == null) {
+                fireBall = new FireBall();
+                fireBall.setPosition(new Vector3f(maze.playerLocation.getX(), maze.playerLocation.getY(), 3f));
+                fireBall.initializePosition(maze.playerLocation.getX(), maze.playerLocation.getY(), maze.getGrid().length);
+            }
+            fireBall.move(nearestEnemyLoc(fireBall.getMazePosition()), maze.getGrid());
+            // renderer.renderObject(fireBall);
         }
 
         // correct the location of the player lights
@@ -475,6 +482,24 @@ public class World {
 
         // adjust the camera for the shader, so it actually has an effect on the position of the render
         SHADER.setCamera(camera);
+    }
+
+    private Point nearestEnemyLoc(Point p) {
+        Enemy nearest = null;
+        float score = Float.MAX_VALUE;
+        int px = p.getX();
+        int py = p.getY();
+        for (Enemy e : this.enemyList) {
+            int x = e.getMazePosition().getX();
+            int y = e.getMazePosition().getY();
+            float newScore = (x - px) * (x - px) + (y - py) * (y - py);
+            if (newScore < score) {
+                nearest = e;
+                score = newScore;
+            }
+        }
+        System.out.println(nearest.getMazePosition());
+        return nearest.getMazePosition();
     }
 
     public List<Enemy> getEnemyList() {

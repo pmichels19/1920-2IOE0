@@ -1,12 +1,11 @@
 package SpellCasting;
 
 import Levels.Characters.Player;
-import Levels.Framework.joml.Vector3f;
 
 public class SpellFireball extends Spell {
 
-    Vector3f loc;
-    int dir;
+    private int prevMana;
+    private int manaCost = 10;
 
     public SpellFireball() {
         super(0);
@@ -15,9 +14,13 @@ public class SpellFireball extends Spell {
     @Override
     public void castSpell(Object[] args) {
         Player player = Player.getInstance();
-        loc = player.getPosition();
-        dir = player.getDirection();
-        System.out.println(loc + ", " + dir);
+        prevMana = player.getMana();
+        if (prevMana < manaCost) {
+            System.out.println("Not enough mana!");
+        } else {
+            player.setMana(prevMana - manaCost);
+            player.setFireball(true);
+        }
     }
 
     @Override

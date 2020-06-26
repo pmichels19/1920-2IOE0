@@ -115,8 +115,6 @@ public class DrawingCanvas extends JFrame implements Runnable {
         String tempPath = Paths.get("").toAbsolutePath().toString() + "\\" + "spell.jpg";
         ImageIO.write(im, "jpg", new File(tempPath));
 
-        System.out.println(tempPath);
-
         return tempPath;
     }
 
@@ -295,7 +293,7 @@ public class DrawingCanvas extends JFrame implements Runnable {
                         String[] tempData = googleConfig.predict(saveGridAsImage());
                         imageClass.setText(defaultLabel + tempData[0] + ", " + tempData[1]);
                         Spell cast = Spell.determineSpell(tempData[0]);
-                        cast.castSpell(new Object[] {tempData[1]});
+                        cast.castSpell(null);
                     } catch (Exception ex) {
                         System.out.println(ex);
                     }
@@ -307,6 +305,9 @@ public class DrawingCanvas extends JFrame implements Runnable {
                     resetGrid();
                     repaint();
                     released = false;
+                } else if (e.getKeyChar() == 'l') {
+                    released = false;
+                    stop();
                 }
             }
         }

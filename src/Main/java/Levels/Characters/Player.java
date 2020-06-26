@@ -32,6 +32,7 @@ public class Player extends Character {
 
     private boolean hasGuide = false;
     private boolean hasShield = false;
+    private boolean shotFireball = false;
     private int invisiblility = 0;
 
     // a list of items the player has collected so far
@@ -282,8 +283,16 @@ public class Player extends Character {
         return hasGuide;
     }
 
+    public boolean fireballShot() {
+        return shotFireball;
+    }
+
     public void setGuide(boolean guide) {
         this.hasGuide = guide;
+    }
+
+    public void setFireball(boolean shot) {
+        this.shotFireball = shot;
     }
 
     public void setAgilityPower(double agilityPower) {

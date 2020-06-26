@@ -68,7 +68,6 @@ public abstract class Spell {
                 ret = new SpellEmpty();
                 break;
         }
-        System.out.println(ret.getClass().getName());
         return ret;
     }
 

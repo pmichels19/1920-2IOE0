@@ -17,7 +17,7 @@ public class SpellFireball extends Spell {
         prevMana = player.getMana();
         if (prevMana < manaCost) {
             System.out.println("Not enough mana!");
-        } else {
+        } else if (!player.fireballShot()) {
             player.setMana(prevMana - manaCost);
             player.setFireball(true);
         }

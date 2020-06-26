@@ -325,24 +325,45 @@ public class World {
         }
 
         if (player.fireballShot()) {
-            if (fireBall == null) {
-                fireBall = new FireBall();
-                fireBall.setPosition(new Vector3f(maze.playerLocation.getX(), maze.playerLocation.getY(), 3f));
-                fireBall.setColor(new Vector3f(1f, .75f, .0f));
-                fireBall.initializePosition(maze.playerLocation.getX(), maze.playerLocation.getY(), maze.getGrid().length);
-                player_lights[6].setAttenuation(LIGHT_ATTENUATION);
-                shot = true;
-            }
-            if (fireBall.getMazePosition().equals(nearestEnemyLoc(fireBall.getMazePosition()))) {
+            if (!enemyList.isEmpty()) {
+                if (fireBall == null) {
+                    fireBall = new FireBall();
+                    fireBall.setPosition(new Vector3f(maze.playerLocation.getX(), maze.playerLocation.getY(), 3f));
+                    fireBall.setColor(new Vector3f(1f, .75f, .0f));
+                    fireBall.initializePosition(maze.playerLocation.getX(), maze.playerLocation.getY(), maze.getGrid().length);
+                    player_lights[6].setAttenuation(LIGHT_ATTENUATION);
+                    shot = true;
+                }
+                Point enemyPos = nearestEnemyLoc(fireBall.getMazePosition());
+                float xPart = enemyPos.getX() - player.getMazePosition().getX();
+                float yPart = enemyPos.getY() - player.getMazePosition().getY();
+                if (xPart * xPart + yPart * yPart < 49) {
+                    if (fireBall.getMazePosition().equals(enemyPos)) {
+                        for (Enemy e : enemyList) {
+                            if (e.getMazePosition().equals(enemyPos)) {
+                                e.damage(50);
+                            }
+                        }
+                        player.setFireball(false);
+                        shot = false;
+                        fireBall = null;
+                        player_lights[6].setAttenuation(NO_LIGHT);
+                    }
+                    if (shot) {
+                        player_lights[6].setPosition(new Vector3f(fireBall.getPosition().x, fireBall.getPosition().y, 1f));
+                        fireBall.move(enemyPos, maze.getGrid());
+                        renderer.renderObject(fireBall);
+                    }
+                } else {
+                    player.setFireball(false);
+                    shot = false;
+                    fireBall = null;
+                    player_lights[6].setAttenuation(NO_LIGHT);
+                    player.setMana(player.getMana() + 10);
+                }
+            } else {
+                player.setMana(player.getMana() + 10);
                 player.setFireball(false);
-                shot = false;
-                fireBall = null;
-                player_lights[6].setAttenuation(NO_LIGHT);
-            }
-            if (shot) {
-                player_lights[6].setPosition(new Vector3f(fireBall.getPosition().x, fireBall.getPosition().y, 1f));
-                fireBall.move(nearestEnemyLoc(fireBall.getMazePosition()), maze.getGrid());
-                renderer.renderObject(fireBall);
             }
         }
 
